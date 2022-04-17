@@ -3,12 +3,26 @@ import { useState } from "preact/hooks";
 import { GridColumns } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import Table from "./components/Table";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#6713ef",
+    },
+    secondary: {
+      main: "#636378",
+    },
+  },
+});
 
 export function App() {
   return (
-    <div>
-      <Table />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div>
+        <Table />
+      </div>
+    </ThemeProvider>
   );
 }
 

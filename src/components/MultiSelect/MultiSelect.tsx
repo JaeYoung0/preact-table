@@ -1,14 +1,8 @@
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select from "@mui/material/Select";
-import Checkbox from "@mui/material/Checkbox";
 import Config from "@/icons/Config";
 import * as S from "./MultiSelect.style";
 import { useState } from "preact/hooks";
 import RoundedPlus from "@/icons/RoundedPlus";
+import CustomIndicatorModal from "../CustomIndicatorModal";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -29,6 +23,8 @@ export default function MultiSelect({ options, selectedOptions }: Props) {
   console.log("@@selectedOptions", options, selectedOptions);
 
   const [opened, setOpened] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const closeModal = () => setModalVisible(false);
 
   return (
     <div style={{ position: "relative" }}>
@@ -48,7 +44,9 @@ export default function MultiSelect({ options, selectedOptions }: Props) {
 
         <S.SubTitle>
           지표
-          <RoundedPlus />
+          <S.OpenModalButton onClick={() => setModalVisible(true)}>
+            <RoundedPlus />
+          </S.OpenModalButton>
         </S.SubTitle>
         <S.HiddenOptionsWrapper>
           {selectedOptions.map((option) => (
@@ -60,6 +58,8 @@ export default function MultiSelect({ options, selectedOptions }: Props) {
           <S.SubmitButton>저장</S.SubmitButton>
         </S.ButtonsWrapper>
       </S.ConfigContainer>
+
+      <CustomIndicatorModal visible={modalVisible} close={closeModal} />
     </div>
   );
 }

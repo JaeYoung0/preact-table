@@ -48,7 +48,7 @@ export const Label = styled.label`
 
 const OptionsWrapper = styled.ul`
   position: relative;
-  background: #f5f6f7;
+  background: #fff;
   padding: 0px;
   border-radius: 5px;
   margin: 5px 0;
@@ -61,9 +61,11 @@ const OptionsWrapper = styled.ul`
     position: relative;
     list-style: none;
     padding: 10px;
+    cursor: pointer;
 
     &:hover {
-      background: #d1d1e8;
+      /* background: #d1d1e8; */
+      background: #f5f6f7;
     }
 
     &::after {
@@ -89,6 +91,8 @@ export const SubTitle = styled(Title)`
   align-items: center;
   margin-bottom: 10px;
 `;
+
+export const OpenModalButton = styled.div``;
 
 export const VisibleOptionsWrapper = styled(OptionsWrapper)`
   margin-bottom: 20px;
