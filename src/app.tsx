@@ -4,6 +4,7 @@ import { GridColumns } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import Table from "./components/Table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { OptionsProvider } from "./hooks/useOptions";
 
 const theme = createTheme({
   palette: {
@@ -19,9 +20,11 @@ const theme = createTheme({
 export function App() {
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <Table />
-      </div>
+      <OptionsProvider>
+        <div>
+          <Table />
+        </div>
+      </OptionsProvider>
     </ThemeProvider>
   );
 }

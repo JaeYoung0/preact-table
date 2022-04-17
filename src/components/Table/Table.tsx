@@ -1,28 +1,20 @@
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import { rows as DATA_ROWS, columns as DATA_COLS } from "../../data";
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "preact/hooks";
 import MultiSelect from "@/components/MultiSelect";
 import * as S from "./Table.style";
 import * as XLSX from "xlsx";
 import Download from "@/icons/Download";
+import useOptions from "@/hooks/useOptions";
 
 const FIELD_NAMES = DATA_COLS.map((col) => col.field);
 
 export default function MyDataGrid() {
   const [rows, setRows] = useState(DATA_ROWS);
   const [cols, setCols] = useState(DATA_COLS);
-  const [selectedOptions, setSelectedOptions] = useState(FIELD_NAMES);
 
-  const handleChange = (event: any) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedOptions(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+  const { visibleOptions } = useOptions();
 
   function exportFilteredData(filename: string, rows: any[]) {
     filename = `${filename}.xlsx`;
@@ -35,7 +27,7 @@ export default function MyDataGrid() {
 
   useEffect(() => {
     setCols(
-      selectedOptions.map((fieldName) => ({
+      visibleOptions.map((fieldName) => ({
         field: fieldName,
         headerName: fieldName,
         width: 150,
@@ -43,7 +35,7 @@ export default function MyDataGrid() {
         align: "center",
       }))
     );
-  }, [selectedOptions]);
+  }, [visibleOptions]);
 
   return (
     <S.Wrapper>
@@ -52,28 +44,15 @@ export default function MyDataGrid() {
           EXCEL
           <Download />
         </S.ExcelDownloadButton>
-        <MultiSelect
-          options={FIELD_NAMES}
-          selectedOptions={selectedOptions}
-          // onChange={handleChange}
-        />
+        <MultiSelect />
       </S.ButtonsWrapper>
 
       <DataGrid
         rows={rows}
         columns={cols}
-        // pageSize={10}
-        // rowsPerPageOptions={[10, 15, 20]}
-        // checkboxSelection
         disableSelectionOnClick
-        // disableColumnSelector
         showCellRightBorder
         disableColumnMenu
-        components={
-          {
-            // Toolbar: GridToolbar,
-          }
-        }
       />
     </S.Wrapper>
   );

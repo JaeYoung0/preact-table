@@ -22,11 +22,10 @@ export const Wrapper = styled.div`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
+  justify-content: flex-end;
   margin-bottom: 15px;
-
-  button ~ button {
-    margin-left: 10px;
-  }
 `;
 
-export const ExcelDownloadButton = styled(BasicButton)``;
+export const ExcelDownloadButton = styled(BasicButton)`
+  margin-right: 10px;
+`;

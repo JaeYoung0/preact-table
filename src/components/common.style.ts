@@ -8,7 +8,6 @@ export const BasicButton = styled.button`
   align-items: center;
   padding: 0px 20px;
   border: 2px solid #6713ef;
-  margin-left: auto;
   line-height: 35px;
   background: #fefefe;
 

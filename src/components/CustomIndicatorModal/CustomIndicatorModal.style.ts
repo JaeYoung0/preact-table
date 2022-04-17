@@ -50,14 +50,16 @@ export const Title = styled.p`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
 `;
 
 export const CancelButton = styled(BasicButton)`
   justify-content: center;
+  margin-left: 0;
 `;
 export const SubmitButton = styled(BasicButton)`
   justify-content: center;
+  margin-left: 0;
 `;
 
 export const Row = styled.div`

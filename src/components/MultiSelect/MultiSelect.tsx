@@ -1,29 +1,32 @@
 import Config from "@/icons/Config";
 import * as S from "./MultiSelect.style";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import RoundedPlus from "@/icons/RoundedPlus";
 import CustomIndicatorModal from "../CustomIndicatorModal";
+import useOptions from "@/hooks/useOptions";
+// import Accordion from "@mui/material/Accordion";
+// import AccordionSummary from "@mui/material/AccordionSummary";
+// import AccordionDetails from "@mui/material/AccordionDetails";
+import DeleteIcon from "@mui/icons-material/Delete";
+// import useAnotherClick from "@/hooks/useAnotherClick";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-interface Props {
-  options: string[];
-  selectedOptions: string[];
-}
-export default function MultiSelect({ options, selectedOptions }: Props) {
-  console.log("@@selectedOptions", options, selectedOptions);
+interface Props {}
+export default function MultiSelect({}: Props) {
+  // console.log("@@visibleOptions", options, visibleOptions);
 
   const [opened, setOpened] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const configContainerRef = useRef(null);
+  // const { anotherClick } = useAnotherClick(configContainerRef);
+
+  const {
+    visibleOptions,
+    handleVisibileOptions,
+    handleHiddenOptions,
+    hiddenOptions,
+  } = useOptions();
+
   const closeModal = () => setModalVisible(false);
 
   return (
@@ -32,13 +35,23 @@ export default function MultiSelect({ options, selectedOptions }: Props) {
         설정
         <Config />
       </S.ConfigButton>
-      <S.ConfigContainer opened={opened}>
+      <S.ConfigContainer opened={opened} ref={configContainerRef}>
         <S.Title>열설정</S.Title>
 
         <S.SubTitle>표시</S.SubTitle>
         <S.VisibleOptionsWrapper>
-          {selectedOptions.map((option) => (
-            <li>{option}</li>
+          {visibleOptions.map((option) => (
+            <li
+              onClick={() => {
+                handleVisibileOptions(
+                  visibleOptions.filter((item) => item !== option)
+                );
+                handleHiddenOptions([...hiddenOptions, option]);
+              }}
+            >
+              {option}
+              <DeleteIcon />
+            </li>
           ))}
         </S.VisibleOptionsWrapper>
 
@@ -49,12 +62,21 @@ export default function MultiSelect({ options, selectedOptions }: Props) {
           </S.OpenModalButton>
         </S.SubTitle>
         <S.HiddenOptionsWrapper>
-          {selectedOptions.map((option) => (
-            <li>{option}</li>
+          {hiddenOptions.map((option) => (
+            <li
+              onClick={() => {
+                handleHiddenOptions(
+                  hiddenOptions.filter((item) => item !== option)
+                );
+                handleVisibileOptions([...visibleOptions, option]);
+              }}
+            >
+              {option}
+            </li>
           ))}
         </S.HiddenOptionsWrapper>
         <S.ButtonsWrapper>
-          <S.CancelButton>취소</S.CancelButton>
+          <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
           <S.SubmitButton>저장</S.SubmitButton>
         </S.ButtonsWrapper>
       </S.ConfigContainer>

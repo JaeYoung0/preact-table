@@ -26,7 +26,7 @@ export const ConfigContainer = styled.div<{ opened: boolean }>`
   overflow-y: scroll;
   ${hideScroll}
 
-  padding: 10px;
+  padding: 20px;
 
   background: #fff;
   border: 1px solid #636378;
@@ -49,6 +49,9 @@ export const Label = styled.label`
 const OptionsWrapper = styled.ul`
   position: relative;
   background: #fff;
+
+  border: 1px solid #f5f6f7;
+
   padding: 0px;
   border-radius: 5px;
   margin: 5px 0;
@@ -56,26 +59,6 @@ const OptionsWrapper = styled.ul`
   max-height: 200px;
   overflow-y: scroll;
   ${hideScroll}
-
-  li {
-    position: relative;
-    list-style: none;
-    padding: 10px;
-    cursor: pointer;
-
-    &:hover {
-      /* background: #d1d1e8; */
-      background: #f5f6f7;
-    }
-
-    &::after {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      content: "x";
-    }
-  }
 `;
 
 export const Title = styled.p`
@@ -96,10 +79,69 @@ export const OpenModalButton = styled.div``;
 
 export const VisibleOptionsWrapper = styled(OptionsWrapper)`
   margin-bottom: 20px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background: #f5f6f7;
+    }
+  }
+  svg {
+    font-size: 18px;
+    color: #636378;
+  }
+
+  /* li {
+    position: relative;
+    list-style: none;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background: #f5f6f7;
+    }
+
+    &::after {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      content: "x";
+      font-size: 16px;
+      font-weight: bold;
+      color: #6713ef;
+    }
+  } */
 `;
 
 export const HiddenOptionsWrapper = styled(OptionsWrapper)`
   margin-bottom: 20px;
+
+  li {
+    position: relative;
+    list-style: none;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background: #f5f6f7;
+    }
+
+    &::after {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      content: "추가 +";
+      font-size: 14px;
+      font-weight: bold;
+      color: #636378;
+    }
+  }
 `;
 
 export const ButtonsWrapper = styled.div`
@@ -109,6 +151,7 @@ export const ButtonsWrapper = styled.div`
 
 export const CancelButton = styled(BasicButton)`
   justify-content: center;
+  margin-right: 10px;
 `;
 export const SubmitButton = styled(BasicButton)`
   justify-content: center;
