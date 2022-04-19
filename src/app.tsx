@@ -1,10 +1,6 @@
-import { useState } from "preact/hooks";
-
-import { GridColumns } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
-import Table from "./components/Table";
+import Table from "@/components/Table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { OptionsProvider } from "./hooks/useOptions";
+import { OptionsProvider } from "@/hooks/useOptions";
 
 const theme = createTheme({
   palette: {
