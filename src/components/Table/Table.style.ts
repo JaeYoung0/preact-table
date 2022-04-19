@@ -5,6 +5,14 @@ export const Wrapper = styled.div`
   height: 500px;
   .MuiDataGrid-columnHeaders {
     background: #636378;
+
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+  }
+
+  .MuiDataGrid-columnHeader:focus-within {
+    outline: none;
   }
 
   .MuiDataGrid-columnHeaderTitleContainer {

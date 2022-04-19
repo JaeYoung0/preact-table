@@ -8,7 +8,7 @@ import useOptions from "@/hooks/useOptions";
 // import AccordionSummary from "@mui/material/AccordionSummary";
 // import AccordionDetails from "@mui/material/AccordionDetails";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import useAnotherClick from "@/hooks/useAnotherClick";
+import useAnotherClick from "@/hooks/useAnotherClick";
 
 interface Props {}
 export default function MultiSelect({}: Props) {
@@ -19,6 +19,7 @@ export default function MultiSelect({}: Props) {
 
   const configContainerRef = useRef(null);
   // const { anotherClick } = useAnotherClick(configContainerRef);
+  // console.log("@@anotherClick", anotherClick);
 
   const {
     visibleOptions,
@@ -26,6 +27,8 @@ export default function MultiSelect({}: Props) {
     handleHiddenOptions,
     hiddenOptions,
   } = useOptions();
+
+  console.log("@@visibleOptions3", visibleOptions);
 
   const closeModal = () => setModalVisible(false);
 

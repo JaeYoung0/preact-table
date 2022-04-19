@@ -7,35 +7,22 @@ import * as S from "./Table.style";
 import * as XLSX from "xlsx";
 import Download from "@/icons/Download";
 import useOptions from "@/hooks/useOptions";
+import { GridColumns } from "@mui/x-data-grid";
+import useMetrics from "@/hooks/useMetrics";
 
-const FIELD_NAMES = DATA_COLS.map((col) => col.field);
+function exportFilteredData(filename: string, rows: any[]) {
+  filename = `${filename}.xlsx`;
+  const sheet_data = rows;
+  const ws = XLSX.utils.json_to_sheet(sheet_data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "실적데이터");
+  XLSX.writeFile(wb, filename);
+}
 
 export default function MyDataGrid() {
-  const [rows, setRows] = useState(DATA_ROWS);
-  const [cols, setCols] = useState(DATA_COLS);
+  const { cols, rows } = useMetrics();
 
   const { visibleOptions } = useOptions();
-
-  function exportFilteredData(filename: string, rows: any[]) {
-    filename = `${filename}.xlsx`;
-    const sheet_data = rows;
-    const ws = XLSX.utils.json_to_sheet(sheet_data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "실적데이터");
-    XLSX.writeFile(wb, filename);
-  }
-
-  useEffect(() => {
-    setCols(
-      visibleOptions.map((fieldName) => ({
-        field: fieldName,
-        headerName: fieldName,
-        width: 150,
-        headerAlign: "center",
-        align: "center",
-      }))
-    );
-  }, [visibleOptions]);
 
   return (
     <S.Wrapper>
@@ -49,7 +36,14 @@ export default function MyDataGrid() {
 
       <DataGrid
         rows={rows}
-        columns={cols}
+        // FIXME: 이러면 useMetrics에서 cols를 구할 필요가 없다..
+        columns={visibleOptions.map((col) => ({
+          field: col,
+          headerName: col,
+          width: 150,
+          headerAlign: "center",
+          align: "center",
+        }))}
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu

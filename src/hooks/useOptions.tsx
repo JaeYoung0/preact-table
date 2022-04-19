@@ -2,6 +2,7 @@ import { createContext } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 import React from "react";
 import { columns as DATA_COLS } from "../data";
+import useMetrics from "./useMetrics";
 
 const FIELD_NAMES = DATA_COLS.map((col) => col.field);
 
@@ -31,12 +32,12 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
     setHiddenOptions([...newOptions]);
   };
 
+  const { visibleOptions: wow } = useMetrics();
+
   useEffect(() => {
     // FIXME: API call
-    setTimeout(() => {
-      setVisibleOptions(FIELD_NAMES);
-    }, 500);
-  }, []);
+    setVisibleOptions(wow);
+  }, [wow]);
 
   return (
     <Options.Provider
