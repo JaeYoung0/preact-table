@@ -9,6 +9,7 @@ import useOptions from "@/hooks/useOptions";
 // import AccordionDetails from "@mui/material/AccordionDetails";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAnotherClick from "@/hooks/useAnotherClick";
+import { CigroAPI_V2 } from "@/helper/api";
 
 interface Props {}
 export default function MultiSelect({}: Props) {
@@ -28,7 +29,7 @@ export default function MultiSelect({}: Props) {
     hiddenOptions,
   } = useOptions();
 
-  console.log("@@visibleOptions3", visibleOptions);
+  console.log("@@hiddenOptions", hiddenOptions);
 
   const closeModal = () => setModalVisible(false);
 
@@ -80,7 +81,21 @@ export default function MultiSelect({}: Props) {
         </S.HiddenOptionsWrapper>
         <S.ButtonsWrapper>
           <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
-          <S.SubmitButton>저장</S.SubmitButton>
+          <S.SubmitButton
+            onClick={async () => {
+              // FIXME: put할때 body에 모든 데이터를 배열로 보내면 되는건가 ...
+              // const result = await  CigroAPI_V2('/metrics/columns',{
+              //   params:{
+              //     user_id: "1625805300271x339648481160378400",
+              //     metrics_type: "SALES",
+              //   },
+              //   method:'PUT'
+              // })
+              // console.log('@@result',result);
+            }}
+          >
+            저장
+          </S.SubmitButton>
         </S.ButtonsWrapper>
       </S.ConfigContainer>
 

@@ -20,7 +20,7 @@ function useMetrics() {
       }),
     { dedupingInterval: 2000, errorRetryCount: 3 }
   );
-  console.log("@@data", data);
+  console.log("@@useMetrics data", data);
 
   // FIXME: visible, hidden 구분하기. 그러면 useOptions랑 통합할 수 있을지도.
   const cols: GridColumns = useMemo(() => {
@@ -36,8 +36,6 @@ function useMetrics() {
 
   const rows: GridRowModel[] = useMemo(() => {
     if (!data) return [];
-    // const colKeys = Object.keys(data[0]);
-    // console.log("@@colKeys", colKeys);
 
     return data.map((row, idx) => ({ ...row, id: idx }));
   }, [data]);

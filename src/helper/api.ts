@@ -5,6 +5,7 @@ export const CigroAPI_V2 = (
   config: {
     params: ParamsType;
     method: "GET" | "POST" | "PUT";
+    body?: any;
   }
 ) => {
   const prefix = "https://dev.cigro.io/api/v2";
@@ -13,14 +14,12 @@ export const CigroAPI_V2 = (
     method: config.method,
   };
   console.log("@@config.params", config.params);
+  endpoint += "?" + new URLSearchParams(config.params).toString();
 
-  if (config.method === "GET") {
-    endpoint += "?" + new URLSearchParams(config.params).toString();
-  } else {
-    options.body = JSON.stringify(config.params);
+  if (config.method !== "GET") {
+    //  FIXME: stringify를 해야해?..
+    options.body = JSON.stringify(config.body);
   }
 
-  return fetch(prefix + endpoint, options)
-    .then((response) => response.json())
-    .then((res) => res.data);
+  return fetch(prefix + endpoint, options).then((response) => response.json());
 };
