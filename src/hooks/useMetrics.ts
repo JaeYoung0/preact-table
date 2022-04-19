@@ -1,21 +1,23 @@
 import { useMemo } from "preact/hooks";
 import { GridColumns, GridRowModel } from "@mui/x-data-grid";
 import useSWR from "swr";
-
-const fetcher = (endpoint: string) =>
-  fetch(`https://dev.cigro.io/api/v2${endpoint}`)
-    .then((res) => res.json())
-    .then((res) => res.data);
-
-const numberWithCommas = (target: number) => {
-  if (typeof target !== "number") return target;
-  return target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+import { CigroAPI_V2 } from "@/helper/api";
 
 function useMetrics() {
   const { data, error, mutate } = useSWR<Record<string, unknown>[]>(
-    "/metrics?user_id=1625805300271x339648481160378400&start=1618833417&end=1650369417",
-    fetcher,
+    "/metrics",
+    (key) =>
+      CigroAPI_V2(key, {
+        method: "GET",
+        params: {
+          user_id: "1625805300271x339648481160378400",
+          start: "1618833417",
+          end: "1650369417",
+          metrics_type: "SALES",
+          per_page: "10",
+          page: "1",
+        },
+      }),
     { dedupingInterval: 2000, errorRetryCount: 3 }
   );
   console.log("@@data", data);
