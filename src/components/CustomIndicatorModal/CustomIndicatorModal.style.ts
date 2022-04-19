@@ -81,6 +81,11 @@ export const Reset = styled.span`
   border: 1px solid #cfcfcf;
   padding: 5px 10px;
   border-radius: 10px;
+  margin-right: 10px;
+`;
+
+export const Backspace = styled(Reset)`
+  margin-right: 0px;
 `;
 
 export const CalculatorWrapper = styled.div``;
@@ -119,14 +124,6 @@ export const CalculatorBody = styled.div`
   border-top: none;
 
   margin-bottom: 20px;
-
-  span {
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-
-    /* line-height: 50px; */
-  }
 `;
 
 export const FormulaItem = styled.span`
@@ -134,6 +131,7 @@ export const FormulaItem = styled.span`
   background: #f5f6f7;
   border-radius: 5px;
   margin-right: 5px;
+  margin-bottom: 5px;
 `;
 
 export const OriginalIndicators = styled.div`

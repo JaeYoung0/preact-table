@@ -66,6 +66,17 @@ function CustomIndicatorModal({ visible, close }: Props) {
     });
   };
 
+  const handleReset = () => setFormula([]);
+
+  const handleBackspace = () =>
+    setFormula([...formula.slice(0, formula.length - 1)]);
+
+  const renderFormula = (item: string) => {
+    if (item === "*") return <S.FormulaItem>x</S.FormulaItem>;
+    else if (item === "/") return <S.FormulaItem>&divide;</S.FormulaItem>;
+    else return <S.FormulaItem>{item}</S.FormulaItem>;
+  };
+
   return (
     <S.Container visible={visible}>
       <S.Backdrop />
@@ -110,7 +121,10 @@ function CustomIndicatorModal({ visible, close }: Props) {
           style={{ justifyContent: "space-between", marginBottom: "10px" }}
         >
           <S.CaculatorName>수식</S.CaculatorName>
-          <S.Reset onClick={() => setFormula([])}>reset</S.Reset>
+          <div>
+            <S.Reset onClick={handleReset}>reset</S.Reset>
+            <S.Backspace onClick={handleBackspace}>Backspace</S.Backspace>
+          </div>
         </S.Row>
         <S.CalculatorHeader
           onClick={(e) => {
@@ -135,11 +149,7 @@ function CustomIndicatorModal({ visible, close }: Props) {
           // onChange={handleformulaChange}
           sx={{ width: "100%", border: "none" }}
         /> */}
-          <div>
-            {formula.map((item) => (
-              <S.FormulaItem>{item}</S.FormulaItem>
-            ))}
-          </div>
+          {formula.map(renderFormula)}
         </S.CalculatorBody>
 
         <S.OriginalIndicators>
