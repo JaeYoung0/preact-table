@@ -32,6 +32,55 @@ export default function MultiSelect({}: Props) {
   console.log("@@hiddenOptions", hiddenOptions);
 
   const closeModal = () => setModalVisible(false);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
+  console.log("@@draggingIdx", draggingIdx);
+
+  const handleDragStart = (idx: number) => {
+    setDraggingIdx(idx);
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLLIElement>) => {
+    (e.target as HTMLLIElement).style.borderBottom = "2px solid #6713ef";
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLLIElement>) => {
+    (e.target as HTMLLIElement).style.borderBottom = "initial";
+  };
+
+  const handleDragDrop = (
+    e: React.DragEvent<HTMLLIElement>,
+    targetIdx: number
+  ) => {
+    (e.target as HTMLLIElement).style.borderBottom = "initial";
+
+    if (draggingIdx === null) return;
+
+    const newList = [...visibleOptions];
+    const draggingItem = newList[draggingIdx];
+    const targetItem = newList[targetIdx];
+
+    console.log(
+      draggingIdx,
+      "옮기는 중...",
+      targetIdx,
+      "부터 하나도 없애지 않고",
+      draggingItem,
+      "을 ",
+      targetItem,
+      "뒤에 삽입한 결과",
+      newList
+    );
+
+    // draggingItem 옮기기
+    newList.splice(targetIdx + 1, 0, draggingItem);
+    newList.splice(draggingIdx, 1);
+
+    handleVisibileOptions(newList);
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -44,17 +93,32 @@ export default function MultiSelect({}: Props) {
 
         <S.SubTitle>표시</S.SubTitle>
         <S.VisibleOptionsWrapper>
-          {visibleOptions.map((option) => (
+          {visibleOptions.map((option, idx) => (
             <li
-              onClick={() => {
-                handleVisibileOptions(
-                  visibleOptions.filter((item) => item !== option)
-                );
-                handleHiddenOptions([...hiddenOptions, option]);
+              draggable
+              key={idx}
+              onDragStart={() => {
+                handleDragStart(idx);
               }}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => {
+                handleDragDrop(e, idx);
+              }}
+              // onClick={}
             >
               {option}
-              <DeleteIcon />
+              <span
+                onClick={() => {
+                  handleVisibileOptions(
+                    visibleOptions.filter((item) => item !== option)
+                  );
+                  handleHiddenOptions([...hiddenOptions, option]);
+                }}
+              >
+                <DeleteIcon />
+              </span>
             </li>
           ))}
         </S.VisibleOptionsWrapper>

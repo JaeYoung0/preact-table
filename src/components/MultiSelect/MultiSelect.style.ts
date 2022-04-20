@@ -84,38 +84,16 @@ export const VisibleOptionsWrapper = styled(OptionsWrapper)`
     display: flex;
     justify-content: space-between;
     padding: 10px 5px;
-    border-radius: 5px;
+
     cursor: pointer;
-    &:hover {
-      background: #f5f6f7;
-    }
   }
   svg {
     font-size: 18px;
     color: #636378;
-  }
-
-  /* li {
-    position: relative;
-    list-style: none;
-    padding: 10px;
-    cursor: pointer;
-
     &:hover {
-      background: #f5f6f7;
+      color: red;
     }
-
-    &::after {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      content: "x";
-      font-size: 16px;
-      font-weight: bold;
-      color: #6713ef;
-    }
-  } */
+  }
 `;
 
 export const HiddenOptionsWrapper = styled(OptionsWrapper)`
