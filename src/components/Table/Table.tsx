@@ -35,11 +35,19 @@ export default function MyDataGrid() {
       </S.ButtonsWrapper>
 
       <DataGrid
+        components={{
+          // FIXME: Loading Indicator
+          NoRowsOverlay: () => (
+            <S.NoRowsOverlay>
+              <p>데이터를 불러오는 중입니다...</p>
+            </S.NoRowsOverlay>
+          ),
+        }}
         rows={rows}
         // FIXME: 이러면 useMetrics에서 cols를 구할 필요가 없다..
         columns={visibleOptions.map((col) => ({
-          field: col,
-          headerName: col,
+          field: col.label,
+          headerName: col.label,
           width: 150,
           headerAlign: "center",
           align: "center",

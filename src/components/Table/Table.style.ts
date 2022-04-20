@@ -37,3 +37,14 @@ export const ButtonsWrapper = styled.div`
 export const ExcelDownloadButton = styled(BasicButton)`
   margin-right: 10px;
 `;
+
+export const NoRowsOverlay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  p {
+    font-size: 16px;
+  }
+`;

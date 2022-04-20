@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { CigroAPI_V2 } from "@/helper/api";
 import { useMemo } from "preact/hooks";
 
-type ColData = {
+export type ColData = {
   metrics_type: "SALES";
   label: string;
   display: "TEXT" | "WON" | "PERCENT";
@@ -41,7 +41,7 @@ function useCols() {
     return data.filter((item) => item.status === "HIDDEN");
   }, [data]);
 
-  return { visibleCols, hiddenCols };
+  return { visibleCols, hiddenCols, mutate };
 }
 
 export default useCols;

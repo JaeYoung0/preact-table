@@ -10,6 +10,7 @@ import useOptions from "@/hooks/useOptions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAnotherClick from "@/hooks/useAnotherClick";
 import { CigroAPI_V2 } from "@/helper/api";
+import useCols from "@/hooks/useCols";
 
 interface Props {}
 export default function MultiSelect({}: Props) {
@@ -22,18 +23,18 @@ export default function MultiSelect({}: Props) {
   // const { anotherClick } = useAnotherClick(configContainerRef);
   // console.log("@@anotherClick", anotherClick);
 
+  const { visibleCols: enhancedCols } = useCols();
+
   const {
     visibleOptions,
     handleVisibileOptions,
     handleHiddenOptions,
     hiddenOptions,
+    mutate,
   } = useOptions();
-
-  console.log("@@hiddenOptions", hiddenOptions);
 
   const closeModal = () => setModalVisible(false);
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
-  console.log("@@draggingIdx", draggingIdx);
 
   const handleDragStart = (idx: number) => {
     setDraggingIdx(idx);
@@ -64,6 +65,7 @@ export default function MultiSelect({}: Props) {
     const targetItem = newList[targetIdx];
 
     console.log(
+      "@@drag",
       draggingIdx,
       "옮기는 중...",
       targetIdx,
@@ -75,9 +77,15 @@ export default function MultiSelect({}: Props) {
       newList
     );
 
-    // draggingItem 옮기기
-    newList.splice(targetIdx + 1, 0, draggingItem);
+    // draggingItem 삭제하기
     newList.splice(draggingIdx, 1);
+
+    // draggingItem 옮기기
+    newList.splice(
+      targetIdx > draggingIdx ? targetIdx : targetIdx + 1,
+      0,
+      draggingItem
+    );
 
     handleVisibileOptions(newList);
   };
@@ -108,11 +116,11 @@ export default function MultiSelect({}: Props) {
               }}
               // onClick={}
             >
-              {option}
+              {option.label}
               <span
                 onClick={() => {
                   handleVisibileOptions(
-                    visibleOptions.filter((item) => item !== option)
+                    visibleOptions.filter((item) => item.label !== option.label)
                   );
                   handleHiddenOptions([...hiddenOptions, option]);
                 }}
@@ -139,7 +147,7 @@ export default function MultiSelect({}: Props) {
                 handleVisibileOptions([...visibleOptions, option]);
               }}
             >
-              {option}
+              {option.label}
             </li>
           ))}
         </S.HiddenOptionsWrapper>
@@ -147,15 +155,26 @@ export default function MultiSelect({}: Props) {
           <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
           <S.SubmitButton
             onClick={async () => {
+              const payload = visibleOptions.map((option) => ({
+                type: option.type,
+                status: option.status,
+                order: option.order,
+                id: option.id,
+              }));
+              console.log("@@payload SubmitButton", payload);
+
               // FIXME: put할때 body에 모든 데이터를 배열로 보내면 되는건가 ...
-              // const result = await  CigroAPI_V2('/metrics/columns',{
-              //   params:{
-              //     user_id: "1625805300271x339648481160378400",
-              //     metrics_type: "SALES",
-              //   },
-              //   method:'PUT'
-              // })
-              // console.log('@@result',result);
+              const result = await CigroAPI_V2("/metrics/columns", {
+                params: {
+                  user_id: "1625805300271x339648481160378400",
+                  // metrics_type: "SALES",
+                },
+                method: "PUT",
+                body: payload,
+              });
+
+              await mutate();
+              console.log("@@result", result);
             }}
           >
             저장

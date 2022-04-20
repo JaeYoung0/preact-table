@@ -57,7 +57,7 @@ function CustomIndicatorModal({ visible, close }: Props) {
 
   const [formula, setFormula] = useState<string[]>([]);
 
-  console.log("@@payload", { ...state, formula });
+  // console.log("@@payload", { ...state, formula });
 
   console.log("@@state", state);
   console.log("@@formula", formula);
@@ -89,18 +89,18 @@ function CustomIndicatorModal({ visible, close }: Props) {
 
         <S.Row>
           <TextField
-            id="custom-name"
-            name="name"
-            label="이름"
-            variant="outlined"
+            id='custom-name'
+            name='name'
+            label='이름'
+            variant='outlined'
             onChange={handleChange}
           />
 
           <TextField
-            id="custom-format"
-            name="format"
+            id='custom-format'
+            name='format'
             select
-            label="형식"
+            label='형식'
             value={state.format}
             sx={{ m: 1, width: "10ch" }}
             onChange={handleChange}
@@ -115,11 +115,11 @@ function CustomIndicatorModal({ visible, close }: Props) {
         </S.Row>
         <S.Row>
           <TextField
-            id="custom-description"
-            name="description"
+            id='custom-description'
+            name='description'
             value={state.description}
-            label="설명-선택사항"
-            variant="outlined"
+            label='설명-선택사항'
+            variant='outlined'
             sx={{ width: "100%" }}
             onChange={handleChange}
           />
@@ -140,12 +140,12 @@ function CustomIndicatorModal({ visible, close }: Props) {
             setFormula([...formula, value]);
           }}
         >
-          <span data-value="+">+</span>
-          <span data-value="-">-</span>
-          <span data-value="*">x</span>
-          <span data-value="/">&divide;</span>
-          <span data-value="(">{`(`}</span>
-          <span data-value=")">{`)`}</span>
+          <span data-value='+'>+</span>
+          <span data-value='-'>-</span>
+          <span data-value='*'>x</span>
+          <span data-value='/'>&divide;</span>
+          <span data-value='('>{`(`}</span>
+          <span data-value=')'>{`)`}</span>
         </S.CalculatorHeader>
 
         <S.CalculatorBody>
