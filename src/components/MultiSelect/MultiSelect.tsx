@@ -1,15 +1,14 @@
 import Config from "@/icons/Config";
 import * as S from "./MultiSelect.style";
-import { useRef, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import RoundedPlus from "@/icons/RoundedPlus";
 import CustomIndicatorModal from "../CustomIndicatorModal";
 import useOptions from "@/hooks/useOptions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
-import useAnotherClick from "@/hooks/useAnotherClick";
 import { CigroAPI_V2 } from "@/helper/api";
-import useCols, { ColData } from "@/hooks/useCols";
+import { CustomColType } from "@/hooks/useCols";
 import { IndicatorModalValue } from "../CustomIndicatorModal/CustomIndicatorModal";
 
 export default function MultiSelect() {
@@ -103,7 +102,7 @@ export default function MultiSelect() {
 
   const handleCustomListClick = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    option: ColData
+    option: CustomColType
   ) => {
     e.stopPropagation();
     const { label, description, display, formula } = option;
