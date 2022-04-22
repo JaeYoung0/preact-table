@@ -38,7 +38,7 @@ export const ExcelDownloadButton = styled(BasicButton)`
   margin-right: 10px;
 `;
 
-export const NoRowsOverlay = styled.div`
+export const RowsOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
