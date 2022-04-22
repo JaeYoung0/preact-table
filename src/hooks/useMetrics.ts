@@ -1,10 +1,10 @@
 import { useMemo } from "preact/hooks";
-import { GridColumns, GridRowModel } from "@mui/x-data-grid";
+import { GridRowModel } from "@mui/x-data-grid";
 import useSWR from "swr";
 import { CigroAPI_V2 } from "@/helper/api";
 
 function useMetrics() {
-  const { data, error, mutate } = useSWR<Record<string, unknown>[]>(
+  const { data = [], error, mutate } = useSWR<Record<string, unknown>[]>(
     "/metrics",
     (key) =>
       CigroAPI_V2(key, {
@@ -21,37 +21,24 @@ function useMetrics() {
     { dedupingInterval: 2000, errorRetryCount: 3 }
   );
 
-  // FIXME: visible, hidden 구분하기. 그러면 useOptions랑 통합할 수 있을지도.
-  const cols: GridColumns = useMemo(() => {
-    if (!data) return [];
-    return Object.keys(data[0]).map((item) => ({
-      field: item,
-      headerName: item,
-      width: 150,
-      headerAlign: "center",
-      align: "center",
-    }));
-  }, [data]);
+  /**
+   * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
+   */
+  console.log("@@error", error);
 
   const rows: GridRowModel[] = useMemo(() => {
     if (!data) return [];
 
-    return data.map((row, idx) => ({ ...row, id: idx }));
-  }, [data]);
-
-  const visibleOptions = useMemo(() => {
-    if (!data) return [];
-    return Object.keys(data[0]);
+    return data?.map((row, idx) => ({ ...row, id: idx }));
   }, [data]);
 
   console.log("@@rows", rows);
 
   return {
     rows,
-    cols,
+
     mutate,
     error,
-    visibleOptions,
   };
 }
 
