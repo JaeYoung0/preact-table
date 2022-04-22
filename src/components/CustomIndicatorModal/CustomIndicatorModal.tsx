@@ -1,18 +1,18 @@
 import * as S from "./CustomIndicatorModal.style";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import MenuItem from "@mui/material/MenuItem";
-
 import TextField from "@mui/material/TextField";
 import useCols from "@/hooks/useCols";
 import { createCustomCol, createCustomColCommand } from "@/services/columns";
 
-type FormValue = {
-  name: string;
+export type IndicatorModalValue = {
+  label: string;
   description: string;
-  format: "NUMBER" | "WON" | "PERCENT";
+  display: "NUMBER" | "WON" | "PERCENT";
+  formula: string[];
 };
 
-const formats = [
+const displays = [
   {
     value: "NUMBER",
     label: "숫자",
@@ -30,17 +30,22 @@ const formats = [
 interface Props {
   visible: boolean;
   close: () => void;
+  initialModalState: IndicatorModalValue;
 }
 
-function CustomIndicatorModal({ visible, close }: Props) {
-  const [state, setState] = useState<FormValue>({
-    name: "",
-    format: "NUMBER",
-    description: "",
-  });
+function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
+  const [modalState, setModalState] = useState<IndicatorModalValue>(
+    initialModalState
+  );
 
-  const [formula, setFormula] = useState<string[]>([]);
-  console.log("@@formula", formula);
+  useEffect(() => {
+    setModalState(initialModalState);
+  }, [initialModalState]);
+
+  console.log("@@modalState", modalState);
+
+  // const [formula, setFormula] = useState<string[]>([]);
+  console.log("@@formula modalState", modalState.formula);
 
   const { ingredientCols, mutate } = useCols();
   console.log(
@@ -49,19 +54,22 @@ function CustomIndicatorModal({ visible, close }: Props) {
     ingredientCols.map((col) => col.label)
   );
 
-  console.log("@@state", state);
+  console.log("@@modalState", modalState);
 
   const handleChange = (event: any) => {
-    setState({
-      ...state,
+    setModalState({
+      ...modalState,
       [event.target.name]: event.target.value,
     });
   };
 
-  const handleReset = () => setFormula([]);
+  const handleReset = () => setModalState({ ...modalState, formula: [] });
 
   const handleBackspace = () =>
-    setFormula([...formula.slice(0, formula.length - 1)]);
+    setModalState({
+      ...modalState,
+      formula: [...modalState.formula.slice(0, modalState.formula.length - 1)],
+    });
 
   const renderFormula = (item: string) => {
     if (item === "*") return <S.FormulaItem>x</S.FormulaItem>;
@@ -78,38 +86,38 @@ function CustomIndicatorModal({ visible, close }: Props) {
 
         <S.Row>
           <TextField
-            id='custom-name'
-            name='name'
-            label='이름'
-            value={state.name}
-            variant='outlined'
+            id="custom-label"
+            name="label"
+            label="이름"
+            value={modalState.label}
+            variant="outlined"
             onChange={handleChange}
           />
 
           <TextField
-            id='custom-format'
-            name='format'
+            id="custom-display"
+            name="display"
             select
-            label='형식'
-            value={state.format}
+            label="형식"
+            value={modalState.display}
             sx={{ m: 1, width: "10ch" }}
             onChange={handleChange}
             // helperText='Please select your currency'
           >
-            {formats.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {displays.map((display) => (
+              <MenuItem key={display.value} value={display.value}>
+                {display.label}
               </MenuItem>
             ))}
           </TextField>
         </S.Row>
         <S.Row>
           <TextField
-            id='custom-description'
-            name='description'
-            value={state.description}
-            label='설명-선택사항'
-            variant='outlined'
+            id="custom-description"
+            name="description"
+            value={modalState.description}
+            label="설명-선택사항"
+            variant="outlined"
             sx={{ width: "100%" }}
             onChange={handleChange}
           />
@@ -127,24 +135,32 @@ function CustomIndicatorModal({ visible, close }: Props) {
         <S.CalculatorHeader
           onClick={(e) => {
             const value = (e.target as HTMLElement).dataset.value as string;
-            setFormula([...formula, value]);
+            setModalState({
+              ...modalState,
+              formula: [...modalState.formula, value],
+            });
           }}
         >
-          <span data-value='+'>+</span>
-          <span data-value='-'>-</span>
-          <span data-value='*'>x</span>
-          <span data-value='/'>&divide;</span>
-          <span data-value='('>{`(`}</span>
-          <span data-value=')'>{`)`}</span>
+          <span data-value="+">+</span>
+          <span data-value="-">-</span>
+          <span data-value="*">x</span>
+          <span data-value="/">&divide;</span>
+          <span data-value="(">{`(`}</span>
+          <span data-value=")">{`)`}</span>
         </S.CalculatorHeader>
 
-        <S.CalculatorBody>{formula.map(renderFormula)}</S.CalculatorBody>
+        <S.CalculatorBody>
+          {modalState.formula.map(renderFormula)}
+        </S.CalculatorBody>
 
         <S.OriginalIndicators>
           {ingredientCols.map((col) => (
             <span
               onClick={() => {
-                setFormula([...formula, col.label]);
+                setModalState({
+                  ...modalState,
+                  formula: [...modalState.formula, col.label],
+                });
               }}
             >
               {col.label}
@@ -163,10 +179,10 @@ function CustomIndicatorModal({ visible, close }: Props) {
           <S.SubmitButton
             onClick={async () => {
               const command: createCustomColCommand = {
-                label: state.name,
-                display: state.format,
-                description: state.description,
-                formula: formula.join(" "),
+                label: modalState.label,
+                display: modalState.display,
+                description: modalState.description,
+                formula: modalState.formula.join(" "),
                 metrics_type: "SALES",
                 type: "CUSTOM",
                 status: "HIDDEN",
