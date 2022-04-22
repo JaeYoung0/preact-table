@@ -1,29 +1,32 @@
 import Config from "@/icons/Config";
 import * as S from "./MultiSelect.style";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import RoundedPlus from "@/icons/RoundedPlus";
 import CustomIndicatorModal from "../CustomIndicatorModal";
 import useOptions from "@/hooks/useOptions";
-// import Accordion from "@mui/material/Accordion";
-// import AccordionSummary from "@mui/material/AccordionSummary";
-// import AccordionDetails from "@mui/material/AccordionDetails";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import EditIcon from "@mui/icons-material/Edit";
 import useAnotherClick from "@/hooks/useAnotherClick";
 import { CigroAPI_V2 } from "@/helper/api";
-import useCols from "@/hooks/useCols";
+import useCols, { ColData } from "@/hooks/useCols";
+import { IndicatorModalValue } from "../CustomIndicatorModal/CustomIndicatorModal";
 
-interface Props {}
-export default function MultiSelect({}: Props) {
-  // console.log("@@visibleOptions", options, visibleOptions);
-
+export default function MultiSelect() {
   const [opened, setOpened] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const configContainerRef = useRef(null);
-  // const { anotherClick } = useAnotherClick(configContainerRef);
-  // console.log("@@anotherClick", anotherClick);
-
-  const { visibleCols: enhancedCols } = useCols();
+  const initialValues: IndicatorModalValue = {
+    label: "",
+    description: "",
+    display: "NUMBER",
+    formula: [],
+  };
+  const [
+    initialModalState,
+    setInitialModalState,
+  ] = useState<IndicatorModalValue>(initialValues);
+  console.log("@@initialModalState", initialModalState);
 
   const {
     visibleOptions,
@@ -33,7 +36,15 @@ export default function MultiSelect({}: Props) {
     mutate,
   } = useOptions();
 
-  const closeModal = () => setModalVisible(false);
+  const openModal = (payload: IndicatorModalValue) => {
+    setModalVisible(true);
+    setInitialModalState({ ...payload, formula: payload.formula });
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
 
   const handleDragStart = (idx: number) => {
@@ -90,13 +101,70 @@ export default function MultiSelect({}: Props) {
     handleVisibileOptions(newList);
   };
 
+  const handleCustomListClick = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    option: ColData
+  ) => {
+    e.stopPropagation();
+    const { label, description, display, formula } = option;
+
+    console.log("@@wow", {
+      label,
+      description,
+      display,
+      formula: [formula],
+    });
+
+    openModal({
+      label,
+      description,
+      display,
+      formula: [formula],
+    });
+
+    console.log("@@formula", formula);
+  };
+
+  const handleSave = async () => {
+    const visibleOptionsPayload = visibleOptions.map((option, idx) => ({
+      type: option.type,
+      status: "VISIBLE",
+      order: idx + 1,
+      id: option.id,
+    }));
+
+    const hiddenOptionsPayload = hiddenOptions.map((option) => ({
+      type: option.type,
+      status: "HIDDEN",
+      // order: option.order,
+      order: null,
+      id: option.id,
+    }));
+
+    const payload = [...visibleOptionsPayload, ...hiddenOptionsPayload];
+
+    console.log("@@payload SubmitButton", payload);
+
+    // FIXME: put할때 body에 모든 데이터를 배열로 보내면 되는건가 ...
+    const result = await CigroAPI_V2("/metrics/columns", {
+      params: {
+        user_id: "1625805300271x339648481160378400",
+      },
+      method: "PUT",
+      body: payload,
+    });
+
+    await mutate();
+    console.log("@@result", result);
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <S.ConfigButton onClick={() => setOpened(!opened)}>
         설정
         <Config />
       </S.ConfigButton>
-      <S.ConfigContainer opened={opened} ref={configContainerRef}>
+      <S.ConfigContainer opened={opened}>
         <S.Title>열설정</S.Title>
 
         <S.SubTitle>표시</S.SubTitle>
@@ -105,16 +173,11 @@ export default function MultiSelect({}: Props) {
             <li
               draggable
               key={idx}
-              onDragStart={() => {
-                handleDragStart(idx);
-              }}
+              onDragStart={() => handleDragStart(idx)}
               onDragEnter={handleDragEnter}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
-              onDrop={(e) => {
-                handleDragDrop(e, idx);
-              }}
-              // onClick={}
+              onDrop={(e) => handleDragDrop(e, idx)}
             >
               {option.label}
               <span
@@ -125,7 +188,7 @@ export default function MultiSelect({}: Props) {
                   handleHiddenOptions([...hiddenOptions, option]);
                 }}
               >
-                <DeleteIcon />
+                <VisibilityOffIcon />
               </span>
             </li>
           ))}
@@ -148,42 +211,30 @@ export default function MultiSelect({}: Props) {
               }}
             >
               {option.label}
+              {option.type === "CUSTOM" && (
+                <>
+                  <span onClick={(e) => handleCustomListClick(e, option)}>
+                    <EditIcon />
+                  </span>
+                  <span onClick={() => alert("Delete Custom Col")}>
+                    <DeleteIcon />
+                  </span>
+                </>
+              )}
             </li>
           ))}
         </S.HiddenOptionsWrapper>
         <S.ButtonsWrapper>
           <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
-          <S.SubmitButton
-            onClick={async () => {
-              const payload = visibleOptions.map((option, idx) => ({
-                type: option.type,
-                status: option.status,
-                // order: option.order,
-                // order: idx + 1,
-                id: option.id,
-              }));
-              console.log("@@payload SubmitButton", payload);
-
-              // FIXME: put할때 body에 모든 데이터를 배열로 보내면 되는건가 ...
-              const result = await CigroAPI_V2("/metrics/columns", {
-                params: {
-                  user_id: "1625805300271x339648481160378400",
-                  // metrics_type: "SALES",
-                },
-                method: "PUT",
-                body: payload,
-              });
-
-              await mutate();
-              console.log("@@result", result);
-            }}
-          >
-            저장
-          </S.SubmitButton>
+          <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
         </S.ButtonsWrapper>
       </S.ConfigContainer>
 
-      <CustomIndicatorModal visible={modalVisible} close={closeModal} />
+      <CustomIndicatorModal
+        visible={modalVisible}
+        close={closeModal}
+        initialModalState={initialModalState}
+      />
     </div>
   );
 }
