@@ -17,7 +17,7 @@ function exportFilteredData(filename: string, rows: any[]) {
 }
 
 export default function MyDataGrid() {
-  const { cols, rows } = useMetrics();
+  const { rows } = useMetrics();
 
   const { visibleOptions } = useOptions();
 
@@ -35,9 +35,14 @@ export default function MyDataGrid() {
         components={{
           // FIXME: Loading Indicator
           NoRowsOverlay: () => (
-            <S.NoRowsOverlay>
+            <S.RowsOverlay>
+              <p>불러올 데이터가 없습니다.</p>
+            </S.RowsOverlay>
+          ),
+          LoadingOverlay: () => (
+            <S.RowsOverlay>
               <p>데이터를 불러오는 중입니다...</p>
-            </S.NoRowsOverlay>
+            </S.RowsOverlay>
           ),
         }}
         rows={rows}
