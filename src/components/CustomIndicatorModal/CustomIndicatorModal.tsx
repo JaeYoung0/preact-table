@@ -1,23 +1,28 @@
-import React from "react";
 import * as S from "./CustomIndicatorModal.style";
-import Select from "@mui/material/Select";
 import { useState } from "preact/hooks";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
+
 import TextField from "@mui/material/TextField";
+import useCols from "@/hooks/useCols";
+import { createCustomCol, createCustomColCommand } from "@/services/columns";
+
+type FormValue = {
+  name: string;
+  description: string;
+  format: "NUMBER" | "WON" | "PERCENT";
+};
 
 const formats = [
   {
-    value: "number",
+    value: "NUMBER",
     label: "숫자",
   },
   {
-    value: "won",
+    value: "WON",
     label: "통화(원)",
   },
   {
-    value: "percent",
+    value: "PERCENT",
     label: "백분율",
   },
 ];
@@ -27,40 +32,24 @@ interface Props {
   close: () => void;
 }
 
-const originalIndicators = [
-  "지출 금액",
-  "노출",
-  "도달 수",
-  "빈도",
-  "링크 클릭",
-  "CPC",
-  "CPM",
-  "CTR",
-  "지출 금액",
-  "노출",
-  "도달 수",
-  "빈도",
-  "링크 클릭",
-  "CPC",
-  "CPM",
-  "CTR",
-];
-
 function CustomIndicatorModal({ visible, close }: Props) {
-  console.log("@@visible", visible);
-
-  const [state, setState] = useState({
+  const [state, setState] = useState<FormValue>({
     name: "",
-    format: "number",
+    format: "NUMBER",
     description: "",
   });
 
   const [formula, setFormula] = useState<string[]>([]);
+  console.log("@@formula", formula);
 
-  // console.log("@@payload", { ...state, formula });
+  const { ingredientCols, mutate } = useCols();
+  console.log(
+    "@@ingredientCols",
+    ingredientCols,
+    ingredientCols.map((col) => col.label)
+  );
 
   console.log("@@state", state);
-  console.log("@@formula", formula);
 
   const handleChange = (event: any) => {
     setState({
@@ -92,6 +81,7 @@ function CustomIndicatorModal({ visible, close }: Props) {
             id='custom-name'
             name='name'
             label='이름'
+            value={state.name}
             variant='outlined'
             onChange={handleChange}
           />
@@ -148,26 +138,16 @@ function CustomIndicatorModal({ visible, close }: Props) {
           <span data-value=')'>{`)`}</span>
         </S.CalculatorHeader>
 
-        <S.CalculatorBody>
-          {/* <TextField
-          id='custom-formula'
-          // label={<span></span>}
-          // variant='outlined'
-          value={formula}
-          // onChange={handleformulaChange}
-          sx={{ width: "100%", border: "none" }}
-        /> */}
-          {formula.map(renderFormula)}
-        </S.CalculatorBody>
+        <S.CalculatorBody>{formula.map(renderFormula)}</S.CalculatorBody>
 
         <S.OriginalIndicators>
-          {originalIndicators.map((item) => (
+          {ingredientCols.map((col) => (
             <span
               onClick={() => {
-                setFormula([...formula, item]);
+                setFormula([...formula, col.label]);
               }}
             >
-              {item}
+              {col.label}
             </span>
           ))}
         </S.OriginalIndicators>
@@ -180,7 +160,31 @@ function CustomIndicatorModal({ visible, close }: Props) {
           >
             취소
           </S.CancelButton>
-          <S.SubmitButton>저장</S.SubmitButton>
+          <S.SubmitButton
+            onClick={async () => {
+              const command: createCustomColCommand = {
+                label: state.name,
+                display: state.format,
+                description: state.description,
+                formula: formula.join(" "),
+                metrics_type: "SALES",
+                type: "CUSTOM",
+                status: "HIDDEN",
+              };
+
+              console.log("@@command", command);
+
+              const res = await createCustomCol(command);
+              if (res) {
+                await mutate();
+                // 토스트 띄우기
+                close();
+              }
+              console.log("@@res", res);
+            }}
+          >
+            저장
+          </S.SubmitButton>
         </S.ButtonsWrapper>
       </S.ModalWrapper>
     </S.Container>

@@ -4,9 +4,6 @@ import React from "react";
 import { KeyedMutator } from "swr";
 import { columns as DATA_COLS } from "../data";
 import useCols, { ColData } from "./useCols";
-import useMetrics from "./useMetrics";
-
-const FIELD_NAMES = DATA_COLS.map((col) => col.field);
 
 type OptionsContextType = {
   visibleOptions: ColData[];
@@ -25,28 +22,25 @@ const Options = createContext<OptionsContextType>({
 });
 
 export function OptionsProvider({ children }: { children: React.ReactNode }) {
-  // const [visibleOptions, setVisibleOptions] = useState<string[]>([]);
   const [visibleOptions, setVisibleOptions] = useState<ColData[]>([]);
   const [hiddenOptions, setHiddenOptions] = useState<ColData[]>([]);
 
   const handleVisibileOptions = (newOptions: ColData[]) => {
-    setVisibleOptions([...newOptions]);
+    setVisibleOptions(newOptions);
   };
 
   const handleHiddenOptions = (newOptions: ColData[]) => {
-    setHiddenOptions([...newOptions]);
+    setHiddenOptions(newOptions);
   };
 
   const { visibleCols, hiddenCols, mutate } = useCols();
 
   useEffect(() => {
-    // setVisibleOptions([...visibleCols.map((item) => item.label)]);
-    setVisibleOptions([...visibleCols]);
+    setVisibleOptions(visibleCols);
   }, [visibleCols]);
 
   useEffect(() => {
-    // setHiddenOptions([...hiddenCols.map((item) => item.label)]);
-    setHiddenOptions([...hiddenCols]);
+    setHiddenOptions(hiddenCols);
   }, [hiddenCols]);
 
   return (

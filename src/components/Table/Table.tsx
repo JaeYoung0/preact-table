@@ -1,14 +1,11 @@
-import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
-import { rows as DATA_ROWS, columns as DATA_COLS } from "../../data";
-import { useState, useEffect } from "preact/hooks";
 import MultiSelect from "@/components/MultiSelect";
 import * as S from "./Table.style";
 import * as XLSX from "xlsx";
 import Download from "@/icons/Download";
 import useOptions from "@/hooks/useOptions";
-import { GridColumns } from "@mui/x-data-grid";
 import useMetrics from "@/hooks/useMetrics";
+import numberWithCommas from "@/helper/numberWithCommas";
 
 function exportFilteredData(filename: string, rows: any[]) {
   filename = `${filename}.xlsx`;
@@ -51,6 +48,11 @@ export default function MyDataGrid() {
           width: 150,
           headerAlign: "center",
           align: "center",
+          valueFormatter: (params) => {
+            return typeof params.value === "number"
+              ? numberWithCommas(Math.floor(params.value))
+              : params.value;
+          },
         }))}
         disableSelectionOnClick
         showCellRightBorder

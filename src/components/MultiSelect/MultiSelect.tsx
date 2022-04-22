@@ -155,10 +155,11 @@ export default function MultiSelect({}: Props) {
           <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
           <S.SubmitButton
             onClick={async () => {
-              const payload = visibleOptions.map((option) => ({
+              const payload = visibleOptions.map((option, idx) => ({
                 type: option.type,
                 status: option.status,
-                order: option.order,
+                // order: option.order,
+                // order: idx + 1,
                 id: option.id,
               }));
               console.log("@@payload SubmitButton", payload);
