@@ -21,7 +21,7 @@ export const ConfigContainer = styled.div<{ opened: boolean }>`
   top: calc(${CONTAINER_HEIGHT}px + 5px);
   right: 0;
 
-  min-width: 250px;
+  min-width: 300px;
   max-height: 800px;
   overflow-y: scroll;
   ${hideScroll}
@@ -83,15 +83,17 @@ export const VisibleOptionsWrapper = styled(OptionsWrapper)`
   li {
     display: flex;
     justify-content: space-between;
-    padding: 10px 5px;
+    align-items: center;
+    padding: 10px;
+    height: 25px;
 
     cursor: pointer;
   }
   svg {
-    font-size: 18px;
+    font-size: 25px;
     color: #636378;
     &:hover {
-      color: red;
+      color: #6713ef;
     }
   }
 `;
@@ -101,23 +103,25 @@ export const HiddenOptionsWrapper = styled(OptionsWrapper)`
 
   li {
     position: relative;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     list-style: none;
     padding: 10px;
+    height: 25px;
     cursor: pointer;
 
     &:hover {
       background: #f5f6f7;
     }
 
-    &::after {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      content: "추가 +";
-      font-size: 14px;
-      font-weight: bold;
+    svg {
+      font-size: 25px;
       color: #636378;
+      &:hover {
+        color: #6713ef;
+      }
     }
   }
 `;
