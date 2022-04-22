@@ -2,14 +2,29 @@ import useSWR from "swr";
 import { CigroAPI_V2 } from "@/helper/api";
 import { useMemo } from "preact/hooks";
 
-export type ColData = {
+export type ColData = CustomColType | OriginalColType;
+
+export type CustomColType = {
+  type: "CUSTOM";
+  metrics_type: "SALES";
+  label: string;
+  display: "WON" | "PERCENT" | "NUMBER";
+  order: number;
+  formula: string;
+  company_id: number;
+  status: "VISIBLE" | "HIDDEN";
+  description: string;
+  id: number;
+};
+
+export type OriginalColType = {
+  type: "ORIGINAL";
   metrics_type: "SALES";
   label: string;
   display: "TEXT" | "WON" | "PERCENT" | "NUMBER";
-  order: 1;
-  formula: null;
-  company_id: 3;
-  type: "ORIGINAL" | "CUSTOM";
+  order: number;
+  formula: string;
+  company_id: number;
   status: "VISIBLE" | "HIDDEN";
   description: string;
   id: number;
