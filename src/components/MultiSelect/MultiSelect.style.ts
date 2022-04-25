@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { BasicButton } from "../common.style";
-const CONTAINER_HEIGHT = 35;
+const CONTAINER_HEIGHT = 50;
 
 export const ConfigButton = styled(BasicButton)`
   width: 95px;

@@ -7,13 +7,14 @@ import useOptions from "@/hooks/useOptions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
-import { CustomColType } from "@/hooks/useCols";
+import useCols, { CustomColType } from "@/hooks/useCols";
 import { IndicatorModalValue } from "../CustomIndicatorModal/CustomIndicatorModal";
 import {
   deleteCustomCol,
   updateCols,
   updateColsCommand,
 } from "@/services/columns";
+import useMetrics from "@/hooks/useMetrics";
 
 export default function MultiSelect() {
   const [opened, setOpened] = useState(false);
@@ -31,11 +32,13 @@ export default function MultiSelect() {
     initialModalState,
     setInitialModalState,
   ] = useState<IndicatorModalValue>(initialValues);
-  console.log("@@initialModalState", initialModalState.formula);
+  console.log("@@initialModalState", initialModalState);
   const splitRegex = /[\+\-\*\/\(\)]/g;
 
   const parseFormula = (formula: string[]) => {
     console.log("@@formula 1", formula);
+
+    if (formula.length === 0) return [];
 
     return formula?.[0]
       ?.replace(/\s/g, "")
@@ -48,15 +51,16 @@ export default function MultiSelect() {
     handleVisibileOptions,
     handleHiddenOptions,
     hiddenOptions,
-    mutate,
   } = useOptions();
+  const { mutate: mutateCols } = useCols();
+  const { mutate: mutateRows } = useMetrics();
 
   const openModal = (payload: IndicatorModalValue) => {
-    setModalVisible(true);
     setInitialModalState({
       ...payload,
       formula: parseFormula(payload.formula),
     });
+    setModalVisible(true);
   };
 
   const closeModal = () => {
@@ -144,17 +148,32 @@ export default function MultiSelect() {
       ...hiddenOptionsPayload,
     ];
 
-    await updateCols(command);
-    await mutate();
+    console.log("@@command1", command);
+    console.log("@@2 command", [...visibleOptions, ...hiddenOptions]);
+
     closeSettings();
     alert("열 설정이 저장되었습니다.");
+
+    mutateCols([...visibleOptions, ...hiddenOptions], false);
+    await updateCols(command);
+
+    // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
+    // -> DB 업데이트가 느려서 그런가?
+    // -> Cols는 갱신없이 업데이트하는 대신에 3초단위로 폴링받자
+    // -> 폴링할랬더니... 폴링할 때마다 설정창에서 options들이 계속 바뀐다...
+    setTimeout(() => {
+      // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
+      mutateRows();
+
+      // Promise.all([mutateCols(), mutateRows()]);
+    }, 100);
   };
 
   const handleCustomColDelete = async (id: number) => {
     const isConfirmed = confirm("삭제하시겠습니까?");
     if (isConfirmed) {
       await deleteCustomCol({ id });
-      await mutate();
+      await mutateCols();
       alert("삭제를 완료했습니다.");
     }
   };
@@ -184,9 +203,12 @@ export default function MultiSelect() {
               <span
                 onClick={() => {
                   handleVisibileOptions(
-                    visibleOptions.filter((item) => item.label !== option.label)
+                    visibleOptions.filter((item) => item.id !== option.id)
                   );
-                  handleHiddenOptions([...hiddenOptions, option]);
+                  handleHiddenOptions([
+                    ...hiddenOptions,
+                    { ...option, status: "HIDDEN" },
+                  ]);
                 }}
               >
                 <VisibilityOffIcon />
@@ -206,9 +228,12 @@ export default function MultiSelect() {
             <li
               onClick={() => {
                 handleHiddenOptions(
-                  hiddenOptions.filter((item) => item !== option)
+                  hiddenOptions.filter((item) => item.id !== option.id)
                 );
-                handleVisibileOptions([...visibleOptions, option]);
+                handleVisibileOptions([
+                  ...visibleOptions,
+                  { ...option, status: "VISIBLE" },
+                ]);
               }}
             >
               {option.label}

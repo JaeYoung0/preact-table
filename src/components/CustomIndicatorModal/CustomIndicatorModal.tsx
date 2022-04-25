@@ -41,7 +41,7 @@ interface Props {
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(
-    initialModalState
+    () => initialModalState
   );
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
   console.log("@@modalState", modalState);
 
-  const { ingredientCols, mutate } = useCols();
+  const { ingredientCols, mutate: mutateCols } = useCols();
   console.log(
     "@@ingredientCols",
     ingredientCols,
@@ -117,7 +117,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
       console.log("@@res", res);
     }
 
-    await mutate();
+    await mutateCols();
     close();
   };
 
@@ -216,6 +216,8 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           {ingredientCols.map((col) => (
             <span
               onClick={() => {
+                console.log("@@modalState.formula", modalState.formula);
+
                 setModalState({
                   ...modalState,
                   formula: [...modalState.formula, col.label],
