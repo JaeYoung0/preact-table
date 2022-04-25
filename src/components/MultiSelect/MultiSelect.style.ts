@@ -1,12 +1,21 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { BasicButton } from "../common.style";
+const CONTAINER_HEIGHT = 35;
 
 export const ConfigButton = styled(BasicButton)`
   width: 95px;
 `;
 
-const CONTAINER_HEIGHT = 35;
+export const TransparentBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 100;
+`;
 
 const hideScroll = css`
   &::-webkit-scrollbar {

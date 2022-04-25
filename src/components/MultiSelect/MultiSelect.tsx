@@ -27,8 +27,10 @@ export default function MultiSelect() {
     formula: [],
     id: null,
   };
-  const [initialModalState, setInitialModalState] =
-    useState<IndicatorModalValue>(initialValues);
+  const [
+    initialModalState,
+    setInitialModalState,
+  ] = useState<IndicatorModalValue>(initialValues);
   console.log("@@initialModalState", initialModalState.formula);
   const splitRegex = /[\+\-\*\/\(\)]/g;
 
@@ -158,11 +160,12 @@ export default function MultiSelect() {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div>
       <S.ConfigButton onClick={() => toggleSettings()}>
         설정
         <Config />
       </S.ConfigButton>
+      {opened && <S.TransparentBackground onClick={() => closeSettings()} />}
       <S.ConfigContainer opened={opened}>
         <S.Title>열설정</S.Title>
         <S.SubTitle>표시</S.SubTitle>
