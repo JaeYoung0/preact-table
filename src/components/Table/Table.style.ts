@@ -39,10 +39,16 @@ export const ExcelDownloadButton = styled(BasicButton)`
 `;
 
 export const RowsOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   height: 100%;
+  background: #fff;
+  z-index: 10;
 
   p {
     font-size: 16px;

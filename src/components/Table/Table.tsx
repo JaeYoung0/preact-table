@@ -6,6 +6,7 @@ import Download from "@/icons/Download";
 import useOptions from "@/hooks/useOptions";
 import useMetrics from "@/hooks/useMetrics";
 import numberWithCommas from "@/helper/numberWithCommas";
+import useCols from "@/hooks/useCols";
 
 function exportFilteredData(filename: string, rows: any[]) {
   filename = `${filename}.xlsx`;
@@ -17,7 +18,7 @@ function exportFilteredData(filename: string, rows: any[]) {
 }
 
 export default function MyDataGrid() {
-  const { rows } = useMetrics();
+  const { rows, error, isLoading } = useMetrics();
 
   const { visibleOptions } = useOptions();
 
@@ -34,9 +35,18 @@ export default function MyDataGrid() {
       <DataGrid
         components={{
           // FIXME: Loading Indicator
+          ErrorOverlay: () => (
+            <S.RowsOverlay>
+              <p>에러가 발생했습니다.</p>
+            </S.RowsOverlay>
+          ),
           NoRowsOverlay: () => (
             <S.RowsOverlay>
-              <p>불러올 데이터가 없습니다.</p>
+              {error?.message ? (
+                <p>{error?.message}</p>
+              ) : (
+                <p>불러올 데이터가 없습니다.</p>
+              )}
             </S.RowsOverlay>
           ),
           LoadingOverlay: () => (
@@ -46,7 +56,7 @@ export default function MyDataGrid() {
           ),
         }}
         rows={rows}
-        // FIXME: 이러면 useMetrics에서 cols를 구할 필요가 없다..
+        loading={isLoading}
         columns={visibleOptions.map((col) => ({
           field: col.label,
           headerName: col.label,
