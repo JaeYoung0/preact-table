@@ -1,5 +1,15 @@
 export type ParamsType = Record<string, string>;
 
+function handleErrors(response: Response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+
+    // if (response.status == 404) {
+    // }
+  }
+  return response;
+}
+
 export const CigroAPI_V2 = (
   endpoint: string,
   config: {
@@ -22,6 +32,10 @@ export const CigroAPI_V2 = (
   }
 
   return fetch(prefix + endpoint, options)
+    .then(handleErrors)
     .then((response) => response.json())
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      // console.error(err);
+      throw err;
+    });
 };
