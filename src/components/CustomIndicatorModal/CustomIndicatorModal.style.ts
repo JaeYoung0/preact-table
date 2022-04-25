@@ -13,20 +13,13 @@ export const Backdrop = styled.div`
   opacity: 0.5;
 `;
 
-export const Container = styled.div<{ visible: boolean }>`
+export const Container = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 100vh;
   z-index: 990;
-  visibility: hidden;
-
-  ${({ visible }) =>
-    visible &&
-    css`
-      visibility: visible;
-    `}
 `;
 
 export const ModalWrapper = styled.div`
@@ -76,12 +69,18 @@ export const CaculatorName = styled.span`
   line-height: 1.4375em;
 `;
 
-export const Reset = styled.span`
-  cursor: pointer;
-  border: 1px solid #cfcfcf;
+export const CalculatorButtonsWrapper = styled.div``;
+
+export const Reset = styled.button`
+  display: inline-block;
+  align-items: center;
   padding: 5px 10px;
-  border-radius: 10px;
   margin-right: 10px;
+
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+
+  cursor: pointer;
 `;
 
 export const Backspace = styled(Reset)`
@@ -116,9 +115,18 @@ export const CalculatorHeader = styled.div`
 `;
 
 export const CalculatorBody = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+
   border-radius: 0 0 5px 5px;
   min-height: 80px;
+  /* max-height: 100px; */
+  /* width: 100%; */
+  /* overflow: scroll; */
   padding: 20px;
+
+  word-break: break-all;
+  height: 100%;
 
   border: 1px solid #cfcfcf;
   border-top: none;
@@ -127,6 +135,7 @@ export const CalculatorBody = styled.div`
 `;
 
 export const FormulaItem = styled.span`
+  height: 100%;
   padding: 5px 10px;
   background: #f5f6f7;
   border-radius: 5px;

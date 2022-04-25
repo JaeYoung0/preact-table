@@ -7,25 +7,39 @@ import useOptions from "@/hooks/useOptions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
-import { CigroAPI_V2 } from "@/helper/api";
 import { CustomColType } from "@/hooks/useCols";
 import { IndicatorModalValue } from "../CustomIndicatorModal/CustomIndicatorModal";
+import {
+  deleteCustomCol,
+  updateCols,
+  updateColsCommand,
+} from "@/services/columns";
 
 export default function MultiSelect() {
   const [opened, setOpened] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  console.log("@@modalVisible", modalVisible);
 
   const initialValues: IndicatorModalValue = {
     label: "",
     description: "",
     display: "NUMBER",
     formula: [],
+    id: null,
   };
-  const [
-    initialModalState,
-    setInitialModalState,
-  ] = useState<IndicatorModalValue>(initialValues);
-  console.log("@@initialModalState", initialModalState);
+  const [initialModalState, setInitialModalState] =
+    useState<IndicatorModalValue>(initialValues);
+  console.log("@@initialModalState", initialModalState.formula);
+  const splitRegex = /[\+\-\*\/\(\)]/g;
+
+  const parseFormula = (formula: string[]) => {
+    console.log("@@formula 1", formula);
+
+    return formula?.[0]
+      ?.replace(/\s/g, "")
+      .replace(splitRegex, (matched) => `#${matched}#`)
+      .split("#");
+  };
 
   const {
     visibleOptions,
@@ -37,12 +51,18 @@ export default function MultiSelect() {
 
   const openModal = (payload: IndicatorModalValue) => {
     setModalVisible(true);
-    setInitialModalState({ ...payload, formula: payload.formula });
+    setInitialModalState({
+      ...payload,
+      formula: parseFormula(payload.formula),
+    });
   };
 
   const closeModal = () => {
     setModalVisible(false);
   };
+
+  const toggleSettings = () => setOpened(!opened);
+  const closeSettings = () => setOpened(false);
 
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
 
@@ -72,20 +92,6 @@ export default function MultiSelect() {
 
     const newList = [...visibleOptions];
     const draggingItem = newList[draggingIdx];
-    const targetItem = newList[targetIdx];
-
-    console.log(
-      "@@drag",
-      draggingIdx,
-      "옮기는 중...",
-      targetIdx,
-      "부터 하나도 없애지 않고",
-      draggingItem,
-      "을 ",
-      targetItem,
-      "뒤에 삽입한 결과",
-      newList
-    );
 
     // draggingItem 삭제하기
     newList.splice(draggingIdx, 1);
@@ -105,23 +111,15 @@ export default function MultiSelect() {
     option: CustomColType
   ) => {
     e.stopPropagation();
-    const { label, description, display, formula } = option;
-
-    console.log("@@wow", {
-      label,
-      description,
-      display,
-      formula: [formula],
-    });
+    const { label, description, display, formula, id } = option;
 
     openModal({
       label,
       description,
       display,
       formula: [formula],
+      id,
     });
-
-    console.log("@@formula", formula);
   };
 
   const handleSave = async () => {
@@ -135,37 +133,38 @@ export default function MultiSelect() {
     const hiddenOptionsPayload = hiddenOptions.map((option) => ({
       type: option.type,
       status: "HIDDEN",
-      // order: option.order,
       order: null,
       id: option.id,
     }));
 
-    const payload = [...visibleOptionsPayload, ...hiddenOptionsPayload];
+    const command: updateColsCommand = [
+      ...visibleOptionsPayload,
+      ...hiddenOptionsPayload,
+    ];
 
-    console.log("@@payload SubmitButton", payload);
-
-    // FIXME: put할때 body에 모든 데이터를 배열로 보내면 되는건가 ...
-    const result = await CigroAPI_V2("/metrics/columns", {
-      params: {
-        user_id: "1625805300271x339648481160378400",
-      },
-      method: "PUT",
-      body: payload,
-    });
-
+    await updateCols(command);
     await mutate();
-    console.log("@@result", result);
+    closeSettings();
+    alert("열 설정이 저장되었습니다.");
+  };
+
+  const handleCustomColDelete = async (id: number) => {
+    const isConfirmed = confirm("삭제하시겠습니까?");
+    if (isConfirmed) {
+      await deleteCustomCol({ id });
+      await mutate();
+      alert("삭제를 완료했습니다.");
+    }
   };
 
   return (
     <div style={{ position: "relative" }}>
-      <S.ConfigButton onClick={() => setOpened(!opened)}>
+      <S.ConfigButton onClick={() => toggleSettings()}>
         설정
         <Config />
       </S.ConfigButton>
       <S.ConfigContainer opened={opened}>
         <S.Title>열설정</S.Title>
-
         <S.SubTitle>표시</S.SubTitle>
         <S.VisibleOptionsWrapper>
           {visibleOptions.map((option, idx) => (
@@ -195,7 +194,7 @@ export default function MultiSelect() {
 
         <S.SubTitle>
           지표
-          <S.OpenModalButton onClick={() => setModalVisible(true)}>
+          <S.OpenModalButton onClick={() => openModal(initialValues)}>
             <RoundedPlus />
           </S.OpenModalButton>
         </S.SubTitle>
@@ -211,14 +210,19 @@ export default function MultiSelect() {
             >
               {option.label}
               {option.type === "CUSTOM" && (
-                <>
+                <div>
                   <span onClick={(e) => handleCustomListClick(e, option)}>
                     <EditIcon />
                   </span>
-                  <span onClick={() => alert("Delete Custom Col")}>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCustomColDelete(option.id);
+                    }}
+                  >
                     <DeleteIcon />
                   </span>
-                </>
+                </div>
               )}
             </li>
           ))}

@@ -4,7 +4,7 @@ export const CigroAPI_V2 = (
   endpoint: string,
   config: {
     params: ParamsType;
-    method: "GET" | "POST" | "PUT";
+    method: "GET" | "POST" | "PUT" | "DELETE";
     body?: any;
   }
 ) => {
@@ -21,5 +21,7 @@ export const CigroAPI_V2 = (
     options.body = JSON.stringify(config.body);
   }
 
-  return fetch(prefix + endpoint, options).then((response) => response.json());
+  return fetch(prefix + endpoint, options)
+    .then((response) => response.json())
+    .catch((err) => console.error(err));
 };

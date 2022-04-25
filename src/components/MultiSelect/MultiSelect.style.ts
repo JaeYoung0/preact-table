@@ -21,7 +21,7 @@ export const ConfigContainer = styled.div<{ opened: boolean }>`
   top: calc(${CONTAINER_HEIGHT}px + 5px);
   right: 0;
 
-  min-width: 300px;
+  min-width: 350px;
   max-height: 800px;
   overflow-y: scroll;
   ${hideScroll}
@@ -123,6 +123,11 @@ export const HiddenOptionsWrapper = styled(OptionsWrapper)`
         color: #6713ef;
       }
     }
+  }
+
+  > li div span:nth-of-type(2) {
+    display: inline-block;
+    margin-left: 1rem;
   }
 `;
 
