@@ -43,8 +43,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] =
     useState<IndicatorModalValue>(initialModalState);
 
-  console.log("@@modalVisible 2", visible);
-
   useEffect(() => {
     setModalState(initialModalState);
   }, [initialModalState]);
@@ -212,7 +210,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         </S.CalculatorHeader>
 
         <S.CalculatorBody>
-          {modalState.formula.map(renderFormula)}
+          {modalState.formula?.map(renderFormula)}
         </S.CalculatorBody>
 
         <S.OriginalIndicators>
