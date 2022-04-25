@@ -41,20 +41,26 @@ function useCols() {
           metrics_type: "SALES",
         },
       }),
-    { dedupingInterval: 2000, errorRetryCount: 3 }
+    {
+      dedupingInterval: 2000,
+      errorRetryCount: 3,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      // refreshInterval: 5000, // 5초마다 폴링
+    }
   );
 
   console.log("@@useCols data", data);
 
   const visibleCols = useMemo(() => {
-    if (!data) return [];
+    if (!data || error) return [];
     return data.filter((item) => item.status === "VISIBLE");
-  }, [data]);
+  }, [data, isValidating]);
 
   const hiddenCols = useMemo(() => {
-    if (!data) return [];
+    if (!data || error) return [];
     return data.filter((item) => item.status === "HIDDEN");
-  }, [data]);
+  }, [data, isValidating]);
 
   /**
    * 맞춤 지표 만들기의 재료가 될 수 있는 cols 모음
@@ -72,7 +78,6 @@ function useCols() {
     visibleCols,
     hiddenCols,
     ingredientCols,
-
     mutate,
     error,
     isLoading: isValidating,
