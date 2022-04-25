@@ -4,7 +4,10 @@ import useSWR from "swr";
 import { CigroAPI_V2 } from "@/helper/api";
 
 function useMetrics() {
-  const { data = [], error, mutate } = useSWR<Record<string, unknown>[]>(
+  const { data = [], error, mutate, isValidating } = useSWR<
+    Record<string, unknown>[],
+    Error
+  >(
     "/metrics",
     (key) =>
       CigroAPI_V2(key, {
@@ -18,27 +21,31 @@ function useMetrics() {
           page: "1",
         },
       }),
-    { dedupingInterval: 2000, errorRetryCount: 3 }
+    {
+      dedupingInterval: 2000,
+      errorRetryCount: 3,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   /**
    * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
    */
-  console.log("@@error", error);
 
   const rows: GridRowModel[] = useMemo(() => {
-    if (!data) return [];
+    if (!data || error) return [];
 
     return data?.map((row, idx) => ({ ...row, id: idx }));
-  }, [data]);
+  }, [data, error]);
 
   console.log("@@rows", rows);
 
   return {
     rows,
-
     mutate,
     error,
+    isLoading: isValidating,
   };
 }
 
