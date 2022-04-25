@@ -40,8 +40,9 @@ interface Props {
 }
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
-  const [modalState, setModalState] =
-    useState<IndicatorModalValue>(initialModalState);
+  const [modalState, setModalState] = useState<IndicatorModalValue>(
+    initialModalState
+  );
 
   useEffect(() => {
     setModalState(initialModalState);
@@ -139,30 +140,28 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
     }
   };
 
-  if (!visible) return null;
-
   return (
-    <S.Container>
+    <S.Container visible={visible}>
       <S.Backdrop />
       <S.ModalWrapper>
         <S.Title>맞춤 지표 만들기</S.Title>
 
         <S.Row>
           <TextField
-            id='custom-label'
-            name='label'
-            label='이름'
+            id="custom-label"
+            name="label"
+            label="이름"
             value={modalState.label}
-            variant='outlined'
+            variant="outlined"
             onChange={handleChange}
             sx={{ flex: 1 }}
           />
 
           <TextField
-            id='custom-display'
-            name='display'
+            id="custom-display"
+            name="display"
             select
-            label='형식'
+            label="형식"
             value={modalState.display}
             sx={{ m: 1, flex: 1 }}
             onChange={handleChange}
@@ -176,11 +175,11 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         </S.Row>
         <S.Row>
           <TextField
-            id='custom-description'
-            name='description'
+            id="custom-description"
+            name="description"
             value={modalState.description}
-            label='설명-선택사항'
-            variant='outlined'
+            label="설명-선택사항"
+            variant="outlined"
             sx={{ width: "100%" }}
             onChange={handleChange}
           />
@@ -191,22 +190,22 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         >
           <S.CaculatorName>수식</S.CaculatorName>
           <S.CalculatorButtonsWrapper>
-            <S.Reset type='button' onClick={handleReset}>
+            <S.Reset type="button" onClick={handleReset}>
               reset
             </S.Reset>
-            <S.Backspace type='button' onClick={handleBackspace}>
+            <S.Backspace type="button" onClick={handleBackspace}>
               Backspace
             </S.Backspace>
           </S.CalculatorButtonsWrapper>
         </S.Row>
         <S.CalculatorHeader onClick={handleCalculatorClick}>
-          <span data-value='+'>+</span>
-          <span data-value='-'>-</span>
-          <span data-value='*'>x</span>
-          <span data-value='/'>&divide;</span>
-          <span data-value='('>{`(`}</span>
-          <span data-value=')'>{`)`}</span>
-          <span data-value='숫자'>{`숫자`}</span>
+          <span data-value="+">+</span>
+          <span data-value="-">-</span>
+          <span data-value="*">x</span>
+          <span data-value="/">&divide;</span>
+          <span data-value="(">{`(`}</span>
+          <span data-value=")">{`)`}</span>
+          <span data-value="숫자">{`숫자`}</span>
         </S.CalculatorHeader>
 
         <S.CalculatorBody>

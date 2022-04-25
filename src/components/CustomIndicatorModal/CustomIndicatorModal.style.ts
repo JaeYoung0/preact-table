@@ -13,13 +13,20 @@ export const Backdrop = styled.div`
   opacity: 0.5;
 `;
 
-export const Container = styled.div`
+export const Container = styled.div<{ visible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 100vh;
   z-index: 990;
+  visibility: hidden;
+
+  ${({ visible }) =>
+    visible &&
+    css`
+      visibility: visible;
+    `}
 `;
 
 export const ModalWrapper = styled.div`
