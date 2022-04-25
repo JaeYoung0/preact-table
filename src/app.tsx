@@ -1,6 +1,7 @@
 import Table from "@/components/Table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { OptionsProvider } from "@/hooks/useOptions";
+import { Global, css } from "@emotion/react";
 
 const theme = createTheme({
   palette: {
@@ -17,9 +18,14 @@ export function App() {
   return (
     <ThemeProvider theme={theme}>
       <OptionsProvider>
-        <div>
-          <Table />
-        </div>
+        <Global
+          styles={css`
+            html {
+              font-family: "Noto Sans KR";
+            }
+          `}
+        />
+        <Table />
       </OptionsProvider>
     </ThemeProvider>
   );
