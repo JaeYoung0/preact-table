@@ -6,8 +6,8 @@ import Download from "@/icons/Download";
 import useOptions from "@/hooks/useOptions";
 import useMetrics from "@/hooks/useMetrics";
 import numberWithCommas from "@/helper/numberWithCommas";
-import useCols from "@/hooks/useCols";
 import { useEffect, useState } from "preact/hooks";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function exportFilteredData(filename: string, rows: any[]) {
   filename = `${filename}.xlsx`;
@@ -22,9 +22,6 @@ export default function MyDataGrid() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [rowCount, setRowCount] = useState(0);
-  console.log("@@rowCount", page, rowCount);
-
-  console.log("@@page", page);
 
   useEffect(() => {
     setRowCount(pageSize * (page + 2));
@@ -36,7 +33,6 @@ export default function MyDataGrid() {
   });
 
   const { visibleOptions } = useOptions();
-  console.log("@@rows", page, pageSize, rows);
 
   return (
     <S.Wrapper>
@@ -55,7 +51,7 @@ export default function MyDataGrid() {
       </S.ButtonsWrapper>
 
       <DataGrid
-        paginationMode='server'
+        paginationMode="server"
         pageSize={pageSize}
         onPageSizeChange={(newPage) => setPageSize(newPage)}
         rowsPerPageOptions={[5, 10, 20]}
@@ -81,7 +77,7 @@ export default function MyDataGrid() {
           ),
           LoadingOverlay: () => (
             <S.RowsOverlay>
-              <p>데이터를 불러오는 중입니다...</p>
+              <CircularProgress color="secondary" />
             </S.RowsOverlay>
           ),
         }}
