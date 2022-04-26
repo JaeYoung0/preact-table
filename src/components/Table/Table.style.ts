@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
-import { BasicButton } from "../common.style";
+import styled from '@emotion/styled'
+import { BasicButton } from '../common.style'
 export const Wrapper = styled.div`
   width: 100%;
   height: 500px;
@@ -26,17 +26,17 @@ export const Wrapper = styled.div`
   .MuiDataGrid-sortIcon {
     color: #fff;
   }
-`;
+`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 15px;
-`;
+`
 
 export const ExcelDownloadButton = styled(BasicButton)`
   margin-right: 10px;
-`;
+`
 
 export const RowsOverlay = styled.div`
   position: absolute;
@@ -53,4 +53,4 @@ export const RowsOverlay = styled.div`
   p {
     font-size: 16px;
   }
-`;
+`

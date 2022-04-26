@@ -1,1 +1,1 @@
-export { default } from "./RoundedPlus";
+export { default } from './RoundedPlus'

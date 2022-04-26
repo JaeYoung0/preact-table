@@ -1,6 +1,6 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import { BasicButton } from "../common.style";
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
+import { BasicButton } from '../common.style'
 
 export const Backdrop = styled.div`
   position: absolute;
@@ -11,7 +11,7 @@ export const Backdrop = styled.div`
   height: 100%;
   background: #000000;
   opacity: 0.5;
-`;
+`
 
 export const Container = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -27,7 +27,7 @@ export const Container = styled.div<{ visible: boolean }>`
     css`
       visibility: visible;
     `}
-`;
+`
 
 export const ModalWrapper = styled.div`
   position: absolute;
@@ -40,27 +40,27 @@ export const ModalWrapper = styled.div`
   background: #fff;
   border-radius: 5px;
   width: 400px;
-`;
+`
 
 export const Title = styled.p`
   font-size: 18px;
   font-weight: bold;
   margin: 0 0 20px;
-`;
+`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: space-evenly;
-`;
+`
 
 export const CancelButton = styled(BasicButton)`
   justify-content: center;
   margin-left: 0;
-`;
+`
 export const SubmitButton = styled(BasicButton)`
   justify-content: center;
   margin-left: 0;
-`;
+`
 
 export const Row = styled.div`
   display: flex;
@@ -68,15 +68,15 @@ export const Row = styled.div`
   align-items: center;
 
   margin-bottom: 20px;
-`;
+`
 
 export const CaculatorName = styled.span`
   color: rgba(0, 0, 0, 0.6);
   font-size: 14px;
   line-height: 1.4375em;
-`;
+`
 
-export const CalculatorButtonsWrapper = styled.div``;
+export const CalculatorButtonsWrapper = styled.div``
 
 export const Reset = styled.button`
   display: inline-block;
@@ -88,13 +88,13 @@ export const Reset = styled.button`
   border-radius: 10px;
 
   cursor: pointer;
-`;
+`
 
 export const Backspace = styled(Reset)`
   margin-right: 0px;
-`;
+`
 
-export const CalculatorWrapper = styled.div``;
+export const CalculatorWrapper = styled.div``
 
 export const CalculatorHeader = styled.div`
   display: flex;
@@ -119,7 +119,7 @@ export const CalculatorHeader = styled.div`
       border-radius: 0 5px 0 0;
     }
   }
-`;
+`
 
 export const CalculatorBody = styled.div`
   display: flex;
@@ -139,7 +139,7 @@ export const CalculatorBody = styled.div`
   border-top: none;
 
   margin-bottom: 20px;
-`;
+`
 
 export const FormulaItem = styled.span`
   height: 100%;
@@ -148,7 +148,7 @@ export const FormulaItem = styled.span`
   border-radius: 5px;
   margin-right: 5px;
   margin-bottom: 5px;
-`;
+`
 
 export const OriginalIndicators = styled.div`
   display: grid;
@@ -168,7 +168,7 @@ export const OriginalIndicators = styled.div`
     &:hover {
       background: #f5f6f7;
       &::before {
-        content: "+";
+        content: '+';
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
@@ -176,4 +176,4 @@ export const OriginalIndicators = styled.div`
       }
     }
   }
-`;
+`

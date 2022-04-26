@@ -1,22 +1,22 @@
-import { useMemo } from "preact/hooks";
-import { GridRowModel } from "@mui/x-data-grid";
-import useSWR from "swr";
-import { fetchMetrics } from "@/services/rows";
+import { useMemo } from 'preact/hooks'
+import { GridRowModel } from '@mui/x-data-grid'
+import useSWR from 'swr'
+import { fetchMetrics } from '@/services/rows'
 
 interface Props {
-  pageSize: number;
-  page: number;
+  pageSize: number
+  page: number
 }
 
 function useMetrics({ pageSize, page }: Props) {
   const key = {
-    user_id: "1625805300271x339648481160378400",
-    start: "1618833417",
-    end: "1650369417",
-    metrics_type: "SALES",
+    user_id: '1625805300271x339648481160378400',
+    start: '1618833417',
+    end: '1650369417',
+    metrics_type: 'SALES',
     per_page: pageSize,
     page,
-  };
+  }
 
   const {
     data = [],
@@ -35,24 +35,24 @@ function useMetrics({ pageSize, page }: Props) {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
-  );
+  )
 
   /**
    * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
    */
 
   const rows: GridRowModel[] = useMemo(() => {
-    if (!data || error) return [];
+    if (!data || error) return []
 
-    return data?.map((row, idx) => ({ ...row, id: idx }));
-  }, [data, error]);
+    return data?.map((row, idx) => ({ ...row, id: idx }))
+  }, [data, error])
 
   return {
     rows,
     mutate,
     error,
     isLoading: isValidating,
-  };
+  }
 }
 
-export default useMetrics;
+export default useMetrics

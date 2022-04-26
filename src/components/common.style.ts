@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled'
 
 export const BasicButton = styled.button`
   width: 115px;
@@ -25,4 +25,4 @@ export const BasicButton = styled.button`
       fill: #fefefe;
     }
   }
-`;
+`

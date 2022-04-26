@@ -1,150 +1,133 @@
-import Config from "@/icons/Config";
-import * as S from "./MultiSelect.style";
-import { useState } from "preact/hooks";
-import RoundedPlus from "@/icons/RoundedPlus";
-import CustomIndicatorModal from "../CustomIndicatorModal";
-import useOptions from "@/hooks/useOptions";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import EditIcon from "@mui/icons-material/Edit";
-import useCols, { CustomColType } from "@/hooks/useCols";
-import { IndicatorModalValue } from "../CustomIndicatorModal";
-import {
-  deleteCustomCol,
-  updateCols,
-  updateColsCommand,
-} from "@/services/columns";
-import { mutate } from "swr";
-import { fetchMetrics } from "@/services/rows";
+import Config from '@/icons/Config'
+import * as S from './MultiSelect.style'
+import { useState } from 'preact/hooks'
+import RoundedPlus from '@/icons/RoundedPlus'
+import CustomIndicatorModal from '../CustomIndicatorModal'
+import useOptions from '@/hooks/useOptions'
+import DeleteIcon from '@mui/icons-material/Delete'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import EditIcon from '@mui/icons-material/Edit'
+import useCols, { CustomColType } from '@/hooks/useCols'
+import { IndicatorModalValue } from '../CustomIndicatorModal'
+import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
+import { mutate } from 'swr'
+import { fetchMetrics } from '@/services/rows'
 
 const initialValues: IndicatorModalValue = {
-  label: "",
-  description: "",
-  display: "NUMBER",
+  label: '',
+  description: '',
+  display: 'NUMBER',
   formula: [],
   id: null,
-};
+}
 
-const splitRegex = /[\+\-\*\/\(\)]/g;
+const splitRegex = /[\+\-\*\/\(\)]/g
 
 const parseFormula = (formula: string[]) => {
-  console.log("@@formula 1", formula);
+  console.log('@@formula 1', formula)
 
-  if (formula.length === 0) return [];
+  if (formula.length === 0) return []
 
   return formula?.[0]
-    ?.replace(/\s/g, "")
+    ?.replace(/\s/g, '')
     .replace(splitRegex, (matched) => `#${matched}#`)
-    .split("#");
-};
+    .split('#')
+}
 
 interface Props {
   pageState: {
-    page: number;
-    pageSize: number;
-    rowCount: number;
-  };
+    page: number
+    pageSize: number
+    rowCount: number
+  }
 }
 export default function MultiSelect({ pageState }: Props) {
-  const [opened, setOpened] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [opened, setOpened] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
 
-  const mutateAllRows = (pageState: Props["pageState"]) => {
-    const { pageSize, rowCount } = pageState;
+  const mutateAllRows = (pageState: Props['pageState']) => {
+    const { pageSize, rowCount } = pageState
 
-    const totalPages = rowCount / pageSize - 1;
+    const totalPages = rowCount / pageSize - 1
 
     Array(totalPages)
       .fill(0)
       .forEach((_, idx) => {
         const key = {
-          user_id: "1625805300271x339648481160378400",
-          start: "1618833417",
-          end: "1650369417",
-          metrics_type: "SALES",
+          user_id: '1625805300271x339648481160378400',
+          start: '1618833417',
+          end: '1650369417',
+          metrics_type: 'SALES',
           per_page: pageSize,
           page: idx,
-        };
+        }
 
-        mutate(JSON.stringify(key), () => fetchMetrics(key));
-      });
-  };
+        mutate(JSON.stringify(key), () => fetchMetrics(key))
+      })
+  }
 
-  const [initialModalState, setInitialModalState] =
-    useState<IndicatorModalValue>(initialValues);
+  const [initialModalState, setInitialModalState] = useState<IndicatorModalValue>(initialValues)
 
-  const {
-    visibleOptions,
-    handleVisibileOptions,
-    handleHiddenOptions,
-    hiddenOptions,
-  } = useOptions();
+  const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
-  const { mutate: mutateCols } = useCols();
+  const { mutate: mutateCols } = useCols()
 
   const openModal = (payload: IndicatorModalValue) => {
     setInitialModalState({
       ...payload,
       formula: parseFormula(payload.formula),
-    });
-    setModalVisible(true);
-  };
+    })
+    setModalVisible(true)
+  }
 
   const closeModal = () => {
-    setModalVisible(false);
-  };
+    setModalVisible(false)
+  }
 
-  const toggleSettings = () => setOpened(!opened);
-  const closeSettings = () => setOpened(false);
+  const toggleSettings = () => setOpened(!opened)
+  const closeSettings = () => setOpened(false)
 
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
   const handleDragStart = (idx: number) => {
-    setDraggingIdx(idx);
-  };
+    setDraggingIdx(idx)
+  }
 
   const handleDragEnter = (e: React.DragEvent<HTMLLIElement>) => {
-    (e.target as HTMLLIElement).style.borderBottom = "2px solid #6713ef";
-  };
+    ;(e.target as HTMLLIElement).style.borderBottom = '2px solid #6713ef'
+  }
 
   const handleDragOver = (e: React.DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   const handleDragLeave = (e: React.DragEvent<HTMLLIElement>) => {
-    (e.target as HTMLLIElement).style.borderBottom = "initial";
-  };
+    ;(e.target as HTMLLIElement).style.borderBottom = 'initial'
+  }
 
-  const handleDragDrop = (
-    e: React.DragEvent<HTMLLIElement>,
-    targetIdx: number
-  ) => {
-    (e.target as HTMLLIElement).style.borderBottom = "initial";
+  const handleDragDrop = (e: React.DragEvent<HTMLLIElement>, targetIdx: number) => {
+    ;(e.target as HTMLLIElement).style.borderBottom = 'initial'
 
-    if (draggingIdx === null) return;
+    if (draggingIdx === null) return
 
-    const newList = [...visibleOptions];
-    const draggingItem = newList[draggingIdx];
+    const newList = [...visibleOptions]
+    const draggingItem = newList[draggingIdx]
 
     // draggingItem 삭제하기
-    newList.splice(draggingIdx, 1);
+    newList.splice(draggingIdx, 1)
 
     // draggingItem 옮기기
-    newList.splice(
-      targetIdx > draggingIdx ? targetIdx : targetIdx + 1,
-      0,
-      draggingItem
-    );
+    newList.splice(targetIdx > draggingIdx ? targetIdx : targetIdx + 1, 0, draggingItem)
 
-    handleVisibileOptions(newList);
-  };
+    handleVisibileOptions(newList)
+  }
 
   const handleCustomListClick = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     option: CustomColType
   ) => {
-    e.stopPropagation();
-    const { label, description, display, formula, id } = option;
+    e.stopPropagation()
+    const { label, description, display, formula, id } = option
 
     openModal({
       label,
@@ -152,62 +135,60 @@ export default function MultiSelect({ pageState }: Props) {
       display,
       formula: [formula],
       id,
-    });
-  };
+    })
+  }
 
   const handleSave = async () => {
     const visibleOptionsPayload = visibleOptions.map((option, idx) => ({
       type: option.type,
-      status: "VISIBLE",
+      status: 'VISIBLE',
       order: idx + 1,
       id: option.id,
-    }));
+    }))
 
     const hiddenOptionsPayload = hiddenOptions.map((option) => ({
       type: option.type,
-      status: "HIDDEN",
+      status: 'HIDDEN',
       order: null,
       id: option.id,
-    }));
+    }))
 
     const isClearGroupByTarget =
       visibleOptions.filter((option) => {
-        const groupByTarget =
-          option.type === "ORIGINAL" && option.display === "TEXT";
-        return groupByTarget;
-      }).length === 0;
+        const groupByTarget = option.type === 'ORIGINAL' && option.display === 'TEXT'
+        return groupByTarget
+      }).length === 0
+
+    console.log('@@isClearGroupByTarget', isClearGroupByTarget)
 
     if (isClearGroupByTarget) {
-      return alert("정렬 기준이 되는 열을 선택해주세요.");
+      return alert('정렬 기준이 되는 열을 선택해주세요.')
     }
 
-    const command: updateColsCommand = [
-      ...visibleOptionsPayload,
-      ...hiddenOptionsPayload,
-    ];
+    const command: updateColsCommand = [...visibleOptionsPayload, ...hiddenOptionsPayload]
 
-    closeSettings();
-    alert("열 설정이 저장되었습니다.");
+    closeSettings()
+    alert('열 설정이 저장되었습니다.')
 
-    mutateCols([...visibleOptions, ...hiddenOptions], false);
-    await updateCols(command);
+    mutateCols([...visibleOptions, ...hiddenOptions], false)
+    await updateCols(command)
 
     // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
     setTimeout(() => {
       // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
-      mutateAllRows(pageState);
-    }, 100);
-  };
+      mutateAllRows(pageState)
+    }, 100)
+  }
 
   const handleCustomColDelete = async (id: number) => {
-    const isConfirmed = confirm("삭제하시겠습니까?");
+    const isConfirmed = confirm('삭제하시겠습니까?')
     if (isConfirmed) {
-      await deleteCustomCol({ id });
-      await mutateCols();
-      alert("삭제를 완료했습니다.");
+      await deleteCustomCol({ id })
+      await mutateCols()
+      alert('삭제를 완료했습니다.')
     }
-  };
+  }
 
   return (
     <>
@@ -235,13 +216,8 @@ export default function MultiSelect({ pageState }: Props) {
               {
                 <span
                   onClick={() => {
-                    handleVisibileOptions(
-                      visibleOptions.filter((item) => item.id !== option.id)
-                    );
-                    handleHiddenOptions([
-                      ...hiddenOptions,
-                      { ...option, status: "HIDDEN" },
-                    ]);
+                    handleVisibileOptions(visibleOptions.filter((item) => item.id !== option.id))
+                    handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
                   }}
                 >
                   <VisibilityOffIcon />
@@ -261,25 +237,20 @@ export default function MultiSelect({ pageState }: Props) {
           {hiddenOptions.map((option) => (
             <li
               onClick={() => {
-                handleHiddenOptions(
-                  hiddenOptions.filter((item) => item.id !== option.id)
-                );
-                handleVisibileOptions([
-                  ...visibleOptions,
-                  { ...option, status: "VISIBLE" },
-                ]);
+                handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
+                handleVisibileOptions([...visibleOptions, { ...option, status: 'VISIBLE' }])
               }}
             >
               {option.label}
-              {option.type === "CUSTOM" && (
+              {option.type === 'CUSTOM' && (
                 <div>
                   <span onClick={(e) => handleCustomListClick(e, option)}>
                     <EditIcon />
                   </span>
                   <span
                     onClick={(e) => {
-                      e.stopPropagation();
-                      handleCustomColDelete(option.id);
+                      e.stopPropagation()
+                      handleCustomColDelete(option.id)
                     }}
                   >
                     <DeleteIcon />
@@ -301,5 +272,5 @@ export default function MultiSelect({ pageState }: Props) {
         initialModalState={initialModalState}
       />
     </>
-  );
+  )
 }

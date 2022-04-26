@@ -1,17 +1,17 @@
-import { createContext } from "preact";
-import { useContext, useEffect, useState } from "preact/hooks";
-import React from "react";
-import { KeyedMutator } from "swr";
-import { columns as DATA_COLS } from "../data";
-import useCols, { ColData } from "./useCols";
+import { createContext } from 'preact'
+import { useContext, useEffect, useState } from 'preact/hooks'
+import React from 'react'
+import { KeyedMutator } from 'swr'
+import { columns as DATA_COLS } from '../data'
+import useCols, { ColData } from './useCols'
 
 type OptionsContextType = {
-  visibleOptions: ColData[];
-  hiddenOptions: ColData[];
-  handleVisibileOptions: (newOptions: ColData[]) => void;
-  handleHiddenOptions: (newOptions: ColData[]) => void;
-  mutate: KeyedMutator<ColData[]>;
-};
+  visibleOptions: ColData[]
+  hiddenOptions: ColData[]
+  handleVisibileOptions: (newOptions: ColData[]) => void
+  handleHiddenOptions: (newOptions: ColData[]) => void
+  mutate: KeyedMutator<ColData[]>
+}
 
 const Options = createContext<OptionsContextType>({
   visibleOptions: [],
@@ -19,29 +19,29 @@ const Options = createContext<OptionsContextType>({
   handleVisibileOptions: () => 0,
   handleHiddenOptions: () => 0,
   mutate: () => new Promise(() => 0),
-});
+})
 
 export function OptionsProvider({ children }: { children: React.ReactNode }) {
-  const [visibleOptions, setVisibleOptions] = useState<ColData[]>([]);
-  const [hiddenOptions, setHiddenOptions] = useState<ColData[]>([]);
+  const [visibleOptions, setVisibleOptions] = useState<ColData[]>([])
+  const [hiddenOptions, setHiddenOptions] = useState<ColData[]>([])
 
   const handleVisibileOptions = (newOptions: ColData[]) => {
-    setVisibleOptions(newOptions);
-  };
+    setVisibleOptions(newOptions)
+  }
 
   const handleHiddenOptions = (newOptions: ColData[]) => {
-    setHiddenOptions(newOptions);
-  };
+    setHiddenOptions(newOptions)
+  }
 
-  const { visibleCols, hiddenCols, mutate } = useCols();
-
-  useEffect(() => {
-    setVisibleOptions(visibleCols);
-  }, [visibleCols]);
+  const { visibleCols, hiddenCols, mutate } = useCols()
 
   useEffect(() => {
-    setHiddenOptions(hiddenCols);
-  }, [hiddenCols]);
+    setVisibleOptions(visibleCols)
+  }, [visibleCols])
+
+  useEffect(() => {
+    setHiddenOptions(hiddenCols)
+  }, [hiddenCols])
 
   return (
     <Options.Provider
@@ -55,25 +55,25 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
     </Options.Provider>
-  );
+  )
 }
 
 function useOptions() {
-  const options = useContext(Options);
+  const options = useContext(Options)
   const {
     visibleOptions,
     hiddenOptions,
     handleVisibileOptions,
     handleHiddenOptions,
     mutate,
-  } = options;
+  } = options
   return {
     visibleOptions,
     hiddenOptions,
     handleVisibileOptions,
     handleHiddenOptions,
     mutate,
-  };
+  }
 }
 
-export default useOptions;
+export default useOptions

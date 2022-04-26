@@ -1,18 +1,18 @@
-import Table from "@/components/Table";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { OptionsProvider } from "@/hooks/useOptions";
-import { Global, css } from "@emotion/react";
+import Table from '@/components/Table'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { OptionsProvider } from '@/hooks/useOptions'
+import { Global, css } from '@emotion/react'
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6713ef",
+      main: '#6713ef',
     },
     secondary: {
-      main: "#636378",
+      main: '#636378',
     },
   },
-});
+})
 
 export function App() {
   return (
@@ -21,14 +21,14 @@ export function App() {
         <Global
           styles={css`
             html {
-              font-family: "Noto Sans KR";
+              font-family: 'Noto Sans KR';
             }
           `}
         />
         <Table />
       </OptionsProvider>
     </ThemeProvider>
-  );
+  )
 }
 
 // function uniqueID() {

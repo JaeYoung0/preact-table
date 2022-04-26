@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
-import preact from "@preact/preset-vite";
-const path = require("path");
+import { defineConfig } from 'vite'
+import preact from '@preact/preset-vite'
+const path = require('path')
 
-const root = `${process.cwd()}`;
+const root = `${process.cwd()}`
 
 export default defineConfig({
   plugins: [
@@ -20,9 +20,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      react: "preact/compat",
-      "react-dom": "preact/compat",
-      "@/": `${path.resolve(root, "src")}/`,
+      react: 'preact/compat',
+      'react-dom': 'preact/compat',
+      '@/': `${path.resolve(root, 'src')}/`,
     },
   },
-});
+})

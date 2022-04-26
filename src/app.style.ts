@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled'
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -18,4 +18,4 @@ export const Wrapper = styled.div`
   .MuiDataGrid-sortIcon {
     color: #fff;
   }
-`;
+`

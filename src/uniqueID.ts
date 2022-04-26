@@ -1,4 +1,4 @@
-export const bubbleHelper = 0;
+export const bubbleHelper = 0
 // function uniqueID() {
 // 	return Math.floor(Math.random() * Date.now())
 // };

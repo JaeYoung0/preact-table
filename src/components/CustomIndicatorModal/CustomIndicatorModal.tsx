@@ -1,144 +1,142 @@
-import * as S from "./CustomIndicatorModal.style";
-import { useEffect, useState } from "preact/hooks";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import useCols from "@/hooks/useCols";
+import * as S from './CustomIndicatorModal.style'
+import { useEffect, useState } from 'preact/hooks'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import useCols from '@/hooks/useCols'
 import {
   createCustomCol,
   createCustomColCommand,
   updateCustomCol,
   updateCustomColCommand,
-} from "@/services/columns";
+} from '@/services/columns'
 
 export type IndicatorModalValue = {
-  label: string;
-  description: string;
-  display: "NUMBER" | "WON" | "PERCENT";
-  formula: string[];
-  id?: number | null;
-};
+  label: string
+  description: string
+  display: 'NUMBER' | 'WON' | 'PERCENT'
+  formula: string[]
+  id?: number | null
+}
 
 const displays = [
   {
-    value: "NUMBER",
-    label: "숫자",
+    value: 'NUMBER',
+    label: '숫자',
   },
   {
-    value: "WON",
-    label: "통화(원)",
+    value: 'WON',
+    label: '통화(원)',
   },
   {
-    value: "PERCENT",
-    label: "백분율",
+    value: 'PERCENT',
+    label: '백분율',
   },
-];
+]
 
 interface Props {
-  visible: boolean;
-  close: () => void;
-  initialModalState: IndicatorModalValue;
+  visible: boolean
+  close: () => void
+  initialModalState: IndicatorModalValue
 }
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
-  const [modalState, setModalState] = useState<IndicatorModalValue>(
-    () => initialModalState
-  );
+  const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
 
   useEffect(() => {
-    setModalState(initialModalState);
-  }, [initialModalState]);
+    setModalState(initialModalState)
+  }, [initialModalState])
 
-  console.log("@@modalState", modalState);
+  console.log('@@modalState', modalState)
 
-  const { ingredientCols, mutate: mutateCols } = useCols();
+  const { ingredientCols, mutate: mutateCols } = useCols()
   console.log(
-    "@@ingredientCols",
+    '@@ingredientCols',
     ingredientCols,
     ingredientCols.map((col) => col.label)
-  );
+  )
 
-  console.log("@@modalState", modalState);
+  console.log('@@modalState', modalState)
 
   const handleChange = (event: any) => {
     setModalState({
       ...modalState,
       [event.target.name]: event.target.value,
-    });
-  };
+    })
+  }
 
-  const handleReset = () => setModalState({ ...modalState, formula: [] });
+  const handleReset = () => setModalState({ ...modalState, formula: [] })
 
   const handleBackspace = () =>
     setModalState({
       ...modalState,
       formula: [...modalState.formula.slice(0, modalState.formula.length - 1)],
-    });
+    })
 
   const renderFormula = (item: string) => {
-    if (item === "*") return <S.FormulaItem>x</S.FormulaItem>;
-    else if (item === "/") return <S.FormulaItem>&divide;</S.FormulaItem>;
-    else return <S.FormulaItem>{item}</S.FormulaItem>;
-  };
+    if (item === '*') return <S.FormulaItem>x</S.FormulaItem>
+    else if (item === '/') return <S.FormulaItem>&divide;</S.FormulaItem>
+    else return <S.FormulaItem>{item}</S.FormulaItem>
+  }
 
   const handleSave = async () => {
     if (modalState?.id) {
       const command: updateCustomColCommand = {
-        type: "CUSTOM",
-        status: "HIDDEN",
+        type: 'CUSTOM',
+        status: 'HIDDEN',
         label: modalState.label,
         display: modalState.display,
         description: modalState.description,
-        formula: modalState.formula.join(" "),
-        metrics_type: "SALES",
+        formula: modalState.formula.join(' '),
+        metrics_type: 'SALES',
         id: modalState?.id,
-      };
+      }
 
-      const res = await updateCustomCol(command);
+      const res = await updateCustomCol(command)
       if (res) {
-        alert("지표를 수정했습니다.");
+        alert('지표를 수정했습니다.')
       }
     } else {
       const command: createCustomColCommand = {
-        type: "CUSTOM",
-        status: "HIDDEN",
+        type: 'CUSTOM',
+        status: 'HIDDEN',
         label: modalState.label,
         display: modalState.display,
         description: modalState.description,
-        formula: modalState.formula.join(" "),
-        metrics_type: "SALES",
-      };
-
-      console.log("@@command", command);
-
-      const res = await createCustomCol(command);
-      if (res) {
-        alert("지표를 생성했습니다.");
+        formula: modalState.formula.join(' '),
+        metrics_type: 'SALES',
       }
-      console.log("@@res", res);
+
+      console.log('@@command', command)
+
+      const res = await createCustomCol(command)
+      if (res) {
+        alert('지표를 생성했습니다.')
+      }
+      console.log('@@res', res)
     }
 
-    await mutateCols();
-    close();
-  };
+    await mutateCols()
+    close()
+  }
 
   const handleCalculatorClick: React.MouseEventHandler = (e) => {
-    const value = (e.target as HTMLElement).dataset.value as string;
-    if (value === "숫자") {
-      const result = prompt("숫자를 입력해주세요.");
-      if (!result) return;
-      else if (isNaN(parseInt(result))) return alert("숫자만 입력 가능합니다.");
+    const value = (e.target as HTMLElement).dataset.value as string
+    if (value === '숫자') {
+      const result = prompt('숫자를 입력해주세요.')
+      if (!result) return
+      else if (isNaN(parseInt(result))) return alert('숫자만 입력 가능합니다.')
 
       setModalState({
         ...modalState,
         formula: [...modalState.formula, result],
-      });
+      })
     } else {
       setModalState({
         ...modalState,
         formula: [...modalState.formula, value],
-      });
+      })
     }
-  };
+  }
 
   return (
     <S.Container visible={visible}>
@@ -180,14 +178,12 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
             value={modalState.description}
             label="설명-선택사항"
             variant="outlined"
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
             onChange={handleChange}
           />
         </S.Row>
 
-        <S.Row
-          style={{ justifyContent: "space-between", marginBottom: "10px" }}
-        >
+        <S.Row style={{ justifyContent: 'space-between', marginBottom: '10px' }}>
           <S.CaculatorName>수식</S.CaculatorName>
           <S.CalculatorButtonsWrapper>
             <S.Reset type="button" onClick={handleReset}>
@@ -208,20 +204,18 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           <span data-value="숫자">{`숫자`}</span>
         </S.CalculatorHeader>
 
-        <S.CalculatorBody>
-          {modalState.formula?.map(renderFormula)}
-        </S.CalculatorBody>
+        <S.CalculatorBody>{modalState.formula?.map(renderFormula)}</S.CalculatorBody>
 
         <S.OriginalIndicators>
           {ingredientCols.map((col) => (
             <span
               onClick={() => {
-                console.log("@@modalState.formula", modalState.formula);
+                console.log('@@modalState.formula', modalState.formula)
 
                 setModalState({
                   ...modalState,
                   formula: [...modalState.formula, col.label],
-                });
+                })
               }}
             >
               {col.label}
@@ -232,7 +226,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         <S.ButtonsWrapper>
           <S.CancelButton
             onClick={() => {
-              close();
+              close()
             }}
           >
             취소
@@ -241,7 +235,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         </S.ButtonsWrapper>
       </S.ModalWrapper>
     </S.Container>
-  );
+  )
 }
 
-export default CustomIndicatorModal;
+export default CustomIndicatorModal

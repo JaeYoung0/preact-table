@@ -1,11 +1,11 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import { BasicButton } from "../common.style";
-const CONTAINER_HEIGHT = 50;
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
+import { BasicButton } from '../common.style'
+const CONTAINER_HEIGHT = 50
 
 export const ConfigButton = styled(BasicButton)`
   width: 95px;
-`;
+`
 
 export const TransparentBackground = styled.div`
   position: absolute;
@@ -15,7 +15,7 @@ export const TransparentBackground = styled.div`
   height: 100%;
   background: transparent;
   z-index: 100;
-`;
+`
 
 const hideScroll = css`
   &::-webkit-scrollbar {
@@ -23,7 +23,7 @@ const hideScroll = css`
   }
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none; /* for Firefox */
-`;
+`
 
 export const ConfigContainer = styled.div<{ opened: boolean }>`
   position: absolute;
@@ -49,11 +49,11 @@ export const ConfigContainer = styled.div<{ opened: boolean }>`
     css`
       visibility: visible;
     `}
-`;
+`
 
 export const Label = styled.label`
   margin-bottom: 5px;
-`;
+`
 
 const OptionsWrapper = styled.ul`
   position: relative;
@@ -68,23 +68,23 @@ const OptionsWrapper = styled.ul`
   max-height: 200px;
   overflow-y: scroll;
   ${hideScroll}
-`;
+`
 
 export const Title = styled.p`
   margin: 0;
   font-size: 16px;
   margin-bottom: 30px;
   font-weight: bold;
-`;
+`
 
 export const SubTitle = styled(Title)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-`;
+`
 
-export const OpenModalButton = styled.div``;
+export const OpenModalButton = styled.div``
 
 export const VisibleOptionsWrapper = styled(OptionsWrapper)`
   margin-bottom: 20px;
@@ -105,7 +105,7 @@ export const VisibleOptionsWrapper = styled(OptionsWrapper)`
       color: #6713ef;
     }
   }
-`;
+`
 
 export const HiddenOptionsWrapper = styled(OptionsWrapper)`
   margin-bottom: 20px;
@@ -138,17 +138,17 @@ export const HiddenOptionsWrapper = styled(OptionsWrapper)`
     display: inline-block;
     margin-left: 1rem;
   }
-`;
+`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 export const CancelButton = styled(BasicButton)`
   justify-content: center;
   margin-right: 10px;
-`;
+`
 export const SubmitButton = styled(BasicButton)`
   justify-content: center;
-`;
+`
