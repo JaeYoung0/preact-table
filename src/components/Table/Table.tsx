@@ -1,22 +1,13 @@
 import { DataGrid } from "@mui/x-data-grid";
 import MultiSelect from "@/components/MultiSelect";
 import * as S from "./Table.style";
-import * as XLSX from "xlsx";
 import Download from "@/icons/Download";
 import useOptions from "@/hooks/useOptions";
 import useMetrics from "@/hooks/useMetrics";
 import numberWithCommas from "@/helper/numberWithCommas";
 import { useEffect, useState } from "preact/hooks";
 import CircularProgress from "@mui/material/CircularProgress";
-
-function exportFilteredData(filename: string, rows: any[]) {
-  filename = `${filename}.xlsx`;
-  const sheet_data = rows;
-  const ws = XLSX.utils.json_to_sheet(sheet_data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "실적데이터");
-  XLSX.writeFile(wb, filename);
-}
+import extractXLSX from "@/helper/extractXLSX";
 
 export default function MyDataGrid() {
   const [page, setPage] = useState(0);
@@ -37,7 +28,7 @@ export default function MyDataGrid() {
   return (
     <S.Wrapper>
       <S.ButtonsWrapper>
-        <S.ExcelDownloadButton onClick={() => exportFilteredData("test", rows)}>
+        <S.ExcelDownloadButton onClick={() => extractXLSX("test", rows)}>
           EXCEL
           <Download />
         </S.ExcelDownloadButton>
