@@ -1,4 +1,4 @@
-export type ParamsType = Record<string, string>;
+export type ParamsType = Record<string, any>;
 
 function handleErrors(response: Response) {
   if (!response.ok) {

@@ -1,29 +1,37 @@
 import { useMemo } from "preact/hooks";
 import { GridRowModel } from "@mui/x-data-grid";
 import useSWR from "swr";
-import { CigroAPI_V2 } from "@/helper/api";
+import { fetchMetrics } from "@/services/rows";
 
-function useMetrics() {
-  const { data = [], error, mutate, isValidating } = useSWR<
-    Record<string, unknown>[],
-    Error
-  >(
-    "/metrics",
-    (key) =>
-      CigroAPI_V2(key, {
-        method: "GET",
-        params: {
-          user_id: "1625805300271x339648481160378400",
-          start: "1618833417",
-          end: "1650369417",
-          metrics_type: "SALES",
-          per_page: "10",
-          page: "1",
-        },
-      }),
+interface Props {
+  pageSize: number;
+  page: number;
+}
+
+function useMetrics({ pageSize, page }: Props) {
+  const key = {
+    user_id: "1625805300271x339648481160378400",
+    start: "1618833417",
+    end: "1650369417",
+    metrics_type: "SALES",
+    per_page: pageSize,
+    page,
+  };
+
+  const {
+    data = [],
+    error,
+    mutate,
+    isValidating,
+  } = useSWR<Record<string, unknown>[], Error>(
+    JSON.stringify(key),
+
+    () => fetchMetrics(key),
     {
-      dedupingInterval: 2000,
+      dedupingInterval: 3000,
       errorRetryCount: 3,
+
+      revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
@@ -38,8 +46,6 @@ function useMetrics() {
 
     return data?.map((row, idx) => ({ ...row, id: idx }));
   }, [data, error]);
-
-  console.log("@@rows", rows);
 
   return {
     rows,
