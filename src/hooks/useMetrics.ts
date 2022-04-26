@@ -2,28 +2,21 @@ import { useMemo } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
+import { TableState } from '@/components/Table/Table'
 
-interface Props {
-  pageSize: number
-  page: number
-}
+type Props = TableState
 
-function useMetrics({ pageSize, page }: Props) {
+function useMetrics({ userId, start, end, pageSize, page }: Props) {
   const key = {
-    user_id: '1625805300271x339648481160378400',
-    start: '1618833417',
-    end: '1650369417',
+    user_id: userId,
+    start,
+    end,
     metrics_type: 'SALES',
     per_page: pageSize,
     page,
   }
 
-  const {
-    data = [],
-    error,
-    mutate,
-    isValidating,
-  } = useSWR<Record<string, unknown>[], Error>(
+  const { data = [], error, mutate, isValidating } = useSWR<Record<string, unknown>[], Error>(
     JSON.stringify(key),
 
     () => fetchMetrics(key),

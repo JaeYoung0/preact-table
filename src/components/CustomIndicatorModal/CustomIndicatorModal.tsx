@@ -46,16 +46,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
     setModalState(initialModalState)
   }, [initialModalState])
 
-  console.log('@@modalState', modalState)
-
   const { ingredientCols, mutate: mutateCols } = useCols()
-  console.log(
-    '@@ingredientCols',
-    ingredientCols,
-    ingredientCols.map((col) => col.label)
-  )
-
-  console.log('@@modalState', modalState)
 
   const handleChange = (event: any) => {
     setModalState({
@@ -106,13 +97,10 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         metrics_type: 'SALES',
       }
 
-      console.log('@@command', command)
-
       const res = await createCustomCol(command)
       if (res) {
         alert('지표를 생성했습니다.')
       }
-      console.log('@@res', res)
     }
 
     await mutateCols()

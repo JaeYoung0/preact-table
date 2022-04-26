@@ -9,20 +9,36 @@ import { useEffect, useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import { ColData } from '@/hooks/useCols'
+import useBubbleIo from '@/hooks/useBubbleIo'
+
+const initialTableState = {
+  page: 0,
+  pageSize: 5,
+  rowCount: 10,
+  userId: '',
+  start: '',
+  end: '',
+  metrics_type: 'SALES',
+}
+
+export type TableState = typeof initialTableState
 
 export default function MyDataGrid() {
-  const [page, setPage] = useState(0)
-  const [pageSize, setPageSize] = useState(5)
-  const [rowCount, setRowCount] = useState(0)
+  const [tableState, setTableState] = useState(initialTableState)
+
+  const { payload } = useBubbleIo()
+  console.log('@@tableState', tableState)
 
   useEffect(() => {
-    setRowCount(pageSize * (page + 2))
-  }, [pageSize, page])
+    if (!payload) return
+    setTableState(payload)
+  }, [payload])
 
-  const { rows, error, isLoading } = useMetrics({
-    pageSize,
-    page,
-  })
+  useEffect(() => {
+    setTableState({ ...tableState, rowCount: tableState.pageSize * (tableState.page + 2) })
+  }, [tableState.pageSize, tableState.page])
+
+  const { rows, error, isLoading } = useMetrics(tableState)
 
   const { visibleOptions } = useOptions()
 
@@ -50,24 +66,18 @@ export default function MyDataGrid() {
           EXCEL
           <Download />
         </S.ExcelDownloadButton>
-        <MultiSelect
-          pageState={{
-            page,
-            pageSize,
-            rowCount,
-          }}
-        />
+        <MultiSelect tableState={tableState} />
       </S.ButtonsWrapper>
 
       <DataGrid
         paginationMode="server"
-        pageSize={pageSize}
-        onPageSizeChange={(newPage) => setPageSize(newPage)}
+        pageSize={tableState.pageSize}
+        onPageSizeChange={(pageSize) => setTableState({ ...tableState, pageSize })}
         rowsPerPageOptions={[5, 10, 20]}
-        page={page}
+        page={tableState.page}
         pagination
-        onPageChange={(newPage) => setPage(newPage)}
-        rowCount={rowCount ?? 100}
+        onPageChange={(page) => setTableState({ ...tableState, page })}
+        rowCount={tableState.rowCount}
         components={{
           ErrorOverlay: () => (
             <S.RowsOverlay>
@@ -80,6 +90,11 @@ export default function MyDataGrid() {
             </S.RowsOverlay>
           ),
           LoadingOverlay: () => (
+            <S.RowsOverlay>
+              <CircularProgress color="secondary" />
+            </S.RowsOverlay>
+          ),
+          NoResultsOverlay: () => (
             <S.RowsOverlay>
               <CircularProgress color="secondary" />
             </S.RowsOverlay>

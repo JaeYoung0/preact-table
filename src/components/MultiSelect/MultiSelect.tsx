@@ -12,6 +12,7 @@ import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
 import { mutate } from 'swr'
 import { fetchMetrics } from '@/services/rows'
+import { TableState } from '../Table/Table'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -35,18 +36,14 @@ const parseFormula = (formula: string[]) => {
 }
 
 interface Props {
-  pageState: {
-    page: number
-    pageSize: number
-    rowCount: number
-  }
+  tableState: TableState
 }
-export default function MultiSelect({ pageState }: Props) {
+export default function MultiSelect({ tableState }: Props) {
   const [opened, setOpened] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
 
-  const mutateAllRows = (pageState: Props['pageState']) => {
-    const { pageSize, rowCount } = pageState
+  const mutateAllRows = (tableState: Props['tableState']) => {
+    const { pageSize, rowCount } = tableState
 
     const totalPages = rowCount / pageSize - 1
 
@@ -177,7 +174,7 @@ export default function MultiSelect({ pageState }: Props) {
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
     setTimeout(() => {
       // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
-      mutateAllRows(pageState)
+      mutateAllRows(tableState)
     }, 100)
   }
 
