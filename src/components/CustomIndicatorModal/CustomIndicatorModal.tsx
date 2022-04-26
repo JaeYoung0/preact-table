@@ -140,10 +140,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
   return (
     <S.Container visible={visible}>
-      <S.Backdrop />
+      <S.Backdrop onClick={close} />
       <S.ModalWrapper>
         <S.Title>맞춤 지표 만들기</S.Title>
-
         <S.Row>
           <TextField
             id="custom-label"
