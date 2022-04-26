@@ -7,6 +7,7 @@ import useOptions from "@/hooks/useOptions";
 import useMetrics from "@/hooks/useMetrics";
 import numberWithCommas from "@/helper/numberWithCommas";
 import useCols from "@/hooks/useCols";
+import { useEffect, useState } from "preact/hooks";
 
 function exportFilteredData(filename: string, rows: any[]) {
   filename = `${filename}.xlsx`;
@@ -18,9 +19,24 @@ function exportFilteredData(filename: string, rows: any[]) {
 }
 
 export default function MyDataGrid() {
-  const { rows, error, isLoading } = useMetrics();
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [rowCount, setRowCount] = useState(0);
+  console.log("@@rowCount", page, rowCount);
+
+  console.log("@@page", page);
+
+  useEffect(() => {
+    setRowCount(pageSize * (page + 2));
+  }, [pageSize, page]);
+
+  const { rows, error, isLoading } = useMetrics({
+    pageSize,
+    page,
+  });
 
   const { visibleOptions } = useOptions();
+  console.log("@@rows", page, pageSize, rows);
 
   return (
     <S.Wrapper>
@@ -29,10 +45,24 @@ export default function MyDataGrid() {
           EXCEL
           <Download />
         </S.ExcelDownloadButton>
-        <MultiSelect />
+        <MultiSelect
+          pageState={{
+            page,
+            pageSize,
+            rowCount,
+          }}
+        />
       </S.ButtonsWrapper>
 
       <DataGrid
+        paginationMode='server'
+        pageSize={pageSize}
+        onPageSizeChange={(newPage) => setPageSize(newPage)}
+        rowsPerPageOptions={[5, 10, 20]}
+        page={page}
+        pagination
+        onPageChange={(newPage) => setPage(newPage)}
+        rowCount={rowCount ?? 100}
         components={{
           // FIXME: Loading Indicator
           ErrorOverlay: () => (
@@ -55,8 +85,8 @@ export default function MyDataGrid() {
             </S.RowsOverlay>
           ),
         }}
-        rows={rows}
         loading={isLoading}
+        rows={rows}
         columns={visibleOptions.map((col) => ({
           field: col.label,
           headerName: col.label,
@@ -72,6 +102,7 @@ export default function MyDataGrid() {
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu
+        localeText={{ MuiTablePagination: { labelRowsPerPage: "페이지 당" } }}
       />
     </S.Wrapper>
   );

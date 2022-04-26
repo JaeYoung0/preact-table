@@ -8,43 +8,70 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
 import useCols, { CustomColType } from "@/hooks/useCols";
-import { IndicatorModalValue } from "../CustomIndicatorModal/CustomIndicatorModal";
+import { IndicatorModalValue } from "../CustomIndicatorModal";
 import {
   deleteCustomCol,
   updateCols,
   updateColsCommand,
 } from "@/services/columns";
-import useMetrics from "@/hooks/useMetrics";
+import { mutate } from "swr";
+import { fetchMetrics } from "@/services/rows";
 
-export default function MultiSelect() {
+const initialValues: IndicatorModalValue = {
+  label: "",
+  description: "",
+  display: "NUMBER",
+  formula: [],
+  id: null,
+};
+
+const splitRegex = /[\+\-\*\/\(\)]/g;
+
+const parseFormula = (formula: string[]) => {
+  console.log("@@formula 1", formula);
+
+  if (formula.length === 0) return [];
+
+  return formula?.[0]
+    ?.replace(/\s/g, "")
+    .replace(splitRegex, (matched) => `#${matched}#`)
+    .split("#");
+};
+
+interface Props {
+  pageState: {
+    page: number;
+    pageSize: number;
+    rowCount: number;
+  };
+}
+export default function MultiSelect({ pageState }: Props) {
   const [opened, setOpened] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("@@modalVisible", modalVisible);
 
-  const initialValues: IndicatorModalValue = {
-    label: "",
-    description: "",
-    display: "NUMBER",
-    formula: [],
-    id: null,
+  const mutateAllRows = (pageState: Props["pageState"]) => {
+    const { pageSize, rowCount } = pageState;
+
+    const totalPages = rowCount / pageSize - 1;
+
+    Array(totalPages)
+      .fill(0)
+      .forEach((_, idx) => {
+        const key = {
+          user_id: "1625805300271x339648481160378400",
+          start: "1618833417",
+          end: "1650369417",
+          metrics_type: "SALES",
+          per_page: pageSize,
+          page: idx,
+        };
+
+        mutate(JSON.stringify(key), () => fetchMetrics(key));
+      });
   };
-  const [
-    initialModalState,
-    setInitialModalState,
-  ] = useState<IndicatorModalValue>(initialValues);
-  console.log("@@initialModalState", initialModalState);
-  const splitRegex = /[\+\-\*\/\(\)]/g;
 
-  const parseFormula = (formula: string[]) => {
-    console.log("@@formula 1", formula);
-
-    if (formula.length === 0) return [];
-
-    return formula?.[0]
-      ?.replace(/\s/g, "")
-      .replace(splitRegex, (matched) => `#${matched}#`)
-      .split("#");
-  };
+  const [initialModalState, setInitialModalState] =
+    useState<IndicatorModalValue>(initialValues);
 
   const {
     visibleOptions,
@@ -52,8 +79,8 @@ export default function MultiSelect() {
     handleHiddenOptions,
     hiddenOptions,
   } = useOptions();
+
   const { mutate: mutateCols } = useCols();
-  const { mutate: mutateRows } = useMetrics();
 
   const openModal = (payload: IndicatorModalValue) => {
     setInitialModalState({
@@ -143,13 +170,21 @@ export default function MultiSelect() {
       id: option.id,
     }));
 
+    const isClearGroupByTarget =
+      visibleOptions.filter((option) => {
+        const groupByTarget =
+          option.type === "ORIGINAL" && option.display === "TEXT";
+        return groupByTarget;
+      }).length === 0;
+
+    if (isClearGroupByTarget) {
+      return alert("정렬 기준이 되는 열을 선택해주세요.");
+    }
+
     const command: updateColsCommand = [
       ...visibleOptionsPayload,
       ...hiddenOptionsPayload,
     ];
-
-    console.log("@@command1", command);
-    console.log("@@2 command", [...visibleOptions, ...hiddenOptions]);
 
     closeSettings();
     alert("열 설정이 저장되었습니다.");
@@ -158,14 +193,10 @@ export default function MultiSelect() {
     await updateCols(command);
 
     // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
-    // -> DB 업데이트가 느려서 그런가?
-    // -> Cols는 갱신없이 업데이트하는 대신에 3초단위로 폴링받자
-    // -> 폴링할랬더니... 폴링할 때마다 설정창에서 options들이 계속 바뀐다...
+    // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
     setTimeout(() => {
       // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
-      mutateRows();
-
-      // Promise.all([mutateCols(), mutateRows()]);
+      mutateAllRows(pageState);
     }, 100);
   };
 
@@ -179,7 +210,7 @@ export default function MultiSelect() {
   };
 
   return (
-    <div>
+    <>
       <S.ConfigButton onClick={() => toggleSettings()}>
         설정
         <Config />
@@ -200,19 +231,22 @@ export default function MultiSelect() {
               onDrop={(e) => handleDragDrop(e, idx)}
             >
               {option.label}
-              <span
-                onClick={() => {
-                  handleVisibileOptions(
-                    visibleOptions.filter((item) => item.id !== option.id)
-                  );
-                  handleHiddenOptions([
-                    ...hiddenOptions,
-                    { ...option, status: "HIDDEN" },
-                  ]);
-                }}
-              >
-                <VisibilityOffIcon />
-              </span>
+
+              {
+                <span
+                  onClick={() => {
+                    handleVisibileOptions(
+                      visibleOptions.filter((item) => item.id !== option.id)
+                    );
+                    handleHiddenOptions([
+                      ...hiddenOptions,
+                      { ...option, status: "HIDDEN" },
+                    ]);
+                  }}
+                >
+                  <VisibilityOffIcon />
+                </span>
+              }
             </li>
           ))}
         </S.VisibleOptionsWrapper>
@@ -266,6 +300,6 @@ export default function MultiSelect() {
         close={closeModal}
         initialModalState={initialModalState}
       />
-    </div>
+    </>
   );
 }
