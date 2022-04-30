@@ -5,8 +5,12 @@ type getMetricsCommand = {
   start: string
   end: string
   metrics_type: string
-  per_page: number
-  page: number
+
+  search_field?: string
+  keyword?: string
+
+  order_by_col_num?: number
+  sort?: 'ASC' | 'DESC'
 }
 
 export const fetchMetrics = async (payload: getMetricsCommand) => {

@@ -63,10 +63,15 @@ const OptionsWrapper = styled.ul`
 
   padding: 0px;
   border-radius: 5px;
-  margin: 5px 0;
+  margin: 15px 0;
 
   max-height: 200px;
   overflow-y: scroll;
+
+  li {
+    margin: 10px 0px;
+  }
+
   ${hideScroll}
 `
 
@@ -118,6 +123,7 @@ export const HiddenOptionsWrapper = styled(OptionsWrapper)`
     align-items: center;
     list-style: none;
     padding: 10px;
+
     height: 25px;
     cursor: pointer;
 

@@ -33,6 +33,7 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
     setHiddenOptions(newOptions)
   }
 
+  // visibleCols를 가공한 visibleOptions로 local state를 관리한다.
   const { visibleCols, hiddenCols, mutate } = useCols()
 
   useEffect(() => {
@@ -60,13 +61,8 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
 
 function useOptions() {
   const options = useContext(Options)
-  const {
-    visibleOptions,
-    hiddenOptions,
-    handleVisibileOptions,
-    handleHiddenOptions,
-    mutate,
-  } = options
+  const { visibleOptions, hiddenOptions, handleVisibileOptions, handleHiddenOptions, mutate } =
+    options
   return {
     visibleOptions,
     hiddenOptions,

@@ -42,7 +42,7 @@ function useCols() {
         },
       }),
     {
-      dedupingInterval: 2000,
+      dedupingInterval: 3000,
       errorRetryCount: 3,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

@@ -10,9 +10,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import useCols, { CustomColType } from '@/hooks/useCols'
 import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
-import { mutate } from 'swr'
-import { fetchMetrics } from '@/services/rows'
-import { TableState } from '../Table/Table'
+import useMetrics from '@/hooks/useMetrics'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -35,39 +33,16 @@ const parseFormula = (formula: string[]) => {
     .split('#')
 }
 
-interface Props {
-  tableState: TableState
-}
-export default function MultiSelect({ tableState }: Props) {
+export default function MultiSelect() {
   const [opened, setOpened] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-
-  const mutateAllRows = (tableState: Props['tableState']) => {
-    const { pageSize, rowCount } = tableState
-
-    const totalPages = rowCount / pageSize - 1
-
-    Array(totalPages)
-      .fill(0)
-      .forEach((_, idx) => {
-        const key = {
-          user_id: '1625805300271x339648481160378400',
-          start: '1618833417',
-          end: '1650369417',
-          metrics_type: 'SALES',
-          per_page: pageSize,
-          page: idx,
-        }
-
-        mutate(JSON.stringify(key), () => fetchMetrics(key))
-      })
-  }
 
   const [initialModalState, setInitialModalState] = useState<IndicatorModalValue>(initialValues)
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
   const { mutate: mutateCols } = useCols()
+  const { mutate: mutateRows } = useMetrics()
 
   const openModal = (payload: IndicatorModalValue) => {
     setInitialModalState({
@@ -174,7 +149,7 @@ export default function MultiSelect({ tableState }: Props) {
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
     setTimeout(() => {
       // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
-      mutateAllRows(tableState)
+      mutateRows()
     }, 100)
   }
 
