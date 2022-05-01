@@ -33,7 +33,7 @@ export default function MyDataGrid() {
 
   return (
     <S.Wrapper>
-      <S.ButtonsWrapper>
+      <S.SettingsWrapper>
         <SearchBar />
 
         <div style={{ display: 'flex' }}>
@@ -43,7 +43,7 @@ export default function MyDataGrid() {
           </S.ExcelDownloadButton>
           <MultiSelect />
         </div>
-      </S.ButtonsWrapper>
+      </S.SettingsWrapper>
 
       <DataGrid
         rowsPerPageOptions={[5, 10, 20]}

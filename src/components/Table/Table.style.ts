@@ -28,9 +28,10 @@ export const Wrapper = styled.div`
   }
 `
 
-export const ButtonsWrapper = styled.div`
+export const SettingsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
 `
 
