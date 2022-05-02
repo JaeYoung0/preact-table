@@ -1,4 +1,4 @@
-import Config from '@/icons/Config'
+import ConfigIcon from '@/icons/Config'
 import * as S from './MultiSelect.style'
 import { useState } from 'preact/hooks'
 import RoundedPlus from '@/icons/RoundedPlus'
@@ -11,6 +11,7 @@ import useCols, { CustomColType } from '@/hooks/useCols'
 import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
 import useMetrics from '@/hooks/useMetrics'
+import useBubbleIo from '@/hooks/useBubbleIo'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -36,10 +37,12 @@ const parseFormula = (formula: string[]) => {
 export default function MultiSelect() {
   const [opened, setOpened] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
   const [initialModalState, setInitialModalState] = useState<IndicatorModalValue>(initialValues)
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
+
+  const { tableState } = useBubbleIo()
 
   const { mutate: mutateCols } = useCols()
   const { mutate: mutateRows } = useMetrics()
@@ -58,8 +61,6 @@ export default function MultiSelect() {
 
   const toggleSettings = () => setOpened(!opened)
   const closeSettings = () => setOpened(false)
-
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
   const handleDragStart = (idx: number) => {
     setDraggingIdx(idx)
@@ -143,7 +144,7 @@ export default function MultiSelect() {
     alert('열 설정이 저장되었습니다.')
 
     mutateCols([...visibleOptions, ...hiddenOptions], false)
-    await updateCols(command)
+    await updateCols(tableState?.user_id ?? '', command)
 
     // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
@@ -156,7 +157,7 @@ export default function MultiSelect() {
   const handleCustomColDelete = async (id: number) => {
     const isConfirmed = confirm('삭제하시겠습니까?')
     if (isConfirmed) {
-      await deleteCustomCol({ id })
+      await deleteCustomCol(tableState?.user_id ?? '', { id })
       await mutateCols()
       alert('삭제를 완료했습니다.')
     }
@@ -166,7 +167,7 @@ export default function MultiSelect() {
     <>
       <S.ConfigButton onClick={() => toggleSettings()}>
         설정
-        <Config />
+        <ConfigIcon />
       </S.ConfigButton>
       {opened && <S.TransparentBackground onClick={() => closeSettings()} />}
       <S.ConfigContainer opened={opened}>

@@ -9,6 +9,7 @@ import {
   updateCustomCol,
   updateCustomColCommand,
 } from '@/services/columns'
+import useBubbleIo from '@/hooks/useBubbleIo'
 
 export type IndicatorModalValue = {
   label: string
@@ -41,6 +42,8 @@ interface Props {
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
+
+  const { tableState } = useBubbleIo()
 
   useEffect(() => {
     setModalState(initialModalState)
@@ -82,7 +85,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         id: modalState?.id,
       }
 
-      const res = await updateCustomCol(command)
+      const res = await updateCustomCol(tableState?.user_id ?? '', command)
       if (res) {
         alert('지표를 수정했습니다.')
       }
@@ -97,7 +100,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         metrics_type: 'SALES',
       }
 
-      const res = await createCustomCol(command)
+      const res = await createCustomCol(tableState?.user_id ?? '', command)
       if (res) {
         alert('지표를 생성했습니다.')
       }

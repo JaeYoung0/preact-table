@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 import { CigroAPI_V2 } from '@/helper/api'
 import { useMemo } from 'preact/hooks'
+import useBubbleIo from './useBubbleIo'
 
 export type ColData = CustomColType | OriginalColType
 
@@ -31,13 +32,15 @@ export type OriginalColType = {
 }
 
 function useCols() {
+  const { tableState } = useBubbleIo()
+
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
     '/metrics/columns',
     (key) =>
       CigroAPI_V2(key, {
         method: 'GET',
         params: {
-          user_id: '1625805300271x339648481160378400',
+          user_id: tableState?.user_id ?? '',
           metrics_type: 'SALES',
         },
       }),

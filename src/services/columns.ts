@@ -10,10 +10,10 @@ export type createCustomColCommand = {
   status: 'HIDDEN'
 }
 
-export const createCustomCol = async (command: createCustomColCommand) => {
+export const createCustomCol = async (user_id: string, command: createCustomColCommand) => {
   const result = await CigroAPI_V2('/metrics/columns', {
     params: {
-      user_id: '1625805300271x339648481160378400',
+      user_id,
     },
     method: 'POST',
     body: command,
@@ -25,10 +25,10 @@ export type updateCustomColCommand = createCustomColCommand & {
   id: number
 }
 
-export const updateCustomCol = async (command: updateCustomColCommand) => {
+export const updateCustomCol = async (user_id: string, command: updateCustomColCommand) => {
   const result = await CigroAPI_V2(`/metrics/columns/${command.id}`, {
     params: {
-      user_id: '1625805300271x339648481160378400',
+      user_id,
     },
     method: 'PUT',
     body: command,
@@ -43,10 +43,10 @@ export type updateColsCommand = {
   id: number
 }[]
 
-export const updateCols = async (command: updateColsCommand) => {
+export const updateCols = async (user_id: string, command: updateColsCommand) => {
   CigroAPI_V2('/metrics/columns', {
     params: {
-      user_id: '1625805300271x339648481160378400',
+      user_id,
     },
     method: 'PUT',
     body: command,
@@ -57,10 +57,10 @@ export type deleteCustomColCommand = {
   id: number
 }
 
-export const deleteCustomCol = async (command: deleteCustomColCommand) => {
+export const deleteCustomCol = async (user_id: string, command: deleteCustomColCommand) => {
   const result = await CigroAPI_V2(`/metrics/columns/${command.id}`, {
     params: {
-      user_id: '1625805300271x339648481160378400',
+      user_id,
     },
     method: 'DELETE',
   })
