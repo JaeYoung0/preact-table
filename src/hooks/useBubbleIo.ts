@@ -6,7 +6,7 @@ export const initialTableState = {
   start: '',
   end: '',
   search_field: '',
-  order_by_col_num: 1,
+  order_by_col_num: 1, //default: 1
   metrics_type: 'SALES',
 }
 
@@ -21,7 +21,7 @@ type BubbleIoInjectionData = {
     window.postMessage({
       payload: {
         user_id: '1625805300271x339648481160378400',
-        start: '2021-12-05',
+        start: '2020-12-05',
         end: '2022-04-05',
         metrics_type: 'SALES',
         order_by_col_num: 1,
@@ -37,11 +37,10 @@ function useBubbleIo() {
     () => payload
   )
 
-  console.log('@@payload', payload, data)
-
   useEffect(() => {
     const receiveMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
       const { payload } = e.data
+
       setPayload(payload)
     }
     window.addEventListener('message', receiveMessage)
