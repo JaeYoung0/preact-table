@@ -13,7 +13,7 @@ const GridCellExpand = function GridCellExpand(props: any) {
     if (displayType === 'PERCENT') {
       return `${Math.floor(value * 100 * 100) / 100}%`
     } else if (displayType === 'WON') {
-      return `${numberWithCommas(value)}원`
+      return `${numberWithCommas(Math.floor(value))}원`
     } else if (displayType === 'NUMBER') {
       return numberWithCommas(Math.floor(value))
     } else return value
