@@ -35,7 +35,7 @@ function useCols() {
   const { tableState } = useBubbleIo()
 
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
-    '/metrics/columns',
+    tableState ? '/metrics/columns' : null,
     (key) =>
       CigroAPI_V2(key, {
         method: 'GET',
