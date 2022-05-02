@@ -14,7 +14,7 @@ const GridCellExpand = function GridCellExpand(props: any) {
       return `${Math.floor(value * 100 * 100) / 100}%`
     } else if (displayType === 'WON') {
       return `${numberWithCommas(value)}원`
-    } else if (typeof value === 'number') {
+    } else if (displayType === 'NUMBER') {
       return numberWithCommas(Math.floor(value))
     } else return value
   }
@@ -55,8 +55,6 @@ const GridCellExpand = function GridCellExpand(props: any) {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [setShowFullCell, showFullCell])
-
-  console.log('@@cell', value, cellRef)
 
   return (
     <Box
