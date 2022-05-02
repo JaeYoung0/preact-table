@@ -4,7 +4,7 @@ import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
 import useMetrics from '@/hooks/useMetrics'
-import { useMemo } from 'preact/hooks'
+import { useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
@@ -13,6 +13,8 @@ import renderCellExpand from '@/helper/renderCellExpand'
 export default function MyDataGrid() {
   const { rows, error, isLoading } = useMetrics()
   const { visibleOptions } = useOptions()
+  const [pageSize, setPageSize] = useState(10)
+  const [page, setPage] = useState(0)
 
   const cols = useMemo<GridColumns>(
     () =>
@@ -26,6 +28,9 @@ export default function MyDataGrid() {
       })),
     visibleOptions
   )
+
+  const reCallTargetPage = Math.floor(rows.length / pageSize)
+  console.log('@@reCallTargetPage', reCallTargetPage, page)
 
   return (
     <S.Wrapper>
@@ -41,7 +46,13 @@ export default function MyDataGrid() {
       </S.SettingsWrapper>
 
       <DataGrid
-        rowsPerPageOptions={[5, 10, 20]}
+        // rowsPerPageOptions={[5, 10, 20]}
+        page={page}
+        onPageChange={(newPage) => setPage(newPage)}
+        pageSize={pageSize}
+        onPageSizeChange={(newSize) => setPageSize(newSize)}
+        rowsPerPageOptions={[10, 50, 100]}
+        pagination
         components={{
           ErrorOverlay: () => (
             <S.RowsOverlay>

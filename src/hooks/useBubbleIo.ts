@@ -25,6 +25,7 @@ type BubbleIoInjectionData = {
         end: '2022-04-05',
         metrics_type: 'SALES',
         order_by_col_num: 1,
+        page:0
       },
     })
  */

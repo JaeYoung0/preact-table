@@ -12,6 +12,8 @@ type getMetricsCommand = {
 
   order_by_col_num?: number
   sort?: 'ASC' | 'DESC'
+
+  page: number
 }
 
 export const fetchMetrics = async (payload: getMetricsCommand) => {
@@ -23,7 +25,7 @@ export const fetchMetrics = async (payload: getMetricsCommand) => {
 
   const result = await CigroAPI_V2('/metrics', {
     method: 'GET',
-    params: payload,
+    params: { ...payload },
   })
   return result
 }
