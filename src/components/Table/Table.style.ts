@@ -26,6 +26,10 @@ export const Wrapper = styled.div`
   .MuiDataGrid-sortIcon {
     color: #fff;
   }
+
+  .MuiDataGrid-cellContent {
+    text-overflow: clip;
+  }
 `
 
 export const SettingsWrapper = styled.div`

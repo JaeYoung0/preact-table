@@ -4,11 +4,11 @@ import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
 import useMetrics from '@/hooks/useMetrics'
-import numberWithCommas from '@/helper/numberWithCommas'
 import { useMemo } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
+import renderCellExpand from '@/helper/renderCellExpand'
 
 export default function MyDataGrid() {
   const { rows, error, isLoading } = useMetrics()
@@ -22,11 +22,7 @@ export default function MyDataGrid() {
         width: 150,
         headerAlign: 'center',
         align: 'center',
-        valueFormatter: (params) => {
-          return typeof params.value === 'number'
-            ? numberWithCommas(Math.floor(params.value))
-            : params.value
-        },
+        renderCell: (params) => renderCellExpand(params, col),
       })),
     visibleOptions
   )
@@ -35,7 +31,6 @@ export default function MyDataGrid() {
     <S.Wrapper>
       <S.SettingsWrapper>
         <SearchBar />
-
         <div style={{ display: 'flex' }}>
           <S.ExcelDownloadButton onClick={() => extractXLSX('test', rows)}>
             EXCEL
