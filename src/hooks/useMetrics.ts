@@ -4,18 +4,18 @@ import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
 import useBubbleIo from './useBubbleIo'
 
+export type RowType = Record<string, unknown>
+
 function useMetrics() {
   const { tableState } = useBubbleIo()
 
   console.log('@@tableState', tableState)
 
   // tableState 객체를 직렬화하지 않으면 mutate가 제대로 되지 않는다.
-  const { data = [], error, mutate, isValidating } = useSWR<Record<string, unknown>[], Error>(
+  const { data = [], error, mutate, isValidating } = useSWR<RowType[], Error>(
     tableState ? JSON.stringify(tableState) : null,
     (tableState) => fetchMetrics(JSON.parse(tableState))
   )
-
-  console.log('@@useMetrics', data)
 
   /**
    * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
@@ -33,6 +33,7 @@ function useMetrics() {
     mutate,
     error,
     isLoading: isValidating,
+    data,
   }
 }
 

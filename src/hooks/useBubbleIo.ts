@@ -8,6 +8,7 @@ export const initialTableState = {
   search_field: '',
   order_by_col_num: 1, //default: 1
   metrics_type: 'SALES',
+  page: 0,
 }
 
 export type TableState = typeof initialTableState

@@ -1,6 +1,7 @@
 import Table from '@/components/Table'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { OptionsProvider } from '@/hooks/useOptions'
+import { MergedRowsProvider } from '@/hooks/useMergedRows'
 import { SWRConfig } from 'swr'
 
 const theme = createTheme({
@@ -25,11 +26,13 @@ const swrConfig = {
 export function App() {
   return (
     <ThemeProvider theme={theme}>
-      <OptionsProvider>
-        <SWRConfig value={swrConfig}>
-          <Table />
-        </SWRConfig>
-      </OptionsProvider>
+      <MergedRowsProvider>
+        <OptionsProvider>
+          <SWRConfig value={swrConfig}>
+            <Table />
+          </SWRConfig>
+        </OptionsProvider>
+      </MergedRowsProvider>
     </ThemeProvider>
   )
 }

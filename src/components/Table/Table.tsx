@@ -1,20 +1,36 @@
-import { DataGrid, GridColumns } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GridSortModel } from '@mui/x-data-grid'
 import MultiSelect from '@/components/MultiSelect'
 import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
-import useMetrics from '@/hooks/useMetrics'
-import { useMemo, useState } from 'preact/hooks'
+import useMetrics, { RowType } from '@/hooks/useMetrics'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
 import renderCellExpand from '@/helper/renderCellExpand'
+import useMergedRows from '@/hooks/useMergedRows'
+import useBubbleIo from '@/hooks/useBubbleIo'
 
-export default function MyDataGrid() {
-  const { rows, error, isLoading } = useMetrics()
+export default function Table() {
+  const { tableState } = useBubbleIo()
+
+  const { rows, error, isLoading: isRowFetching, data } = useMetrics()
   const { visibleOptions } = useOptions()
+  const { mergedRows, handleMergedRows } = useMergedRows()
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)
+  const [sortLoading, setSortLoading] = useState(false)
+
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    { field: rows?.[0]?.[0], sort: 'asc' },
+  ])
+
+  console.log('@@sortModel', sortModel)
+
+  const handleSortModelChange = async (newModel: GridSortModel) => {
+    setSortModel(newModel)
+  }
 
   const cols = useMemo<GridColumns>(
     () =>
@@ -29,8 +45,57 @@ export default function MyDataGrid() {
     visibleOptions
   )
 
-  const reCallTargetPage = Math.floor(rows.length / pageSize)
-  console.log('@@reCallTargetPage', reCallTargetPage, page)
+  const loadSortedRows = (sortModel: GridSortModel, rows: RowType[]) => {
+    if (sortModel.length === 0) {
+      return rows
+    }
+
+    const sortedColumn = sortModel[0]
+
+    let sortedRows = [...rows].sort((a, b) => {
+      const aCell = a[sortedColumn.field]
+      const bCell = b[sortedColumn.field]
+      if (typeof aCell === 'number' && typeof bCell === 'number') {
+        return (a[sortedColumn.field] as number) - (b[sortedColumn.field] as number)
+      } else {
+        return String(a[sortedColumn.field]).localeCompare(String(b[sortedColumn.field]))
+      }
+    })
+
+    if (sortModel[0].sort === 'desc') {
+      sortedRows = sortedRows.reverse()
+    }
+
+    return sortedRows
+  }
+
+  useEffect(() => {
+    if (rows.length === 0) return
+    console.log('@@rows1 ', rows)
+    setSortLoading(true)
+
+    handleMergedRows(loadSortedRows(sortModel, [...mergedRows, ...rows]))
+    setSortLoading(false)
+  }, [rows, sortModel])
+
+  useEffect(() => {
+    const recallTargetPage = Math.floor(mergedRows.length / pageSize)
+
+    console.log('@@recallTargetPage', recallTargetPage, page, tableState)
+
+    if (!tableState) return
+    if (recallTargetPage - 1 <= page) {
+      setSortLoading(true)
+
+      window.postMessage({
+        payload: {
+          ...tableState,
+          page: tableState.page + 1,
+        },
+      })
+      setSortLoading(false)
+    }
+  }, [page])
 
   return (
     <S.Wrapper>
@@ -46,7 +111,6 @@ export default function MyDataGrid() {
       </S.SettingsWrapper>
 
       <DataGrid
-        // rowsPerPageOptions={[5, 10, 20]}
         page={page}
         onPageChange={(newPage) => setPage(newPage)}
         pageSize={pageSize}
@@ -66,7 +130,7 @@ export default function MyDataGrid() {
           ),
           LoadingOverlay: () => (
             <S.RowsOverlay>
-              <CircularProgress color="secondary" />
+              <span>Loading...</span>
             </S.RowsOverlay>
           ),
           NoResultsOverlay: () => (
@@ -75,8 +139,11 @@ export default function MyDataGrid() {
             </S.RowsOverlay>
           ),
         }}
-        loading={isLoading}
-        rows={rows}
+        sortingMode="server"
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
+        loading={isRowFetching || sortLoading}
+        rows={mergedRows}
         columns={cols}
         disableSelectionOnClick
         showCellRightBorder
