@@ -3,9 +3,7 @@ import styled from '@emotion/styled'
 import { BasicButton } from '../common.style'
 const CONTAINER_HEIGHT = 50
 
-export const ConfigButton = styled(BasicButton)`
-  width: 95px;
-`
+export const ConfigButton = styled(BasicButton)``
 
 export const TransparentBackground = styled.div`
   position: absolute;

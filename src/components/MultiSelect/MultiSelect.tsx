@@ -166,7 +166,7 @@ export default function MultiSelect() {
   return (
     <>
       <S.ConfigButton onClick={() => toggleSettings()}>
-        설정
+        열 수정
         <ConfigIcon />
       </S.ConfigButton>
       {opened && <S.TransparentBackground onClick={() => closeSettings()} />}

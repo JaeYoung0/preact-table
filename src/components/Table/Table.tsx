@@ -103,7 +103,7 @@ export default function Table() {
         <SearchBar />
         <div style={{ display: 'flex' }}>
           <S.ExcelDownloadButton onClick={() => extractXLSX('test', rows)}>
-            EXCEL
+            excel
             <Download />
           </S.ExcelDownloadButton>
           <MultiSelect />

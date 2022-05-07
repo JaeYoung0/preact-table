@@ -1,21 +1,22 @@
 import styled from '@emotion/styled'
 
 export const BasicButton = styled.button`
-  width: 115px;
-  height: 35px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 20px;
-  border: 2px solid #6713ef;
-  line-height: 35px;
-  background: #fefefe;
+  width: 98px;
+  height: 38px;
+  padding: 8px 16px;
 
+  border: 1px solid #6713ef;
+  line-height: 135%;
+  background: #fefefe;
+  border-radius: 50px;
   cursor: pointer;
 
-  font-size: 15px;
+  font-size: 16px;
+
   color: #6713ef;
-  border-radius: 50px;
 
   &:hover {
     background: #6713ef;
