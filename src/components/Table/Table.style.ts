@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
   width: 100%;
   height: 500px;
   .MuiDataGrid-columnHeaders {
-    background: #636378;
+    background: #505866;
 
     width: 100%;
     margin: 0 auto;
