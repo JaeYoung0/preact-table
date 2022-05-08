@@ -30,7 +30,7 @@ function SearchBar() {
   }, [visibleCols])
 
   useEffect(() => {
-    console.log('## 멀티 필터링 작동!', 'mergedRows:', mergedRows, 'filterOptions:', filterOptions)
+    console.log('## 멀티 필터링', 'mergedRows:', mergedRows, 'filterOptions:', filterOptions)
 
     if (filterOptions.length === 0) handleFilteredRows(mergedRows)
     else {

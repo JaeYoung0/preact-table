@@ -12,6 +12,7 @@ import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
 import useMetrics from '@/hooks/useMetrics'
 import useBubbleIo from '@/hooks/useBubbleIo'
+import useMergedRows from '@/hooks/useMergedRows'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -44,6 +45,7 @@ export default function MultiSelect() {
 
   const { mutate: mutateCols } = useCols()
   const { mutate: mutateRows } = useMetrics()
+  const { handleMergedRows } = useMergedRows()
 
   const openModal = (payload: IndicatorModalValue) => {
     setInitialModalState({
@@ -146,6 +148,11 @@ export default function MultiSelect() {
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
     setTimeout(() => {
       // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
+      console.log(
+        '## 열 설정이 변경되었습니다. mergedRows를 초기화하고, 변경된 cols에 따라 rows를 다시 호출합니다.'
+      )
+
+      handleMergedRows([])
       mutateRows()
     }, 100)
   }
