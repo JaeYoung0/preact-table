@@ -50,15 +50,17 @@ export default function Table() {
 
       const sortedColumn = sortModel[0]
 
-      let sortedRows = [...rows].sort((a, b) => {
-        const aCell = a[sortedColumn.field]
-        const bCell = b[sortedColumn.field]
-        if (typeof aCell === 'number' && typeof bCell === 'number') {
-          return (a[sortedColumn.field] as number) - (b[sortedColumn.field] as number)
-        } else {
-          return String(a[sortedColumn.field]).localeCompare(String(b[sortedColumn.field]))
-        }
-      })
+      let sortedRows = [...rows]
+        .sort((a, b) => {
+          const aCell = a[sortedColumn.field]
+          const bCell = b[sortedColumn.field]
+          if (typeof aCell === 'number' && typeof bCell === 'number') {
+            return (a[sortedColumn.field] as number) - (b[sortedColumn.field] as number)
+          } else {
+            return String(a[sortedColumn.field]).localeCompare(String(b[sortedColumn.field]))
+          }
+        })
+        .map((item, index) => ({ ...item, id: index }))
 
       if (sortModel[0].sort === 'desc') {
         sortedRows = sortedRows.reverse()
@@ -79,7 +81,7 @@ export default function Table() {
 
   useEffect(() => {
     if (rows.length === 0) return
-    console.log('## rows updated! -> mergedRows sorted & merged will also be changed')
+    console.log('## rows updated! -> mergedRows를 다시 sorting 합니다.')
 
     setSortLoading(true)
 
@@ -89,11 +91,11 @@ export default function Table() {
 
   useEffect(() => {
     if (rows.length === 0) return
-    console.log('## sortModel updated! -> filteredRows sorted & mergedRows -> mergedRows updated')
+    console.log('## sortModel updated! -> mergedRows를 다시 sorting 합니다. ')
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(filteredRows, sortModel))
+    handleMergedRows(loadSortedRows(mergedRows, sortModel))
     setSortLoading(false)
   }, [sortModel])
 
@@ -103,6 +105,7 @@ export default function Table() {
     if (!tableState) return
     if (recallTargetPage - 1 <= page) {
       setSortLoading(true)
+
       console.log(
         '## recallTargetPage에 도달하였으므로 다음 page를 호출합니다',
         'recallTargetPage:',
@@ -116,6 +119,7 @@ export default function Table() {
         },
         reset: false,
       })
+
       setSortLoading(false)
     }
   }, [page])
