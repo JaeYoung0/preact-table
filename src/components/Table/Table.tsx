@@ -15,7 +15,7 @@ import useBubbleIo from '@/hooks/useBubbleIo'
 export default function Table() {
   const { tableState } = useBubbleIo()
 
-  const { rows, error, isLoading: isRowFetching, data } = useMetrics()
+  const { rows, error, isLoading: isRowFetching } = useMetrics()
   const { visibleOptions } = useOptions()
   const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
   const [pageSize, setPageSize] = useState(10)

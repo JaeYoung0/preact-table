@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import useSWR from 'swr'
+import useMergedRows from './useMergedRows'
 
 export const initialTableState = {
   user_id: '',
@@ -15,6 +16,7 @@ export type TableState = typeof initialTableState
 
 type BubbleIoInjectionData = {
   payload: TableState
+  reset: boolean
 }
 
 /**
@@ -28,10 +30,12 @@ type BubbleIoInjectionData = {
         order_by_col_num: 1,
         page:0
       },
+      reset: false
     })
  */
 function useBubbleIo() {
   const [payload, setPayload] = useState<TableState | null>(null)
+  const { handleMergedRows } = useMergedRows()
 
   // postMessage에서 payload가 들어오면 payload를 캐싱하는 SWR
   const { data, error, mutate, isValidating } = useSWR<TableState | null, Error>(
@@ -41,8 +45,13 @@ function useBubbleIo() {
 
   useEffect(() => {
     const receiveMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
-      const { payload } = e.data
+      const { payload, reset } = e.data
 
+      console.log('## reset', reset)
+
+      if (reset) {
+        handleMergedRows([])
+      }
       setPayload(payload)
     }
     window.addEventListener('message', receiveMessage)
