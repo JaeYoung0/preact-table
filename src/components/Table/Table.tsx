@@ -117,7 +117,7 @@ export default function Table() {
         onPageChange={(newPage) => setPage(newPage)}
         pageSize={pageSize}
         onPageSizeChange={(newSize) => setPageSize(newSize)}
-        rowsPerPageOptions={[10, 50, 100]}
+        rowsPerPageOptions={[10, 20, 50, 100]}
         pagination
         components={{
           ErrorOverlay: () => (
