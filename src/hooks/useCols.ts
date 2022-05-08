@@ -53,8 +53,6 @@ function useCols() {
     }
   )
 
-  console.log('@@useCols data', data)
-
   const visibleCols = useMemo(() => {
     if (!data || error) return []
     return data.filter((item) => item.status === 'VISIBLE')
@@ -72,8 +70,6 @@ function useCols() {
     if (!data) return []
     return data.filter((item) => item.type === 'ORIGINAL' && item.display !== 'TEXT')
   }, [data])
-
-  console.log('@@ingredientCols', ingredientCols)
 
   return {
     visibleCols,

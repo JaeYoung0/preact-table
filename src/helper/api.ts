@@ -23,7 +23,6 @@ export const CigroAPI_V2 = (
   let options: { method: string; body?: string } = {
     method: config.method,
   }
-  console.log('@@config.params', config.params)
   endpoint += '?' + new URLSearchParams(config.params).toString()
 
   if (config.method !== 'GET') {

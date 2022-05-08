@@ -17,18 +17,16 @@ export default function Table() {
 
   const { rows, error, isLoading: isRowFetching, data } = useMetrics()
   const { visibleOptions } = useOptions()
-  const { mergedRows, handleMergedRows } = useMergedRows()
+  const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)
   const [sortLoading, setSortLoading] = useState(false)
 
-  console.log('##mergedRows', mergedRows)
+  console.log('## filteredRows', filteredRows)
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: rows?.[0]?.[0], sort: 'asc' },
   ])
-
-  console.log('@@sortModel', sortModel)
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
     setSortModel(newModel)
@@ -73,17 +71,31 @@ export default function Table() {
 
   useEffect(() => {
     if (rows.length === 0) return
-    console.log('@@rows1 ', rows)
+    console.log('## rows updated! -> mergedRows sorted & merged will also be changed')
+
     setSortLoading(true)
 
     handleMergedRows(loadSortedRows(sortModel, [...mergedRows, ...rows]))
     setSortLoading(false)
-  }, [rows, sortModel])
+  }, [rows])
 
   useEffect(() => {
-    const recallTargetPage = Math.floor(mergedRows.length / pageSize)
+    if (rows.length === 0) return
+    console.log('## sortModel updated! -> filteredRows sorted & mergedRows -> mergedRows updated')
 
-    console.log('@@recallTargetPage', recallTargetPage, page, tableState)
+    setSortLoading(true)
+
+    handleMergedRows(loadSortedRows(sortModel, [...filteredRows, ...rows]))
+    setSortLoading(false)
+  }, [sortModel])
+
+  useEffect(() => {
+    const recallTargetPage = Math.floor(filteredRows.length / pageSize)
+    console.log(
+      '## recallTargetPage에 도달하였으므로 다음 page를 호출합니다',
+      'recallTargetPage:',
+      recallTargetPage
+    )
 
     if (!tableState) return
     if (recallTargetPage - 1 <= page) {
@@ -104,7 +116,7 @@ export default function Table() {
       <S.SettingsWrapper>
         <SearchBar />
         <div style={{ display: 'flex' }}>
-          <S.ExcelDownloadButton onClick={() => extractXLSX('test', rows)}>
+          <S.ExcelDownloadButton onClick={() => extractXLSX('test', filteredRows)}>
             excel
             <Download />
           </S.ExcelDownloadButton>
@@ -117,7 +129,7 @@ export default function Table() {
         onPageChange={(newPage) => setPage(newPage)}
         pageSize={pageSize}
         onPageSizeChange={(newSize) => setPageSize(newSize)}
-        rowsPerPageOptions={[10, 20, 50, 100]}
+        rowsPerPageOptions={[10, 20, 30]}
         pagination
         components={{
           ErrorOverlay: () => (
@@ -145,7 +157,7 @@ export default function Table() {
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         loading={isRowFetching || sortLoading}
-        rows={mergedRows}
+        rows={filteredRows}
         columns={cols}
         disableSelectionOnClick
         showCellRightBorder

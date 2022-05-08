@@ -200,8 +200,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           {ingredientCols.map((col) => (
             <span
               onClick={() => {
-                console.log('@@modalState.formula', modalState.formula)
-
                 setModalState({
                   ...modalState,
                   formula: [...modalState.formula, col.label],

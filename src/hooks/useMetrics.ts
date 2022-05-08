@@ -4,17 +4,19 @@ import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
 import useBubbleIo from './useBubbleIo'
 
-export type RowType = Record<string, unknown>
+export type RowType = Record<string, any>
 
 function useMetrics() {
   const { tableState } = useBubbleIo()
 
-  console.log('@@tableState', tableState)
-
   // tableState 객체를 직렬화하지 않으면 mutate가 제대로 되지 않는다.
-  const { data = [], error, mutate, isValidating } = useSWR<RowType[], Error>(
-    tableState ? JSON.stringify(tableState) : null,
-    (tableState) => fetchMetrics(JSON.parse(tableState))
+  const {
+    data = [],
+    error,
+    mutate,
+    isValidating,
+  } = useSWR<RowType[], Error>(tableState ? JSON.stringify(tableState) : null, (tableState) =>
+    fetchMetrics(JSON.parse(tableState))
   )
 
   /**

@@ -24,8 +24,6 @@ const initialValues: IndicatorModalValue = {
 const splitRegex = /[\+\-\*\/\(\)]/g
 
 const parseFormula = (formula: string[]) => {
-  console.log('@@formula 1', formula)
-
   if (formula.length === 0) return []
 
   return formula?.[0]
@@ -131,8 +129,6 @@ export default function MultiSelect() {
         const groupByTarget = option.type === 'ORIGINAL' && option.display === 'TEXT'
         return groupByTarget
       }).length === 0
-
-    console.log('@@isClearGroupByTarget', isClearGroupByTarget)
 
     if (isClearGroupByTarget) {
       return alert('정렬 기준이 되는 열을 선택해주세요.')

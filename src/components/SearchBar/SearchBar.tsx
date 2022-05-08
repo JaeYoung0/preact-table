@@ -3,10 +3,10 @@ import useCols, { ColData } from '@/hooks/useCols'
 import TextField from '@mui/material/TextField'
 import { useEffect, useState } from 'preact/hooks'
 import * as S from './SearchBar.style'
-import useMetrics from '@/hooks/useMetrics'
 import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete'
 import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
+import useMergedRows from '@/hooks/useMergedRows'
 
 type FilterOption = {
   id: number
@@ -20,7 +20,8 @@ function SearchBar() {
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
 
   const { visibleCols } = useCols()
-  const { rows, mutate: mutateRows } = useMetrics()
+
+  const { mergedRows, handleFilteredRows } = useMergedRows()
 
   useEffect(() => {
     // visibleCols가 바뀔 때 마다 TEXT 타입 컬럼을 autocompleteLabels로 둔다.
@@ -28,18 +29,32 @@ function SearchBar() {
     setAutocompleteLabels(textCols)
   }, [visibleCols])
 
-  console.log('@@autocompleteLabels', autocompleteLabels)
+  useEffect(() => {
+    console.log('## 멀티 필터링 작동!', 'mergedRows:', mergedRows, 'filterOptions:', filterOptions)
 
-  console.log('@@filterOptions 22', filterOptions)
+    if (filterOptions.length === 0) handleFilteredRows(mergedRows)
+    else {
+      handleFilteredRows(
+        mergedRows.filter((row) => {
+          let result = true
+          const regexList = filterOptions.map((option) => new RegExp(option.value))
 
-  console.log('@@searchValue', searchValue)
-  console.log('@@rows', rows)
-  console.log('@@autocompleteLabels', autocompleteLabels)
+          filterOptions.forEach((option) =>
+            regexList.forEach((regex) =>
+              regex.test(row[option.label]) ? (result = true) : (result = false)
+            )
+          )
+
+          return result
+        })
+      )
+    }
+  }, [filterOptions, mergedRows])
 
   const handleInputChange = (inputValue: string) => setSearchValue(inputValue)
 
   const handleDeleteChip = (idx: number) => {
-    setFilterOptions([...filterOptions.filter((item, filterIdx) => filterIdx !== idx)])
+    setFilterOptions([...filterOptions.filter((_, filterIdx) => filterIdx !== idx)])
   }
 
   const renderStartAdornment = () => {
@@ -120,10 +135,9 @@ function SearchBar() {
         renderInput={renderInput}
         inputValue={searchValue}
         onInputChange={(e, inputValue, reason) => handleInputChange(inputValue)}
-        onChange={(e, value, reason) => {
-          // FIXME: 여기서 mutate ?
-          console.log('@@wow', e, value, reason)
-        }}
+        // onChange={(e, value, reason) => {
+        //   // FIXME: 여기서 mutate ?
+        // }}
         filterOptions={(options) => options}
         renderOption={(props, option, state) => {
           return renderOptions(props, option)
