@@ -85,7 +85,7 @@ export default function Table() {
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(sortModel, [...filteredRows, ...rows]))
+    handleMergedRows(loadSortedRows(sortModel, filteredRows))
     setSortLoading(false)
   }, [sortModel])
 
