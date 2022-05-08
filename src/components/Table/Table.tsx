@@ -4,7 +4,7 @@ import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
 import useMetrics, { RowType } from '@/hooks/useMetrics'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
@@ -21,12 +21,9 @@ export default function Table() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)
   const [sortLoading, setSortLoading] = useState(false)
+  const [sortModel, setSortModel] = useState<GridSortModel>()
 
-  console.log('## filteredRows', filteredRows)
-
-  const [sortModel, setSortModel] = useState<GridSortModel>([
-    { field: rows?.[0]?.[0], sort: 'asc' },
-  ])
+  const recallTargetPage = Math.floor(filteredRows.length / pageSize)
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
     setSortModel(newModel)
@@ -45,29 +42,40 @@ export default function Table() {
     visibleOptions
   )
 
-  const loadSortedRows = (sortModel: GridSortModel, rows: RowType[]) => {
-    if (sortModel.length === 0) {
-      return rows
-    }
-
-    const sortedColumn = sortModel[0]
-
-    let sortedRows = [...rows].sort((a, b) => {
-      const aCell = a[sortedColumn.field]
-      const bCell = b[sortedColumn.field]
-      if (typeof aCell === 'number' && typeof bCell === 'number') {
-        return (a[sortedColumn.field] as number) - (b[sortedColumn.field] as number)
-      } else {
-        return String(a[sortedColumn.field]).localeCompare(String(b[sortedColumn.field]))
+  const loadSortedRows = useCallback(
+    (rows: RowType[], sortModel?: GridSortModel) => {
+      if (!sortModel || sortModel.length === 0) {
+        return rows
       }
-    })
 
-    if (sortModel[0].sort === 'desc') {
-      sortedRows = sortedRows.reverse()
-    }
+      const sortedColumn = sortModel[0]
 
-    return sortedRows
-  }
+      let sortedRows = [...rows].sort((a, b) => {
+        const aCell = a[sortedColumn.field]
+        const bCell = b[sortedColumn.field]
+        if (typeof aCell === 'number' && typeof bCell === 'number') {
+          return (a[sortedColumn.field] as number) - (b[sortedColumn.field] as number)
+        } else {
+          return String(a[sortedColumn.field]).localeCompare(String(b[sortedColumn.field]))
+        }
+      })
+
+      if (sortModel[0].sort === 'desc') {
+        sortedRows = sortedRows.reverse()
+      }
+
+      return sortedRows
+    },
+    [rows, sortModel]
+  )
+
+  useEffect(() => {
+    console.log('## mergedRows', mergedRows)
+  }, [mergedRows])
+
+  useEffect(() => {
+    console.log('## filteredRows', filteredRows)
+  }, [filteredRows])
 
   useEffect(() => {
     if (rows.length === 0) return
@@ -75,7 +83,7 @@ export default function Table() {
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(sortModel, [...mergedRows, ...rows]))
+    handleMergedRows(loadSortedRows([...mergedRows, ...rows], sortModel))
     setSortLoading(false)
   }, [rows])
 
@@ -85,31 +93,35 @@ export default function Table() {
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(sortModel, filteredRows))
+    handleMergedRows(loadSortedRows(filteredRows, sortModel))
     setSortLoading(false)
   }, [sortModel])
 
   useEffect(() => {
-    const recallTargetPage = Math.floor(filteredRows.length / pageSize)
-    console.log(
-      '## recallTargetPage에 도달하였으므로 다음 page를 호출합니다',
-      'recallTargetPage:',
-      recallTargetPage
-    )
+    console.log('## recallTargetPage:', recallTargetPage, 'page:', page)
 
     if (!tableState) return
     if (recallTargetPage - 1 <= page) {
       setSortLoading(true)
+      console.log(
+        '## recallTargetPage에 도달하였으므로 다음 page를 호출합니다',
+        'recallTargetPage:',
+        recallTargetPage
+      )
 
       window.postMessage({
         payload: {
           ...tableState,
           page: tableState.page + 1,
         },
+        reset: false,
       })
       setSortLoading(false)
     }
   }, [page])
+
+  // NO
+  // if (rows.length === 0) return null
 
   return (
     <S.Wrapper>
@@ -164,6 +176,7 @@ export default function Table() {
         disableColumnMenu
         localeText={{ MuiTablePagination: { labelRowsPerPage: '페이지 당' } }}
       />
+      <S.BottomPagingText>{`${page}/${recallTargetPage} - 공사중`}</S.BottomPagingText>
     </S.Wrapper>
   )
 }

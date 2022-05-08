@@ -59,3 +59,17 @@ export const RowsOverlay = styled.div`
     font-size: 16px;
   }
 `
+
+export const BottomPagingText = styled.p`
+  position: absolute;
+  bottom: 0;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 135%;
+
+  letter-spacing: -0.0008em;
+  text-align: center;
+
+  color: #353c49;
+`
