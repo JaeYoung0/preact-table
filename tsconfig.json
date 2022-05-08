@@ -6,7 +6,6 @@
       "react": ["preact/compat"]
     },
     "target": "ESNext",
-
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "useDefineForClassFields": true,
     "allowJs": true,
@@ -21,7 +20,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react", // https://github.com/emotion-js/emotion/issues/1249
-
     "allowSyntheticDefaultImports": true,
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment"

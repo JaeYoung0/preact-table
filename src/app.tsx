@@ -23,6 +23,9 @@ const swrConfig = {
   revalidateOnReconnect: false,
 }
 
+/**
+ * swr로 비동기 호출만 관리하고 local state는 context api로 관리한다.
+ */
 export function App() {
   return (
     <ThemeProvider theme={theme}>

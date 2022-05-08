@@ -21,8 +21,8 @@ type BubbleIoInjectionData = {
  * Bubbie.io에서 아래와 같은 방식으로 payload를 Table 컴포넌트로 전달한다.
     window.postMessage({
       payload: {
-        user_id: '1625805300271x339648481160378400',
-        start: '2020-12-05',
+        user_id: '1651800183717x956761776063033100',
+        start: '2021-12-05',
         end: '2022-04-05',
         metrics_type: 'SALES',
         order_by_col_num: 1,

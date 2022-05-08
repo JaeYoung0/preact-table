@@ -22,6 +22,8 @@ export default function Table() {
   const [page, setPage] = useState(0)
   const [sortLoading, setSortLoading] = useState(false)
 
+  console.log('##mergedRows', mergedRows)
+
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: rows?.[0]?.[0], sort: 'asc' },
   ])
