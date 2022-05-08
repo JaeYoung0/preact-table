@@ -46,7 +46,7 @@ function useBubbleIo() {
   useEffect(() => {
     const handleMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
       const { payload, reset } = e.data
-      console.log('## message event', e)
+      // console.log('## message event', e)
 
       console.log('## reset', reset)
 
@@ -56,7 +56,7 @@ function useBubbleIo() {
       setPayload(payload)
     }
     // FIXME: message event가 여러번 들어온다. -> tableState를 context api로 전달해야할듯
-    window.addEventListener('message', handleMessage, { once: true })
+    window.addEventListener('message', handleMessage)
 
     return () => window.removeEventListener('message', handleMessage)
   }, [])
@@ -64,6 +64,10 @@ function useBubbleIo() {
   useEffect(() => {
     mutate()
   }, [payload])
+
+  useEffect(() => {
+    console.log('## tableState', data)
+  }, [data])
 
   return { tableState: data, isLoading: isValidating, error, mutate }
 }
