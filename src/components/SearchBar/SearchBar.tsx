@@ -7,6 +7,7 @@ import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autoc
 import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
 import useMergedRows from '@/hooks/useMergedRows'
+import SearchIcon from '@/icons/SearchIcon'
 
 type FilterOption = {
   id: number
@@ -72,17 +73,19 @@ function SearchBar() {
       <S.ClearIconWrapper onClick={() => setFilterOptions([])}>
         <ClearIcon color="action" fontSize="small" />
       </S.ClearIconWrapper>
-    ) : null
+    ) : (
+      <SearchIcon />
+    )
   }
 
   const renderInput = (params: AutocompleteRenderInputParams) => {
     const { InputProps } = params
     const { startAdornment, ...rest } = InputProps
     return (
-      <TextField
+      <S.CssTextField
         {...params}
-        label="검색"
         multiline
+        placeholder="원하는 조건을 입력해 필터링하세요."
         InputProps={{
           ...rest,
           startAdornment: renderStartAdornment(),
