@@ -6,16 +6,21 @@ import useBubbleIo from './useBubbleIo'
 
 export type RowType = Record<string, any>
 
+export type MetricsResponse = {
+  report: RowType[]
+  total_cnt: number
+}
+
 function useMetrics() {
   const { tableState } = useBubbleIo()
 
   // tableState 객체를 직렬화하지 않으면 mutate가 제대로 되지 않는다.
   const {
-    data = [],
+    data = { report: [], total_cnt: 0 },
     error,
     mutate,
     isValidating,
-  } = useSWR<RowType[], Error>(tableState ? JSON.stringify(tableState) : null, (tableState) =>
+  } = useSWR<MetricsResponse, Error>(tableState ? JSON.stringify(tableState) : null, (tableState) =>
     fetchMetrics(JSON.parse(tableState))
   )
 
@@ -27,7 +32,13 @@ function useMetrics() {
   const rows: GridRowModel[] = useMemo(() => {
     if (!data || error) return []
 
-    return data?.map((row, idx) => ({ ...row, id: idx }))
+    return data?.report?.map((row, idx) => ({ ...row, id: idx }))
+  }, [data, error])
+
+  const totalPageCount = useMemo(() => {
+    if (!data || error) return 0
+
+    return data.total_cnt
   }, [data, error])
 
   return {
@@ -36,6 +47,7 @@ function useMetrics() {
     error,
     isLoading: isValidating,
     data,
+    totalPageCount,
   }
 }
 
