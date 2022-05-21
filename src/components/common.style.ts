@@ -17,13 +17,4 @@ export const BasicButton = styled.button`
   font-size: 16px;
 
   color: #6713ef;
-
-  &:hover {
-    background: #6713ef;
-    color: #fefefe;
-
-    path {
-      fill: #fefefe;
-    }
-  }
 `

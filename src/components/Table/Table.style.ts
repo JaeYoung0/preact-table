@@ -1,6 +1,8 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { BasicButton } from '../common.style'
 export const Wrapper = styled.div`
+  position: relative;
   width: 100%;
   height: 500px;
   .MuiDataGrid-columnHeaders {
@@ -30,6 +32,45 @@ export const Wrapper = styled.div`
   .MuiDataGrid-cellContent {
     text-overflow: clip;
   }
+
+  .MuiDataGrid-columnHeader--sorted {
+    background: #353c49;
+    border: none;
+  }
+
+  .MuiDataGrid-iconSeparator {
+    transform: scale(0.6, 1.5);
+  }
+
+  .MuiDataGrid-footerContainer {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* .MuiTablePagination-toolbar {
+    visibility: hidden;
+  } */
+
+  /* .MuiTablePagination-toolbar {
+  } */
+
+  /* .MuiTablePagination-displayedRows {
+    display: none;
+  } */
+
+  /* .MuiTablePagination-selectLabel {
+    visibility: hidden;
+  }
+
+  .MuiTablePagination-actions {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .MuiTablePagination-select,
+  .MuiInputBase-root {
+    visibility: hidden;
+  } */
 `
 
 export const SettingsWrapper = styled.div`
@@ -62,7 +103,10 @@ export const RowsOverlay = styled.div`
 
 export const BottomPagingText = styled.p`
   position: absolute;
-  bottom: 0;
+  /* bottom: -35px; */
+  left: 50%;
+  /* bottom: 0px; */
+  transform: translateX(-50%);
 
   font-weight: 600;
   font-size: 12px;
@@ -70,6 +114,81 @@ export const BottomPagingText = styled.p`
 
   letter-spacing: -0.0008em;
   text-align: center;
+  white-space: pre;
 
   color: #353c49;
+
+  margin: 0;
+`
+
+export const BottomArrows = styled.div`
+  position: absolute;
+  left: 50%;
+  /* bottom: -35px; */
+  /* bottom: 0px; */
+  transform: translateX(-50%);
+
+  display: flex;
+  justify-content: center;
+  width: 200px;
+`
+
+const ArrowBase = css`
+  border: none;
+  background: none;
+  cursor: pointer;
+`
+
+export const FirstPageArrow = styled.button`
+  ${ArrowBase}
+  transform: rotate(180deg);
+`
+
+export const PrevArrow = styled.button`
+  ${ArrowBase}
+  transform: rotate(180deg);
+  margin-right: 65px;
+`
+
+export const NextArrowWrapper = styled.button`
+  ${ArrowBase}
+`
+
+export const LastPageArrow = styled.button`
+  ${ArrowBase}
+`
+
+export const PageSizeArea = styled.div`
+  position: absolute;
+  right: 36px;
+
+  span {
+    display: inline-block;
+    white-space: pre;
+    font-weight: 600;
+    font-size: 12px;
+    color: #9198a0;
+  }
+
+  .MuiInputBase-root {
+    padding: 0px 10px;
+    cursor: pointer;
+  }
+
+  .MuiSelect-select {
+    width: 20px;
+    height: 20px;
+    padding: 0 0 0 0 !important;
+  }
+
+  .MuiInputBase-input {
+    color: #505866;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  svg {
+    transform: rotate(90deg);
+    /* padding: 10px 10px 0 0 !important; */
+  }
 `
