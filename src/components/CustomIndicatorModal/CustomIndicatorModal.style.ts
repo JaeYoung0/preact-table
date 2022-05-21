@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { BasicButton } from '../common.style'
+// import { BasicButton } from '../common.style'
 
 export const Backdrop = styled.div`
   position: absolute;
@@ -50,16 +50,29 @@ export const Title = styled.p`
 
 export const ButtonsWrapper = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-end;
 `
 
-export const CancelButton = styled(BasicButton)`
-  justify-content: center;
-  margin-left: 0;
+const ModalBasicButton = styled.button`
+  width: 52px;
+  height: 34px;
+  border: none;
+
+  background: #f2f4f6;
+  border-radius: 4px;
 `
-export const SubmitButton = styled(BasicButton)`
+
+export const CancelButton = styled(ModalBasicButton)`
+  color: #d1d6da;
   justify-content: center;
   margin-left: 0;
+  margin-right: 10px;
+`
+export const SubmitButton = styled(ModalBasicButton)`
+  justify-content: center;
+  margin-left: 0;
+  background-color: #6713ef;
+  color: #fff;
 `
 
 export const Row = styled.div`
@@ -84,10 +97,23 @@ export const Reset = styled.button`
   padding: 5px 10px;
   margin-right: 10px;
 
-  border: 1px solid #cfcfcf;
-  border-radius: 10px;
+  border: none;
+  background: #f2f4f6;
+  border-radius: 4px;
+
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 135%;
+
+  letter-spacing: -0.0008em;
+
+  color: #9198a0;
 
   cursor: pointer;
+
+  svg {
+    margin-right: 5px;
+  }
 `
 
 export const Backspace = styled(Reset)`
@@ -107,8 +133,13 @@ export const CalculatorHeader = styled.div`
     width: 100%;
     height: 30px;
 
-    background: #f5f6f7;
-    border: 1px solid #cfcfcf;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 135%;
+    color: #9198a0;
+
+    background: #f2f4f6;
+    border: 1px solid #d2d6da;
     cursor: pointer;
 
     &:first-of-type {
@@ -135,7 +166,7 @@ export const CalculatorBody = styled.div`
   word-break: break-all;
   height: 100%;
 
-  border: 1px solid #cfcfcf;
+  border: 1px solid #d2d6da;
   border-top: none;
 
   margin-bottom: 20px;
@@ -144,7 +175,7 @@ export const CalculatorBody = styled.div`
 export const FormulaItem = styled.span`
   height: 100%;
   padding: 5px 10px;
-  background: #f5f6f7;
+  background: #f2f4f6;
   border-radius: 5px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -166,7 +197,7 @@ export const OriginalIndicators = styled.div`
     margin-bottom: 5px;
 
     &:hover {
-      background: #f5f6f7;
+      background: #f2f4f6;
       &::before {
         content: '+';
         position: absolute;

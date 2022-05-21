@@ -10,6 +10,8 @@ import {
   updateCustomColCommand,
 } from '@/services/columns'
 import useBubbleIo from '@/hooks/useBubbleIo'
+import RemoveIcon from '@/icons/RemoveIcon'
+import ResetIcon from '@/icons/ResetIcon'
 
 export type IndicatorModalValue = {
   label: string
@@ -177,10 +179,12 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           <S.CaculatorName>수식</S.CaculatorName>
           <S.CalculatorButtonsWrapper>
             <S.Reset type="button" onClick={handleReset}>
-              reset
+              <ResetIcon />
+              리셋
             </S.Reset>
             <S.Backspace type="button" onClick={handleBackspace}>
-              Backspace
+              <RemoveIcon />
+              지우기
             </S.Backspace>
           </S.CalculatorButtonsWrapper>
         </S.Row>
