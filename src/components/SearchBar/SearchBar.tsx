@@ -19,6 +19,7 @@ function SearchBar() {
   const [autocompleteLabels, setAutocompleteLabels] = useState<ColData[]>([])
   const [searchValue, setSearchValue] = useState('')
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
+  console.log('@@filterOptions', filterOptions)
 
   const { visibleCols } = useCols()
 
@@ -85,7 +86,7 @@ function SearchBar() {
       <S.CssTextField
         {...params}
         multiline
-        placeholder="원하는 조건을 입력해 필터링하세요."
+        placeholder={filterOptions.length === 0 ? '원하는 조건을 입력해 필터링하세요.' : ''}
         InputProps={{
           ...rest,
           startAdornment: renderStartAdornment(),
@@ -112,6 +113,7 @@ function SearchBar() {
   const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: ColData) => {
     if (!searchValue)
       return (
+        // FIXME: 조건 입력하고 enter하면 반영안됨
         <S.OptionLi
           {...props}
           onClick={() => {

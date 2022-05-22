@@ -141,6 +141,8 @@ export default function MultiSelect() {
     alert('열 설정이 저장되었습니다.')
 
     mutateCols([...visibleOptions, ...hiddenOptions], false)
+    console.log('@@tableState', tableState)
+
     await updateCols(tableState?.user_id ?? '', command)
 
     // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
@@ -247,6 +249,17 @@ export default function MultiSelect() {
                         <PlusIcon />
                       </span>
                     </S.CustomLabelsWrapper>
+                  )}
+
+                  {option.type === 'ORIGINAL' && (
+                    <span
+                      onClick={() => {
+                        handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
+                        handleVisibileOptions([...visibleOptions, { ...option, status: 'VISIBLE' }])
+                      }}
+                    >
+                      <PlusIcon />
+                    </span>
                   )}
                 </li>
               ))}

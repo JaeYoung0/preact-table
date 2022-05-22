@@ -8,6 +8,19 @@ export const Wrapper = Estyled.div`
 
 export const OptionLi = Estyled.li`
   white-space: pre;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 135%;
+  letter-spacing: -0.0008em;
+  color: #9198A0;
+
+  b{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 135%;
+    color: #D1D6DA;
+  }
+
 `
 
 export const ClearIconWrapper = Estyled.span`
