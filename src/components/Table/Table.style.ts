@@ -1,3 +1,4 @@
+import { customScroll } from '@/app.style'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { BasicButton } from '../common.style'
@@ -52,30 +53,22 @@ export const Wrapper = styled.div`
     justify-content: center;
   }
 
-  /* .MuiTablePagination-toolbar {
-    visibility: hidden;
-  } */
+  .MuiDataGrid-virtualScroller {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
 
-  /* .MuiTablePagination-toolbar {
-  } */
+    ::-webkit-scrollbar-track {
+      background: #f2f4f6;
+      border-radius: 2px;
+    }
 
-  /* .MuiTablePagination-displayedRows {
-    display: none;
-  } */
-
-  /* .MuiTablePagination-selectLabel {
-    visibility: hidden;
+    ::-webkit-scrollbar-thumb {
+      background: #d2d6da;
+      border-radius: 6px;
+    }
   }
-
-  .MuiTablePagination-actions {
-    position: absolute;
-    bottom: 0;
-  }
-
-  .MuiTablePagination-select,
-  .MuiInputBase-root {
-    visibility: hidden;
-  } */
 `
 
 export const SettingsWrapper = styled.div`
@@ -170,7 +163,7 @@ export const PageSizeArea = styled.div`
   span {
     display: inline-block;
     white-space: pre;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 12px;
     color: #9198a0;
   }

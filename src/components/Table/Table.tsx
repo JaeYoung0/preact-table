@@ -243,6 +243,19 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
+        // sx={{
+        //   '&::-webkit-scrollbar': {
+        //     width: '20px',
+        //   },
+
+        //   '&::-webkit-scrollbar-track': {
+        //     backgroundColor: 'orange',
+        //   },
+        //   '&::-webkit-scrollbar-thumb': {
+        //     backgroundColor: 'red',
+        //     borderRadius: 2,
+        //   },
+        // }}
         page={currentPage}
         onPageChange={(newPage) => {
           console.log('@@newPage', newPage)
