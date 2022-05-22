@@ -168,7 +168,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
             id="custom-description"
             name="description"
             value={modalState.description}
-            label="설명-선택사항"
+            label="설명 - 선택사항"
             variant="outlined"
             sx={{ width: '100%' }}
             onChange={handleChange}

@@ -181,12 +181,10 @@ export const PageSizeArea = styled.div`
 
   .MuiInputBase-input {
     color: #505866;
-    font-weight: 600;
     font-size: 12px;
   }
 
   svg {
-    transform: rotate(90deg);
-    /* padding: 10px 10px 0 0 !important; */
+    transform: rotate(90deg) scale(0.8, 0.8);
   }
 `

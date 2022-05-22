@@ -203,6 +203,7 @@ export default function Table() {
           </S.LastPageArrow>
         </S.BottomArrows>
 
+        {/* FIXME: svg 클릭하면 반응이 없다. TextField 말고 Select로 바꿔야할듯?.. */}
         <S.PageSizeArea>
           <span>{`페이지 당  `}</span>
           <TextField

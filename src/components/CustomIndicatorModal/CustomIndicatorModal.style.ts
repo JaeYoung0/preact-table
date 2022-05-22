@@ -42,9 +42,13 @@ export const ModalWrapper = styled.div`
 `
 
 export const Title = styled.p`
-  font-size: 18px;
-  font-weight: bold;
   margin: 0 0 20px;
+
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 135%;
+
+  color: #353c49;
 `
 
 export const ButtonsWrapper = styled.div`
