@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-// import { BasicButton } from '../common.style'
 
 export const Backdrop = styled.div`
   position: absolute;
@@ -53,7 +52,7 @@ export const ButtonsWrapper = styled.div`
   justify-content: flex-end;
 `
 
-const ModalBasicButton = styled.button`
+export const ModalBasicButton = styled.button`
   width: 52px;
   height: 34px;
   border: none;
@@ -77,7 +76,6 @@ export const SubmitButton = styled(ModalBasicButton)`
 
 export const Row = styled.div`
   display: flex;
-  /* justify-content: flex-start; */
   align-items: center;
 
   margin-bottom: 20px;
@@ -158,9 +156,6 @@ export const CalculatorBody = styled.div`
 
   border-radius: 0 0 5px 5px;
   min-height: 80px;
-  /* max-height: 100px; */
-  /* width: 100%; */
-  /* overflow: scroll; */
   padding: 20px;
 
   word-break: break-all;

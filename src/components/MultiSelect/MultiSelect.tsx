@@ -1,18 +1,17 @@
 import ConfigIcon from '@/icons/Config'
 import * as S from './MultiSelect.style'
 import { useState } from 'preact/hooks'
-import RoundedPlus from '@/icons/RoundedPlus'
 import CustomIndicatorModal from '../CustomIndicatorModal'
 import useOptions from '@/hooks/useOptions'
-import DeleteIcon from '@mui/icons-material/Delete'
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import EditIcon from '@mui/icons-material/Edit'
 import useCols, { CustomColType } from '@/hooks/useCols'
 import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
 import useMetrics from '@/hooks/useMetrics'
 import useBubbleIo from '@/hooks/useBubbleIo'
 import useMergedRows from '@/hooks/useMergedRows'
+import CloseIcon from '@/icons/CloseIcon'
+import HoverDotsIcon from '@/icons/HoverDotsIcon'
+import PlusIcon from '@/icons/PlusIcon'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -174,68 +173,87 @@ export default function MultiSelect() {
       </S.ConfigButton>
       {opened && <S.TransparentBackground onClick={() => closeSettings()} />}
       <S.ConfigContainer opened={opened}>
-        <S.Title>열설정</S.Title>
-        <S.SubTitle>표시</S.SubTitle>
-        <S.VisibleOptionsWrapper>
-          {visibleOptions.map((option, idx) => (
-            <li
-              draggable
-              key={idx}
-              onDragStart={() => handleDragStart(idx)}
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDragDrop(e, idx)}
-            >
-              {option.label}
+        <S.ConfigHeader>
+          <S.Title>열 설정</S.Title>
+        </S.ConfigHeader>
 
-              {
-                <span
-                  onClick={() => {
-                    handleVisibileOptions(visibleOptions.filter((item) => item.id !== option.id))
-                    handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
-                  }}
+        <S.ConfigBody>
+          <S.BodyLeft>
+            <S.SubTitle>표시</S.SubTitle>
+            <S.VisibleOptionsWrapper>
+              {visibleOptions.map((option, idx) => (
+                <li
+                  draggable
+                  key={idx}
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragEnter={handleDragEnter}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDragDrop(e, idx)}
                 >
-                  <VisibilityOffIcon />
-                </span>
-              }
-            </li>
-          ))}
-        </S.VisibleOptionsWrapper>
+                  {option.label}
 
-        <S.SubTitle>
-          지표
-          <S.OpenModalButton onClick={() => openModal(initialValues)}>
-            <RoundedPlus />
-          </S.OpenModalButton>
-        </S.SubTitle>
-        <S.HiddenOptionsWrapper>
-          {hiddenOptions.map((option) => (
-            <li
-              onClick={() => {
-                handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
-                handleVisibileOptions([...visibleOptions, { ...option, status: 'VISIBLE' }])
-              }}
-            >
-              {option.label}
-              {option.type === 'CUSTOM' && (
-                <div>
-                  <span onClick={(e) => handleCustomListClick(e, option)}>
-                    <EditIcon />
-                  </span>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleCustomColDelete(option.id)
-                    }}
-                  >
-                    <DeleteIcon />
-                  </span>
-                </div>
-              )}
-            </li>
-          ))}
-        </S.HiddenOptionsWrapper>
+                  {
+                    <span
+                      onClick={() => {
+                        handleVisibileOptions(
+                          visibleOptions.filter((item) => item.id !== option.id)
+                        )
+                        handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
+                      }}
+                    >
+                      <HoverDotsIcon />
+                      <CloseIcon />
+                      {/* <VisibilityOffIcon /> */}
+                    </span>
+                  }
+                </li>
+              ))}
+            </S.VisibleOptionsWrapper>
+          </S.BodyLeft>
+
+          <S.BodyRight>
+            <S.SubTitle>
+              지표
+              <S.OpenModalButton onClick={() => openModal(initialValues)}>
+                + 커스텀 지표
+              </S.OpenModalButton>
+            </S.SubTitle>
+            <S.HiddenOptionsWrapper>
+              {hiddenOptions.map((option) => (
+                <li>
+                  {option.label}
+                  {option.type === 'CUSTOM' && (
+                    <S.CustomLabelsWrapper>
+                      <span>커스텀</span>
+                      <span onClick={(e) => handleCustomListClick(e, option)}>수정</span>
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCustomColDelete(option.id)
+                        }}
+                      >
+                        삭제
+                      </span>
+                      <span
+                        onClick={() => {
+                          handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
+                          handleVisibileOptions([
+                            ...visibleOptions,
+                            { ...option, status: 'VISIBLE' },
+                          ])
+                        }}
+                      >
+                        <PlusIcon />
+                      </span>
+                    </S.CustomLabelsWrapper>
+                  )}
+                </li>
+              ))}
+            </S.HiddenOptionsWrapper>
+          </S.BodyRight>
+        </S.ConfigBody>
+
         <S.ButtonsWrapper>
           <S.CancelButton onClick={() => setOpened(false)}>취소</S.CancelButton>
           <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
