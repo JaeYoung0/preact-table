@@ -13,6 +13,11 @@ export const Wrapper = styled.div`
     display: flex;
   }
 
+  /* remove cell border in Data Grid component of MUI */
+  .MuiDataGrid-root .MuiDataGrid-cell:focus-within {
+    outline: none !important;
+  }
+
   .MuiDataGrid-columnHeader:focus-within {
     outline: none;
   }
