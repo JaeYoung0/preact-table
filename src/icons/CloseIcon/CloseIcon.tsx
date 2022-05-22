@@ -1,9 +1,10 @@
 interface Props {
   width?: number
   height?: number
+  color?: string
 }
 
-function CloseIcon({ width = 8, height = 8 }: Props) {
+function CloseIcon({ width = 8, height = 8, color = '#D1D6DA' }: Props) {
   return (
     <svg
       width={width}
@@ -14,7 +15,7 @@ function CloseIcon({ width = 8, height = 8 }: Props) {
     >
       <path
         d="M6.79465 0.22937L3.96598 3.05737L1.13798 0.22937L0.195312 1.17204L3.02331 4.00004L0.195312 6.82804L1.13798 7.7707L3.96598 4.9427L6.79465 7.7707L7.73731 6.82804L4.90931 4.00004L7.73731 1.17204L6.79465 0.22937Z"
-        fill="#D1D6DA"
+        fill={color}
       />
     </svg>
   )

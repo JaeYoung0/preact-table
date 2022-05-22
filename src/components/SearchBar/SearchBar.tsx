@@ -1,6 +1,5 @@
 import React from 'react'
 import useCols, { ColData } from '@/hooks/useCols'
-import TextField from '@mui/material/TextField'
 import { useEffect, useState } from 'preact/hooks'
 import * as S from './SearchBar.style'
 import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete'
@@ -8,6 +7,7 @@ import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
 import useMergedRows from '@/hooks/useMergedRows'
 import SearchIcon from '@/icons/SearchIcon'
+import CloseIcon from '@/icons/CloseIcon'
 
 type FilterOption = {
   id: number
@@ -19,7 +19,6 @@ function SearchBar() {
   const [autocompleteLabels, setAutocompleteLabels] = useState<ColData[]>([])
   const [searchValue, setSearchValue] = useState('')
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
-  console.log('@@filterOptions', filterOptions)
 
   const { visibleCols } = useCols()
 
@@ -62,8 +61,19 @@ function SearchBar() {
   const renderStartAdornment = () => {
     return filterOptions.map((item, idx) => (
       <Chip
-        sx={{ mr: 0.5 }}
-        label={`${item.label} 포함 ${item.value}`}
+        sx={{ mr: 0.5, background: '#F2F4F6', borderRadius: '15px', pr: 1, height: '26px' }}
+        label={
+          <>
+            <span
+              style={{
+                fontSize: '12px',
+                color: '#9198a0',
+              }}
+            >{`${item.label} 포함 `}</span>
+            <span style={{ color: '#353C49', fontSize: '12px' }}>{item.value}</span>
+          </>
+        }
+        deleteIcon={<CloseIcon width={8} height={8} color="#9198A0" />}
         onDelete={(e) => handleDeleteChip(idx)}
       />
     ))
@@ -134,6 +144,7 @@ function SearchBar() {
   return (
     <S.Wrapper>
       <Autocomplete
+        sx={{ flex: 1, mr: 10 }}
         id="table-autocomplete"
         multiple
         options={autocompleteLabels}
@@ -147,7 +158,6 @@ function SearchBar() {
         renderOption={(props, option, state) => {
           return renderOptions(props, option)
         }}
-        sx={{ flex: 1, mr: 10 }}
       />
     </S.Wrapper>
   )

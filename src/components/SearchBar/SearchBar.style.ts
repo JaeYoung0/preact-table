@@ -4,6 +4,10 @@ import { styled } from '@mui/material/styles'
 
 export const Wrapper = Estyled.div`
   flex: 1;
+
+  .MuiOutlinedInput-root{
+    padding:0 15px 0 10px !important;
+  }
 `
 
 export const OptionLi = Estyled.li`
@@ -24,6 +28,8 @@ export const OptionLi = Estyled.li`
 `
 
 export const ClearIconWrapper = Estyled.span`
+  display: flex;
+  align-items: center;
   cursor: pointer;
 `
 
