@@ -20,7 +20,7 @@ export const Wrapper = styled.div`
   }
 
   .MuiDataGrid-columnHeader:focus-within {
-    outline: none;
+    outline: none !important;
   }
 
   .MuiDataGrid-columnHeaderTitleContainer {
