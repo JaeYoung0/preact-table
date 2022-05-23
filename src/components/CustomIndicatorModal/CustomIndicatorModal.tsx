@@ -12,6 +12,8 @@ import {
 import useBubbleIo from '@/hooks/useBubbleIo'
 import RemoveIcon from '@/icons/RemoveIcon'
 import ResetIcon from '@/icons/ResetIcon'
+import useModals from '@/hooks/useModals'
+import { uniqueID } from '@/uniqueID'
 
 export type IndicatorModalValue = {
   label: string
@@ -46,6 +48,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
 
   const { tableState } = useBubbleIo()
+  const { openModal } = useModals()
 
   useEffect(() => {
     setModalState(initialModalState)
@@ -112,17 +115,26 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
     close()
   }
 
-  const handleCalculatorClick: React.MouseEventHandler = (e) => {
+  const handleCalculatorClick: React.MouseEventHandler = async (e) => {
     const value = (e.target as HTMLElement).dataset.value as string
     if (value === '숫자') {
-      const result = prompt('숫자를 입력해주세요.')
-      if (!result) return
-      else if (isNaN(parseInt(result))) return alert('숫자만 입력 가능합니다.')
-
-      setModalState({
-        ...modalState,
-        formula: [...modalState.formula, result],
+      const result = await openModal({
+        type: 'Prompt',
+        props: {
+          id: uniqueID(),
+          message: '숫자를 입력해주세요.',
+        },
       })
+
+      console.log('@@promptValue result', result)
+
+      // const result = prompt('숫자를 입력해주세요.')
+      // if (!result) return
+      // else if (isNaN(parseInt(result))) return alert('숫자만 입력 가능합니다.')
+      // setModalState({
+      //   ...modalState,
+      //   formula: [...modalState.formula, result],
+      // })
     } else {
       setModalState({
         ...modalState,

@@ -18,7 +18,7 @@ export const Container = styled.div<{ visible: boolean }>`
   left: 0;
   width: 100%;
   min-height: 100vh;
-  z-index: 990;
+  z-index: 800;
   visibility: hidden;
 
   ${({ visible }) =>

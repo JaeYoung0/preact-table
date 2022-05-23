@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { OptionsProvider } from '@/hooks/useOptions'
 import { MergedRowsProvider } from '@/hooks/useMergedRows'
 import { SWRConfig } from 'swr'
+import { ModalProvider } from './hooks/useModals'
 
 const theme = createTheme({
   palette: {
@@ -32,7 +33,9 @@ export function App() {
       <MergedRowsProvider>
         <OptionsProvider>
           <SWRConfig value={swrConfig}>
-            <Table />
+            <ModalProvider>
+              <Table />
+            </ModalProvider>
           </SWRConfig>
         </OptionsProvider>
       </MergedRowsProvider>

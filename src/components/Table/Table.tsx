@@ -23,9 +23,23 @@ import ArrowForwardIcon from '@/icons/ArrowForwardIcon'
 import Pagination from '@mui/material/Pagination'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
+import useModals from '@/hooks/useModals'
+import { uniqueID } from '@/uniqueID'
 
 export default function Table() {
   const { tableState } = useBubbleIo()
+
+  const { openModal, modals } = useModals()
+
+  useEffect(() => {
+    openModal({
+      type: 'Alert',
+      props: {
+        id: uniqueID(),
+        message: 'alert message',
+      },
+    })
+  }, [])
 
   const { rows, error, isLoading: isRowFetching, totalPageCount } = useMetrics()
 
