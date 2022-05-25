@@ -19,21 +19,7 @@ import useModals from '@/hooks/useModals'
 export default function Table() {
   const { tableState } = useBubbleIo()
 
-  // const { openModal } = useModals()
-  // useEffect(() => {
-  //   const wow = async () => {
-  //     const isConfirmed = await openModal({
-  //       type: 'Confirm',
-  //       props: {
-  //         message: '테스트 컨펌',
-  //       },
-  //     })
-
-  //     console.log('@@isConfirmed', isConfirmed)
-  //   }
-
-  //   void wow()
-  // }, [])
+  const { openModal } = useModals()
 
   const { rows, error, isLoading: isRowFetching, totalPageCount } = useMetrics()
 
@@ -50,6 +36,20 @@ export default function Table() {
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
     setSortModel(newModel)
+  }
+
+  const handleExcelDownloadButtonClick = async () => {
+    const name = await openModal({
+      type: 'Prompt',
+      props: {
+        inputType: 'text',
+        message: '파일명을 입력해주세요',
+      },
+    })
+
+    console.log('@@name', name)
+
+    extractXLSX(name || 'untitled', filteredRows)
   }
 
   const cols = useMemo<GridColumns>(
@@ -243,12 +243,7 @@ export default function Table() {
       <S.SettingsWrapper>
         <SearchBar />
         <div style={{ display: 'flex' }}>
-          <S.ExcelDownloadButton
-            onClick={() => {
-              const name = prompt('파일명을 입력해주세요') ?? 'table'
-              extractXLSX(name, filteredRows)
-            }}
-          >
+          <S.ExcelDownloadButton onClick={handleExcelDownloadButtonClick}>
             excel
             <Download />
           </S.ExcelDownloadButton>
