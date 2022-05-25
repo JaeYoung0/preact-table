@@ -1,12 +1,4 @@
-import {
-  DataGrid,
-  GridColumns,
-  gridPageCountSelector,
-  gridPageSelector,
-  GridSortModel,
-  useGridApiContext,
-  useGridSelector,
-} from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GridSortModel, useGridApiContext } from '@mui/x-data-grid'
 import MultiSelect from '@/components/MultiSelect'
 import * as S from './Table.style'
 import Download from '@/icons/Download'
@@ -20,7 +12,6 @@ import renderCellExpand from '@/helper/renderCellExpand'
 import useMergedRows from '@/hooks/useMergedRows'
 import useBubbleIo from '@/hooks/useBubbleIo'
 import ArrowForwardIcon from '@/icons/ArrowForwardIcon'
-import Pagination from '@mui/material/Pagination'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
@@ -29,17 +20,17 @@ import { uniqueID } from '@/uniqueID'
 export default function Table() {
   const { tableState } = useBubbleIo()
 
-  const { openModal, modals } = useModals()
+  // const { openModal, modals } = useModals()
 
-  useEffect(() => {
-    openModal({
-      type: 'Alert',
-      props: {
-        id: uniqueID(),
-        message: 'alert message',
-      },
-    })
-  }, [])
+  // useEffect(() => {
+  //   openModal({
+  //     type: 'Alert',
+  //     props: {
+  //       id: uniqueID(),
+  //       message: 'alert message',
+  //     },
+  //   })
+  // }, [])
 
   const { rows, error, isLoading: isRowFetching, totalPageCount } = useMetrics()
 
@@ -249,7 +240,12 @@ export default function Table() {
       <S.SettingsWrapper>
         <SearchBar />
         <div style={{ display: 'flex' }}>
-          <S.ExcelDownloadButton onClick={() => extractXLSX('test', filteredRows)}>
+          <S.ExcelDownloadButton
+            onClick={() => {
+              const name = prompt('파일명을 입력해주세요') ?? 'table'
+              extractXLSX(name, filteredRows)
+            }}
+          >
             excel
             <Download />
           </S.ExcelDownloadButton>
@@ -258,23 +254,9 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
-        // sx={{
-        //   '&::-webkit-scrollbar': {
-        //     width: '20px',
-        //   },
-
-        //   '&::-webkit-scrollbar-track': {
-        //     backgroundColor: 'orange',
-        //   },
-        //   '&::-webkit-scrollbar-thumb': {
-        //     backgroundColor: 'red',
-        //     borderRadius: 2,
-        //   },
-        // }}
         page={currentPage}
         onPageChange={(newPage) => {
           console.log('@@newPage', newPage)
-
           setCurrentPage(newPage)
         }}
         pageSize={pageSize}
@@ -314,7 +296,6 @@ export default function Table() {
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu
-        // hideFooterPagination
         paginationMode="server"
       />
     </S.Wrapper>
