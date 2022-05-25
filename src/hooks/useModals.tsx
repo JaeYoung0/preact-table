@@ -3,12 +3,14 @@ import PromptModal from '@/components/Modals/PromptModal'
 import { Overlay } from '@/components/Modals/Overlay'
 
 import { createContext } from 'preact'
-import { useContext, useState } from 'preact/hooks'
+import { useCallback, useContext, useEffect, useState } from 'preact/hooks'
 
 type ModalContextType = {
   modals: any[]
-  openModal: (modal: ModalType) => void
+  openModal: (modal: ModalType) => void | Promise<any>
   closeModal: (id: number) => void
+  handlePromptValue: (value: any) => void
+  promptValue: any
 }
 
 type AlertModal = {
@@ -21,23 +23,25 @@ type ConfirmModal = {
   props: { id: number; message: string; onClose: () => any; value: number }
 }
 
-export type PromptModal = {
+export type PromptModalType = {
   type: 'Prompt'
   props: {
     id: number
     message: string
-    onClose?: (id: number) => void // FIXME: open할 때는 없어도 되는 props 구분하기
+    onClose?: () => void // FIXME: open할 때는 없어도 되는 props 구분하기
     value?: number
-    handleInputChange?: (newValue: string) => void
+    handlePromptValue?: (newValue: string) => void
   }
 }
 
-export type ModalType = AlertModal | ConfirmModal | PromptModal
+export type ModalType = AlertModal | ConfirmModal | PromptModalType
 
 const dafaultContext = {
   modals: [],
-  openModal: () => 0,
+  openModal: () => new Promise((resolve) => resolve(0)),
   closeModal: () => 0,
+  handlePromptValue: () => 0,
+  promptValue: '',
 }
 
 const ModalContext = createContext<ModalContextType>(dafaultContext)
@@ -45,13 +49,16 @@ const ModalContext = createContext<ModalContextType>(dafaultContext)
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [modals, setModals] = useState<ModalType[]>([])
 
-  const [promptValue, setPromptValue] = useState<string>('')
-  console.log('@@promptValue', promptValue)
+  const [promptValue, setPromptValue] = useState<any>('')
+
+  const handlePromptValue = (newValue: any) => setPromptValue(newValue)
 
   const openModal = (modal: ModalType) => {
+    console.log('@@modal', modal)
+
     if (modal.type !== 'Prompt') return setModals([...modals, modal])
 
-    // FIXME: Promise 기반 Prompt
+    // PromptModal은 Promise 기반으로 값을 리턴한다.
     return new Promise((resolve) => {
       setModals([
         ...modals,
@@ -59,13 +66,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           type: 'Prompt',
           props: {
             ...modal.props,
-            // onCl
-            handleInputChange: (newValue: string) => {
-              setPromptValue(newValue)
-            },
+            // handlePromptValue,
             onClose: () => {
+              resolve(true)
+
+              // FIXME - 클로저에 갇혀버린다.
+              // resolve(promptValue)
+
               closeModal(modal.props.id)
-              resolve(promptValue)
               // setPromptValue('')
             },
           },
@@ -73,6 +81,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       ])
     })
   }
+
   const closeModal = (id: number) => setModals([...modals.filter((m) => m.props.id !== id)])
 
   const renderModals = (modals: ModalType[]) =>
@@ -87,17 +96,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             />
           )
         case 'Prompt':
-          return (
-            <PromptModal
-              {...modal.props}
-              id={modal.props.id}
-              // onClose={() => {
-              //   closeModal(modal.props.id)
-
-              // // return new Promise((resolve) => resolve(1))
-              // }}
-            />
-          )
+          return <PromptModal {...modal.props} id={modal.props.id} />
 
         default:
           return null
@@ -110,6 +109,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         modals,
         openModal,
         closeModal,
+        handlePromptValue,
+        promptValue,
       }}
     >
       <div id="modal-root">

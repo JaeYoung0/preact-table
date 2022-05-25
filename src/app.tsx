@@ -4,6 +4,7 @@ import { OptionsProvider } from '@/hooks/useOptions'
 import { MergedRowsProvider } from '@/hooks/useMergedRows'
 import { SWRConfig } from 'swr'
 import { ModalProvider } from './hooks/useModals'
+import PromptContextProvider from './contexts/prompt'
 
 const theme = createTheme({
   palette: {
@@ -33,9 +34,11 @@ export function App() {
       <MergedRowsProvider>
         <OptionsProvider>
           <SWRConfig value={swrConfig}>
-            <ModalProvider>
-              <Table />
-            </ModalProvider>
+            <PromptContextProvider>
+              <ModalProvider>
+                <Table />
+              </ModalProvider>
+            </PromptContextProvider>
           </SWRConfig>
         </OptionsProvider>
       </MergedRowsProvider>

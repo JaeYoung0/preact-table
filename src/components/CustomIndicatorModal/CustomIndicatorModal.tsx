@@ -48,7 +48,8 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
 
   const { tableState } = useBubbleIo()
-  const { openModal } = useModals()
+  const { openModal, promptValue } = useModals()
+  console.log('@@promptValue', promptValue)
 
   useEffect(() => {
     setModalState(initialModalState)
@@ -125,16 +126,27 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           message: '숫자를 입력해주세요.',
         },
       })
-
-      console.log('@@promptValue result', result)
+      if (result) {
+        alert(promptValue)
+      }
+      // console.log('@@promptResult', result, typeof result)
 
       // const result = prompt('숫자를 입력해주세요.')
-      // if (!result) return
+      if (!result) return
       // else if (isNaN(parseInt(result))) return alert('숫자만 입력 가능합니다.')
-      // setModalState({
-      //   ...modalState,
-      //   formula: [...modalState.formula, result],
-      // })
+      // else if (typeof result !== 'number')
+      //   return openModal({
+      //     type: 'Alert',
+      //     props: {
+      //       id: uniqueID(),
+      //       message: '숫자만 입력 가능합니다.',
+      //     },
+      //   })
+
+      setModalState({
+        ...modalState,
+        formula: [...modalState.formula, String(result)],
+      })
     } else {
       setModalState({
         ...modalState,
