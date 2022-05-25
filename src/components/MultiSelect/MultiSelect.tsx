@@ -12,6 +12,8 @@ import useMergedRows from '@/hooks/useMergedRows'
 import CloseIcon from '@/icons/CloseIcon'
 import HoverDotsIcon from '@/icons/HoverDotsIcon'
 import PlusIcon from '@/icons/PlusIcon'
+import useModals from '@/hooks/useModals'
+import { uniqueID } from '@/uniqueID'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -41,6 +43,9 @@ export default function MultiSelect() {
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
   const { tableState } = useBubbleIo()
+  console.log('@@tableState', tableState)
+
+  const { openModal: openCustomModal } = useModals()
 
   const { mutate: mutateCols } = useCols()
   const { mutate: mutateRows } = useMetrics()
@@ -132,16 +137,28 @@ export default function MultiSelect() {
       }).length === 0
 
     if (isClearGroupByTarget) {
-      return alert('정렬 기준이 되는 열을 선택해주세요.')
+      return openCustomModal({
+        type: 'Alert',
+        props: {
+          id: uniqueID(),
+          message: '정렬 기준이 되는 열을 선택해주세요.',
+        },
+      })
     }
 
     const command: updateColsCommand = [...visibleOptionsPayload, ...hiddenOptionsPayload]
 
     closeSettings()
-    alert('열 설정이 저장되었습니다.')
+
+    openCustomModal({
+      type: 'Alert',
+      props: {
+        id: uniqueID(),
+        message: '열 설정이 저장되었습니다.',
+      },
+    })
 
     mutateCols([...visibleOptions, ...hiddenOptions], false)
-    console.log('@@tableState', tableState)
 
     await updateCols(tableState?.user_id ?? '', command)
 
@@ -159,11 +176,26 @@ export default function MultiSelect() {
   }
 
   const handleCustomColDelete = async (id: number) => {
-    const isConfirmed = confirm('삭제하시겠습니까?')
+    // const isConfirmed = confirm('삭제하시겠습니까?')
+
+    const isConfirmed = await openCustomModal({
+      type: 'Confirm',
+      props: {
+        message: '삭제하시겠습니까?',
+      },
+    })
+
     if (isConfirmed) {
       await deleteCustomCol(tableState?.user_id ?? '', { id })
       await mutateCols()
-      alert('삭제를 완료했습니다.')
+
+      openCustomModal({
+        type: 'Alert',
+        props: {
+          id: uniqueID(),
+          message: '삭제를 완료했습니다.',
+        },
+      })
     }
   }
 

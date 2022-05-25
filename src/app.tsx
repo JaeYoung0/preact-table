@@ -34,11 +34,9 @@ export function App() {
       <MergedRowsProvider>
         <OptionsProvider>
           <SWRConfig value={swrConfig}>
-            <PromptContextProvider>
-              <ModalProvider>
-                <Table />
-              </ModalProvider>
-            </PromptContextProvider>
+            <ModalProvider>
+              <Table />
+            </ModalProvider>
           </SWRConfig>
         </OptionsProvider>
       </MergedRowsProvider>

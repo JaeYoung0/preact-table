@@ -93,7 +93,13 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
       const res = await updateCustomCol(tableState?.user_id ?? '', command)
       if (res) {
-        alert('지표를 수정했습니다.')
+        openModal({
+          type: 'Alert',
+          props: {
+            id: uniqueID(),
+            message: '지표를 수정했습니다.',
+          },
+        })
       }
     } else {
       const command: createCustomColCommand = {
@@ -108,7 +114,13 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
       const res = await createCustomCol(tableState?.user_id ?? '', command)
       if (res) {
-        alert('지표를 생성했습니다.')
+        openModal({
+          type: 'Alert',
+          props: {
+            id: uniqueID(),
+            message: '지표를 생성했습니다.',
+          },
+        })
       }
     }
 
@@ -124,24 +136,11 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         props: {
           id: uniqueID(),
           message: '숫자를 입력해주세요.',
+          inputType: 'number',
         },
       })
-      if (result) {
-        alert(promptValue)
-      }
-      // console.log('@@promptResult', result, typeof result)
 
-      // const result = prompt('숫자를 입력해주세요.')
       if (!result) return
-      // else if (isNaN(parseInt(result))) return alert('숫자만 입력 가능합니다.')
-      // else if (typeof result !== 'number')
-      //   return openModal({
-      //     type: 'Alert',
-      //     props: {
-      //       id: uniqueID(),
-      //       message: '숫자만 입력 가능합니다.',
-      //     },
-      //   })
 
       setModalState({
         ...modalState,

@@ -15,21 +15,24 @@ import ArrowForwardIcon from '@/icons/ArrowForwardIcon'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
-import { uniqueID } from '@/uniqueID'
 
 export default function Table() {
   const { tableState } = useBubbleIo()
 
-  // const { openModal, modals } = useModals()
-
+  // const { openModal } = useModals()
   // useEffect(() => {
-  //   openModal({
-  //     type: 'Alert',
-  //     props: {
-  //       id: uniqueID(),
-  //       message: 'alert message',
-  //     },
-  //   })
+  //   const wow = async () => {
+  //     const isConfirmed = await openModal({
+  //       type: 'Confirm',
+  //       props: {
+  //         message: '테스트 컨펌',
+  //       },
+  //     })
+
+  //     console.log('@@isConfirmed', isConfirmed)
+  //   }
+
+  //   void wow()
   // }, [])
 
   const { rows, error, isLoading: isRowFetching, totalPageCount } = useMetrics()

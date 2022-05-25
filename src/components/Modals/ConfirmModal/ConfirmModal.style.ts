@@ -16,49 +16,43 @@ export const Container = styled.div`
   width: 348px;
   height: 154px;
 
-  padding: 42px 0 28px;
+  padding: 42px 20px 28px;
 
   background: #ffffff;
   border-radius: 10px;
 `
-export const Body = styled.div``
 
 export const Message = styled.p`
   font-weight: 600;
   font-size: 16px;
   line-height: 135%;
-  margin-bottom: 32px;
 
   color: #505866;
 `
 
-export const Input = styled.input`
-  width: 180px;
-  height: 31px;
+export const ButtonsWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`
+export const ModalBasicButton = styled.button`
+  width: 52px;
+  height: 34px;
+  border: none;
 
   background: #f2f4f6;
-
-  border: 1px solid #d1d6da;
-  border-radius: 15.5px;
-  margin-right: 8px;
-  /* padding: 0 10px; */
-  text-align: center;
-
-  &:focus {
-    border: none;
-    outline: 1px solid #6713ef;
-  }
+  border-radius: 4px;
 `
 
-export const Button = styled.button`
-  width: 57px;
-  height: 31px;
-
-  background: #6713ef;
-  border: 1px solid #6713ef;
-  border-radius: 18px;
-
-  cursor: pointer;
-
+export const CancelButton = styled(ModalBasicButton)`
+  color: #d1d6da;
+  justify-content: center;
+  margin-left: 0;
+  margin-right: 10px;
+`
+export const OkButton = styled(ModalBasicButton)`
+  justify-content: center;
+  margin-left: 0;
+  background-color: #6713ef;
   color: #fff;
 `

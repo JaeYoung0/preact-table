@@ -1,9 +1,10 @@
 import AlertModal from '@/components/Modals/AlertModal'
 import PromptModal from '@/components/Modals/PromptModal'
 import { Overlay } from '@/components/Modals/Overlay'
-
 import { createContext } from 'preact'
-import { useCallback, useContext, useEffect, useState } from 'preact/hooks'
+import { useContext, useState } from 'preact/hooks'
+import { uniqueID } from '@/uniqueID'
+import ConfirmModal from '@/components/Modals/ConfirmModal/ConfirmModal'
 
 type ModalContextType = {
   modals: any[]
@@ -13,14 +14,9 @@ type ModalContextType = {
   promptValue: any
 }
 
-type AlertModal = {
+type AlertModalType = {
   type: 'Alert'
   props: { id: number; message: string }
-}
-
-type ConfirmModal = {
-  type: 'Confirm'
-  props: { id: number; message: string; onClose: () => any; value: number }
 }
 
 export type PromptModalType = {
@@ -31,10 +27,23 @@ export type PromptModalType = {
     onClose?: () => void // FIXME: open할 때는 없어도 되는 props 구분하기
     value?: number
     handlePromptValue?: (newValue: string) => void
+    // resolve?:()=>void
+    resolve?: (value: unknown) => void
+    inputType?: 'text' | 'number'
   }
 }
 
-export type ModalType = AlertModal | ConfirmModal | PromptModalType
+export type ConfrimModalType = {
+  type: 'Confirm'
+  props: {
+    message: string
+    id?: number // optional은 모두 openModal에서 받을 필요없는 props임
+    onClose?: () => void
+    onOk?: () => void
+  }
+}
+
+export type ModalType = AlertModalType | ConfrimModalType | PromptModalType
 
 const dafaultContext = {
   modals: [],
@@ -56,8 +65,36 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const openModal = (modal: ModalType) => {
     console.log('@@modal', modal)
 
-    if (modal.type !== 'Prompt') return setModals([...modals, modal])
+    if (modal.type === 'Alert') return setModals([...modals, modal])
 
+    if (modal.type === 'Confirm')
+      return new Promise((resolve) => {
+        const modalId = uniqueID()
+
+        const { message } = modal.props
+        setModals([
+          ...modals,
+          {
+            type: 'Confirm',
+            props: {
+              id: modalId,
+              message,
+              onClose: () => {
+                resolve(false)
+                closeModal(modalId)
+              },
+              onOk: () => {
+                resolve(true)
+                closeModal(modalId)
+              },
+            },
+          },
+        ])
+      })
+
+    // 1. 전역에서 setModal
+    // 2. Prompt 객체가 들어가고 컴포넌트 렌더링
+    // 3.
     // PromptModal은 Promise 기반으로 값을 리턴한다.
     return new Promise((resolve) => {
       setModals([
@@ -67,14 +104,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           props: {
             ...modal.props,
             // handlePromptValue,
+            resolve,
             onClose: () => {
-              resolve(true)
-
-              // FIXME - 클로저에 갇혀버린다.
-              // resolve(promptValue)
-
               closeModal(modal.props.id)
-              // setPromptValue('')
             },
           },
         },
@@ -97,6 +129,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           )
         case 'Prompt':
           return <PromptModal {...modal.props} id={modal.props.id} />
+
+        case 'Confirm':
+          return <ConfirmModal {...modal.props} />
 
         default:
           return null

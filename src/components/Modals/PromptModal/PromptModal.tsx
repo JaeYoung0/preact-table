@@ -3,13 +3,25 @@ import * as S from './PromptModal.style'
 
 type Props = PromptModalType['props']
 
-function PromptModal({ message, onClose }: Props) {
-  const { handlePromptValue } = useModals()
+function PromptModal({ message, onClose, resolve, inputType }: Props) {
+  const { handlePromptValue, promptValue } = useModals()
   return (
     <S.Container>
       <S.Message>{message}</S.Message>
-      <S.Input type="number" onChange={({ target: { value } }) => handlePromptValue?.(value)} />
-      <S.Button onClick={() => onClose?.()}>확인</S.Button>
+      <S.Body>
+        <S.Input
+          type={inputType}
+          onChange={({ target: { value } }) => handlePromptValue?.(value)}
+        />
+        <S.Button
+          onClick={() => {
+            onClose?.()
+            resolve?.(promptValue)
+          }}
+        >
+          확인
+        </S.Button>
+      </S.Body>
     </S.Container>
   )
 }
