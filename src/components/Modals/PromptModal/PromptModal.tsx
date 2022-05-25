@@ -17,6 +17,7 @@ function PromptModal({ message, onClose, resolve, inputType }: Props) {
           onClick={() => {
             onClose?.()
             resolve?.(promptValue)
+            handlePromptValue('')
           }}
         >
           확인

@@ -14,20 +14,23 @@ type ModalContextType = {
   promptValue: any
 }
 
-type AlertModalType = {
+export type AlertModalType = {
   type: 'Alert'
-  props: { id: number; message: string }
+  props: {
+    id?: number // FIXME: open할 때는 없어도 되는 props 구분하기
+    message: string
+    onClose?: () => void
+  }
 }
 
 export type PromptModalType = {
   type: 'Prompt'
   props: {
-    id: number
+    id?: number
     message: string
-    onClose?: () => void // FIXME: open할 때는 없어도 되는 props 구분하기
+    onClose?: () => void
     value?: number
     handlePromptValue?: (newValue: string) => void
-    // resolve?:()=>void
     resolve?: (value: unknown) => void
     inputType?: 'text' | 'number'
   }
@@ -63,15 +66,27 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const handlePromptValue = (newValue: any) => setPromptValue(newValue)
 
   const openModal = (modal: ModalType) => {
-    console.log('@@modal', modal)
+    if (modal.type === 'Alert') {
+      const { message } = modal.props
+      const modalId = uniqueID()
 
-    if (modal.type === 'Alert') return setModals([...modals, modal])
+      return setModals([
+        ...modals,
+        {
+          type: 'Alert',
+          props: {
+            id: modalId,
+            message,
+          },
+        },
+      ])
+    }
 
     if (modal.type === 'Confirm')
       return new Promise((resolve) => {
+        const { message } = modal.props
         const modalId = uniqueID()
 
-        const { message } = modal.props
         setModals([
           ...modals,
           {
@@ -92,21 +107,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         ])
       })
 
-    // 1. 전역에서 setModal
-    // 2. Prompt 객체가 들어가고 컴포넌트 렌더링
-    // 3.
-    // PromptModal은 Promise 기반으로 값을 리턴한다.
     return new Promise((resolve) => {
+      const modalId = uniqueID()
+
       setModals([
         ...modals,
         {
           type: 'Prompt',
           props: {
+            id: modalId,
             ...modal.props,
             // handlePromptValue,
             resolve,
             onClose: () => {
-              closeModal(modal.props.id)
+              closeModal(modalId)
             },
           },
         },
@@ -123,12 +137,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           return (
             <AlertModal
               {...modal.props}
-              id={modal.props.id}
-              onClose={() => closeModal(modal.props.id)}
+
+              // onClose={() => closeModal(modal.props.id)}
             />
           )
         case 'Prompt':
-          return <PromptModal {...modal.props} id={modal.props.id} />
+          return <PromptModal {...modal.props} />
 
         case 'Confirm':
           return <ConfirmModal {...modal.props} />

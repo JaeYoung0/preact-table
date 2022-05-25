@@ -1,5 +1,5 @@
 import * as S from './ConfirmModal.style'
-import useModals, { ConfrimModalType } from '@/hooks/useModals'
+import { ConfrimModalType } from '@/hooks/useModals'
 
 type Props = ConfrimModalType['props']
 

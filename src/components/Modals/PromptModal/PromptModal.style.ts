@@ -16,7 +16,7 @@ export const Container = styled.div`
   width: 348px;
   height: 154px;
 
-  padding: 42px 0 28px;
+  padding: 42px 0 40px;
 
   background: #ffffff;
   border-radius: 10px;
@@ -25,9 +25,9 @@ export const Body = styled.div``
 
 export const Message = styled.p`
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 135%;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 
   color: #505866;
 `
