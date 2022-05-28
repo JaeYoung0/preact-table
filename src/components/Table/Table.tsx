@@ -16,6 +16,11 @@ import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
 
+import Box from '@mui/material/Box'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+
 export default function Table() {
   const { tableState } = useBubbleIo()
 
@@ -211,27 +216,26 @@ export default function Table() {
           </S.LastPageArrow>
         </S.BottomArrows>
 
-        {/* FIXME: svg 클릭하면 반응이 없다. TextField 말고 Select로 바꿔야할듯?.. */}
         <S.PageSizeArea>
           <span>{`페이지 당  `}</span>
-          <TextField
-            select
+          <Select
+            labelId="page-select-label"
+            id="page-select"
             value={pageSize}
             onChange={(event) => {
               const newPageSize = Number(event.target.value)
               apiRef.current.setPageSize(newPageSize)
               setPageSize(newPageSize)
             }}
-            SelectProps={{
-              IconComponent: () => <ArrowForwardIcon />,
-            }}
+            IconComponent={() => <ArrowForwardIcon />}
           >
             {displays.map((display) => (
               <MenuItem key={display.value} value={display.value}>
                 {display.label}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
+
           <span>{`  개 표시`}</span>
         </S.PageSizeArea>
       </>

@@ -4,10 +4,6 @@ import { styled } from '@mui/material/styles'
 
 export const Wrapper = Estyled.div`
   flex: 1;
-
-  .MuiOutlinedInput-root{
-    padding:0 15px 0 10px !important;
-  }
 `
 
 export const OptionLi = Estyled.li`
@@ -40,9 +36,6 @@ export const CssTextField = styled(TextField)({
 
   '& .MuiOutlinedInput-root': {
     borderRadius: '18px',
-    padding: '0 15px 0 20px !important',
-    height: '38px',
+    padding: '0px 15px 0px 10px !important',
   },
-
-  // FIXME: placeholder color
 })

@@ -74,7 +74,8 @@ function SearchBar() {
           </>
         }
         deleteIcon={<CloseIcon width={8} height={8} color="#9198A0" />}
-        onDelete={(e) => handleDeleteChip(idx)}
+        onClick={() => handleDeleteChip(idx)}
+        onDelete={() => handleDeleteChip(idx)}
       />
     ))
   }
