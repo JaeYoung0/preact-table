@@ -13,7 +13,6 @@ import useBubbleIo from '@/hooks/useBubbleIo'
 import RemoveIcon from '@/icons/RemoveIcon'
 import ResetIcon from '@/icons/ResetIcon'
 import useModals from '@/hooks/useModals'
-import { uniqueID } from '@/uniqueID'
 
 export type IndicatorModalValue = {
   label: string
@@ -49,7 +48,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
   const { tableState } = useBubbleIo()
   const { openModal, promptValue } = useModals()
-  console.log('@@promptValue', promptValue)
 
   useEffect(() => {
     setModalState(initialModalState)
@@ -96,7 +94,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         openModal({
           type: 'Alert',
           props: {
-            id: uniqueID(),
             message: '지표를 수정했습니다.',
           },
         })
@@ -117,7 +114,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         openModal({
           type: 'Alert',
           props: {
-            id: uniqueID(),
             message: '지표를 생성했습니다.',
           },
         })
@@ -134,7 +130,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
       const result = await openModal({
         type: 'Prompt',
         props: {
-          id: uniqueID(),
           message: '숫자를 입력해주세요.',
           inputType: 'number',
         },

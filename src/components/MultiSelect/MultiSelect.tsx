@@ -13,7 +13,6 @@ import CloseIcon from '@/icons/CloseIcon'
 import HoverDotsIcon from '@/icons/HoverDotsIcon'
 import PlusIcon from '@/icons/PlusIcon'
 import useModals from '@/hooks/useModals'
-import { uniqueID } from '@/uniqueID'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -43,7 +42,6 @@ export default function MultiSelect() {
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
   const { tableState } = useBubbleIo()
-  console.log('@@tableState', tableState)
 
   const { openModal: openCustomModal } = useModals()
 
@@ -140,7 +138,6 @@ export default function MultiSelect() {
       return openCustomModal({
         type: 'Alert',
         props: {
-          id: uniqueID(),
           message: '정렬 기준이 되는 열을 선택해주세요.',
         },
       })
@@ -153,7 +150,6 @@ export default function MultiSelect() {
     openCustomModal({
       type: 'Alert',
       props: {
-        id: uniqueID(),
         message: '열 설정이 저장되었습니다.',
       },
     })
@@ -192,7 +188,6 @@ export default function MultiSelect() {
       openCustomModal({
         type: 'Alert',
         props: {
-          id: uniqueID(),
           message: '삭제를 완료했습니다.',
         },
       })
