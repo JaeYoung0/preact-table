@@ -14,7 +14,7 @@ type getMetricsCommand = {
   sort?: 'ASC' | 'DESC'
 
   page: number
-  per_page?: number
+  per_page: number
 }
 
 export const fetchMetrics = async (payload: getMetricsCommand) => {

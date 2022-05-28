@@ -1,4 +1,4 @@
-import { useMemo } from 'preact/hooks'
+import { useMemo, useRef } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
@@ -8,7 +8,7 @@ export type RowType = Record<string, any>
 
 export type MetricsResponse = {
   report: RowType[]
-  total_cnt: number
+  total_cnt: number // 전체 row 갯수
 }
 
 function useMetrics() {
@@ -35,9 +35,13 @@ function useMetrics() {
     return data?.report?.map((row, idx) => ({ ...row, id: idx }))
   }, [data, error])
 
-  const totalPageCount = useMemo(() => {
+  const prevTotalRows = useRef(0)
+
+  const totalRows = useMemo(() => {
+    if (tableState?.page !== 0) return prevTotalRows.current
     if (!data || error) return 0
 
+    prevTotalRows.current = data?.total_cnt
     return data.total_cnt
   }, [data, error])
 
@@ -47,7 +51,7 @@ function useMetrics() {
     error,
     isLoading: isValidating,
     data,
-    totalPageCount,
+    totalRows,
   }
 }
 

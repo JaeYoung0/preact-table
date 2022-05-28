@@ -5,6 +5,7 @@ type Props = PromptModalType['props']
 
 function PromptModal({ message, onClose, resolve, inputType }: Props) {
   const { handlePromptValue, promptValue } = useModals()
+
   return (
     <S.Container>
       <S.Message>{message}</S.Message>

@@ -28,6 +28,7 @@ type BubbleIoInjectionData = {
         end: '2022-04-05',
         metrics_type: 'SALES',
         order_by_col_num: 1,
+        per_page:10,
         page:0
       },
       reset: false
@@ -38,10 +39,10 @@ function useBubbleIo() {
   const { handleMergedRows } = useMergedRows()
 
   // postMessage에서 payload가 들어오면 payload를 캐싱하는 SWR
-  const { data, error, mutate, isValidating } = useSWR<TableState | null, Error>(
-    payload ? '@payload' : null,
-    () => payload
-  )
+  // const { data, error, mutate, isValidating } = useSWR<TableState | null, Error>(
+  //   payload ? '@payload' : null,
+  //   () => payload
+  // )
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
@@ -61,15 +62,14 @@ function useBubbleIo() {
     return () => window.removeEventListener('message', handleMessage)
   }, [])
 
-  useEffect(() => {
-    mutate()
-  }, [payload])
+  // useEffect(() => {
+  //   mutate()
+  // }, [payload])
 
-  useEffect(() => {
-    console.log('## tableState', data)
-  }, [data])
-
-  return { tableState: data, isLoading: isValidating, error, mutate }
+  return {
+    tableState: payload,
+    // isLoading: isValidating, error, mutate
+  }
 }
 
 export default useBubbleIo

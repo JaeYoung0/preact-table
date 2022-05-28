@@ -112,17 +112,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
     return new Promise((resolve) => {
       const modalId = uniqueID()
-      const { message } = modal.props
 
       return setModals([
         ...modals,
         {
           type: 'Prompt',
           props: {
-            // ...modal.props,
+            ...modal.props,
             id: modalId,
-            // handlePromptValue,
-            message,
             resolve,
             onClose: () => {
               closeModal(modalId)
@@ -139,19 +136,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     modals.map((modal) => {
       switch (modal.type) {
         case 'Alert':
-          return (
-            <AlertModal
-              {...modal.props}
-
-              // onClose={() => closeModal(modal.props.id)}
-            />
-          )
+          return <AlertModal {...modal.props} />
         case 'Prompt':
           return <PromptModal {...modal.props} />
-
         case 'Confirm':
           return <ConfirmModal {...modal.props} />
-
         default:
           return null
       }

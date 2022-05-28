@@ -1,4 +1,4 @@
-import { DataGrid, GridColumns, GridSortModel, useGridApiContext } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GridSortModel } from '@mui/x-data-grid'
 import MultiSelect from '@/components/MultiSelect'
 import * as S from './Table.style'
 import Download from '@/icons/Download'
@@ -12,32 +12,29 @@ import renderCellExpand from '@/helper/renderCellExpand'
 import useMergedRows from '@/hooks/useMergedRows'
 import useBubbleIo from '@/hooks/useBubbleIo'
 import ArrowForwardIcon from '@/icons/ArrowForwardIcon'
-import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
-
-import Box from '@mui/material/Box'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 
 export default function Table() {
   const { tableState } = useBubbleIo()
+  console.log('## tableState', tableState)
+  console.log('## Table rendering!')
 
   const { openModal } = useModals()
-
-  const { rows, error, isLoading: isRowFetching, totalPageCount } = useMetrics()
+  const { rows, error, isLoading: isRowFetching, totalRows } = useMetrics()
 
   const { visibleOptions } = useOptions()
   const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
-  const [pageSize, setPageSize] = useState(10)
+  // const [currentPage, setCurrentPage] = useState(0)
 
-  const [currentPage, setCurrentPage] = useState(0)
+  const [current, setCurrent] = useState({
+    page: 0,
+    perPage: 10,
+  })
 
   const [sortLoading, setSortLoading] = useState(false)
   const [sortModel, setSortModel] = useState<GridSortModel>()
-
-  const recallTargetPage = Math.floor(filteredRows.length / pageSize)
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
     setSortModel(newModel)
@@ -76,6 +73,8 @@ export default function Table() {
         return rows
       }
 
+      console.log('## loadSortedRows')
+
       const sortedColumn = sortModel[0]
 
       let sortedRows = [...rows]
@@ -108,7 +107,7 @@ export default function Table() {
   }, [filteredRows])
 
   useEffect(() => {
-    if (rows.length === 0) return
+    if (rows?.length === 0) return
     console.log('## rows updated! -> mergedRows를 다시 sorting 합니다.')
 
     setSortLoading(true)
@@ -118,7 +117,7 @@ export default function Table() {
   }, [rows])
 
   useEffect(() => {
-    if (rows.length === 0) return
+    if (rows?.length === 0) return
     console.log('## sortModel updated! -> mergedRows를 다시 sorting 합니다. ')
 
     setSortLoading(true)
@@ -128,57 +127,48 @@ export default function Table() {
   }, [sortModel])
 
   useEffect(() => {
-    console.log('@@recallTargetPage:', recallTargetPage, 'currentPage:', currentPage)
-
     if (!tableState) return
-    if (recallTargetPage === 0) return
-    if (recallTargetPage - 1 <= currentPage) {
-      setSortLoading(true)
 
-      console.log(
-        '@@recallTargetPage에 도달하였으므로 다음 page를 호출합니다',
-        'recallTargetPage:',
-        recallTargetPage
-      )
-
-      window.postMessage({
-        payload: {
-          ...tableState,
-          page: tableState.page + 1,
-        },
-        reset: false,
-      })
-
-      setSortLoading(false)
+    if (current.page === 0) {
+      handleMergedRows([])
     }
-  }, [currentPage, totalPageCount])
 
-  console.log('@@plz', currentPage, totalPageCount, pageSize)
+    window.postMessage({
+      payload: {
+        ...tableState,
+        page: current.page,
+        per_page: current.perPage,
+      },
+      reset: false,
+    })
+  }, [current])
 
-  // NO
+  const footerPageCountText = useMemo(
+    () => `${current.page + 1}  /  ${Math.ceil(totalRows / current.perPage)}`,
+    [totalRows, current]
+  )
+
+  // NOPE
   // if (rows.length === 0) return null
 
-  const getRowCount = useCallback(() => totalPageCount * pageSize, [totalPageCount, pageSize])
-
   const renderPagination = () => {
-    const apiRef = useGridApiContext()
-    // const page = useGridSelector(apiRef, gridPageSelector)
-    // const pageCount = useGridSelector(apiRef, gridPageCountSelector)
-
     const goToPage = (page: number) => {
-      apiRef.current.setPage(page)
-      // setCurrentPage(page)
+      if (sortLoading || isRowFetching) return
+      setCurrent({ ...current, page })
     }
 
     const handlePrevButtonClick = () => {
-      if (currentPage === 0) return
-      apiRef.current.setPage(currentPage - 1)
-      // setCurrentPage(currentPage - 1)
+      if (sortLoading || isRowFetching) return
+      if (current.page === 0) return
+
+      setCurrent({ ...current, page: current.page - 1 })
     }
 
     const handleNextButtonClick = () => {
-      apiRef.current.setPage(currentPage + 1)
-      // setCurrentPage(currentPage + 1)
+      if (sortLoading || isRowFetching) return
+      if (current.page === Math.ceil(totalRows / current.perPage) - 1) return
+
+      setCurrent({ ...current, page: current.page + 1 })
     }
 
     const displays = [
@@ -198,9 +188,9 @@ export default function Table() {
 
     return (
       <>
-        <S.BottomPagingText>{`${currentPage + 1}  /  ${recallTargetPage}`}</S.BottomPagingText>
-        <S.BottomArrows onClick={() => goToPage(0)}>
-          <S.FirstPageArrow>
+        <S.BottomPagingText>{footerPageCountText}</S.BottomPagingText>
+        <S.BottomArrows>
+          <S.FirstPageArrow onClick={() => goToPage(0)}>
             <ArrowForwardIcon />
             <ArrowForwardIcon style={{ transform: 'translate3d(-3px, 0, 0)' }} />
           </S.FirstPageArrow>
@@ -210,7 +200,7 @@ export default function Table() {
           <S.NextArrowWrapper onClick={handleNextButtonClick}>
             <ArrowForwardIcon />
           </S.NextArrowWrapper>
-          <S.LastPageArrow onClick={() => goToPage(totalPageCount)}>
+          <S.LastPageArrow onClick={() => goToPage(Math.ceil(totalRows / current.perPage) - 1)}>
             <ArrowForwardIcon />
             <ArrowForwardIcon style={{ transform: 'translate3d(-3px, 0, 0)' }} />
           </S.LastPageArrow>
@@ -221,11 +211,10 @@ export default function Table() {
           <Select
             labelId="page-select-label"
             id="page-select"
-            value={pageSize}
+            value={current.perPage}
             onChange={(event) => {
               const newPageSize = Number(event.target.value)
-              apiRef.current.setPageSize(newPageSize)
-              setPageSize(newPageSize)
+              setCurrent({ ...current, perPage: newPageSize, page: 0 })
             }}
             IconComponent={() => <ArrowForwardIcon />}
           >
@@ -256,16 +245,11 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
-        page={currentPage}
-        onPageChange={(newPage) => {
-          console.log('@@newPage', newPage)
-          setCurrentPage(newPage)
-        }}
-        pageSize={pageSize}
-        onPageSizeChange={(newSize) => setPageSize(newSize)}
+        page={current.page}
+        pageSize={current.perPage}
         rowsPerPageOptions={[10, 20, 30]}
         pagination
-        rowCount={getRowCount()}
+        rowCount={totalRows}
         components={{
           ErrorOverlay: () => (
             <S.RowsOverlay>
@@ -288,6 +272,8 @@ export default function Table() {
             </S.RowsOverlay>
           ),
           Pagination: () => renderPagination(),
+          // Pagination: CustomPagination,
+          // Footer: () => renderPagination(),
         }}
         sortingMode="server"
         sortModel={sortModel}
@@ -298,7 +284,6 @@ export default function Table() {
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu
-        paginationMode="server"
       />
     </S.Wrapper>
   )
