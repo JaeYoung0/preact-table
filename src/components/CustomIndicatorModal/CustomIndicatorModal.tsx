@@ -167,7 +167,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
             value={modalState.label}
             variant="outlined"
             onChange={handleChange}
-            sx={{ flex: 1 }}
+            sx={{
+              flex: 1,
+            }}
           />
 
           <TextField
@@ -223,6 +225,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
         <S.CalculatorBody>{modalState.formula?.map(renderFormula)}</S.CalculatorBody>
 
+        <S.OriginalIndicatorName>지표</S.OriginalIndicatorName>
         <S.OriginalIndicators>
           {ingredientCols.map((col) => (
             <span

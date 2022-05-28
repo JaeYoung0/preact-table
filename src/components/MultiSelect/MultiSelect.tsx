@@ -226,21 +226,15 @@ export default function MultiSelect() {
                   onDrop={(e) => handleDragDrop(e, idx)}
                 >
                   {option.label}
-
-                  {
-                    <span
-                      onClick={() => {
-                        handleVisibileOptions(
-                          visibleOptions.filter((item) => item.id !== option.id)
-                        )
-                        handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
-                      }}
-                    >
-                      <HoverDotsIcon />
-                      <CloseIcon />
-                      {/* <VisibilityOffIcon /> */}
-                    </span>
-                  }
+                  <span
+                    onClick={() => {
+                      handleVisibileOptions(visibleOptions.filter((item) => item.id !== option.id))
+                      handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
+                    }}
+                  >
+                    <HoverDotsIcon />
+                    <CloseIcon />
+                  </span>
                 </li>
               ))}
             </S.VisibleOptionsWrapper>

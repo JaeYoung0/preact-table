@@ -51,6 +51,8 @@ export const ConfigHeader = styled.div`
 
 export const Title = styled.p`
   margin: 0;
+
+  font-weight: 600;
   font-size: 20px;
   letter-spacing: 0.0038em;
 
@@ -84,6 +86,7 @@ const OptionsWrapper = styled.ul`
   border-radius: 5px;
   margin: 10px 0 15px;
 
+  max-width: 290px;
   height: 216px;
   // auto: show scrollbar only when needed
   overflow-y: auto;
@@ -96,6 +99,7 @@ const OptionsWrapper = styled.ul`
     padding: 0px 10px;
     height: 25px;
 
+    font-weight: 600;
     font-size: 12px;
     line-height: 135%;
 
@@ -125,7 +129,8 @@ export const SubTitle = styled.span`
   justify-content: space-between;
   align-items: center;
 
-  /* font-weight: 600; */
+  font-weight: 600;
+
   font-size: 16px;
   height: 28px;
 

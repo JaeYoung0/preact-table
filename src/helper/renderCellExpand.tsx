@@ -3,7 +3,7 @@ import { Box, Popper, Typography, Paper } from '@mui/material'
 import { useRef, useState, useEffect } from 'preact/hooks'
 import numberWithCommas from '@/helper/numberWithCommas'
 
-function isOverflown(element: any) {
+export function isOverflown(element: any) {
   return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth
 }
 

@@ -197,7 +197,7 @@ export default function Table() {
         <S.BottomArrows onClick={() => goToPage(0)}>
           <S.FirstPageArrow>
             <ArrowForwardIcon />
-            <ArrowForwardIcon />
+            <ArrowForwardIcon style={{ transform: 'translate3d(-3px, 0, 0)' }} />
           </S.FirstPageArrow>
           <S.PrevArrow onClick={handlePrevButtonClick}>
             <ArrowForwardIcon />
@@ -207,7 +207,7 @@ export default function Table() {
           </S.NextArrowWrapper>
           <S.LastPageArrow onClick={() => goToPage(totalPageCount)}>
             <ArrowForwardIcon />
-            <ArrowForwardIcon />
+            <ArrowForwardIcon style={{ transform: 'translate3d(-3px, 0, 0)' }} />
           </S.LastPageArrow>
         </S.BottomArrows>
 

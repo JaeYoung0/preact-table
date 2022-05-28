@@ -1,3 +1,4 @@
+import { customScroll } from '@/app.style'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 
@@ -83,12 +84,33 @@ export const Row = styled.div`
   align-items: center;
 
   margin-bottom: 20px;
+
+  font-weight: 600;
+  font-size: 16px;
+
+  input[name='label'] {
+    color: #d1d6da;
+  }
+  label {
+    color: #d1d6da;
+  }
+
+  .MuiOutlinedInput-input {
+    color: #d1d6da;
+  }
 `
 
 export const CaculatorName = styled.span`
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 14px;
-  line-height: 1.4375em;
+  color: #9198a0;
+  font-weight: 400;
+  font-size: 16px;
+`
+
+export const OriginalIndicatorName = styled.p`
+  color: #9198a0;
+  font-weight: 400;
+  font-size: 16px;
+  margin-bottom: 12px;
 `
 
 export const CalculatorButtonsWrapper = styled.div``
@@ -182,28 +204,38 @@ export const FormulaItem = styled.span`
 
 export const OriginalIndicators = styled.div`
   display: grid;
+  grid-template-columns: 1fr 1fr;
 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 2fr));
-
+  padding: 10px 12px;
   margin-bottom: 30px;
 
+  max-width: 340px;
+  max-height: 185px;
+
+  overflow-y: auto;
+  border: 1px solid #d2d6da;
+  border-radius: 4px;
+
+  ${customScroll}
+
   span {
+    max-width: 130px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+
     position: relative;
-    padding: 5px 0;
+    padding: 6px 0;
+
     cursor: pointer;
-    padding-left: 25px;
+    padding-left: 10px;
     border-radius: 5px;
-    margin-bottom: 5px;
+
+    font-weight: 400;
+    font-size: 14px;
+    color: #353c49;
 
     &:hover {
       background: #f2f4f6;
-      &::before {
-        content: '+';
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 10px;
-      }
     }
   }
 `
