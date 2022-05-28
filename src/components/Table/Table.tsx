@@ -129,9 +129,11 @@ export default function Table() {
   useEffect(() => {
     if (!tableState) return
 
-    if (current.page === 0) {
-      handleMergedRows([])
-    }
+    // FIXME: per_page가 달라졌을 때만 reset
+    // if (current.page === 0) {
+    //   handleMergedRows([])
+    // }
+    console.log('## current page updated')
 
     window.postMessage({
       payload: {
@@ -141,7 +143,24 @@ export default function Table() {
       },
       reset: false,
     })
-  }, [current])
+  }, [current.page])
+
+  useEffect(() => {
+    if (!tableState) return
+
+    console.log('## current per_page updated')
+
+    handleMergedRows([])
+
+    window.postMessage({
+      payload: {
+        ...tableState,
+        page: current.page,
+        per_page: current.perPage,
+      },
+      reset: false,
+    })
+  }, [current.perPage])
 
   const footerPageCountText = useMemo(
     () => `${current.page + 1}  /  ${Math.ceil(totalRows / current.perPage)}`,
