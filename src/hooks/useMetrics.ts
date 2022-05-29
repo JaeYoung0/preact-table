@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'preact/hooks'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
@@ -13,6 +13,7 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useBubbleIo()
+  const [fetchedKeys, setFetchedKeys] = useState<any[]>([])
 
   // tableState 객체를 직렬화하지 않으면 mutate가 제대로 되지 않는다.
   const {
@@ -23,6 +24,17 @@ function useMetrics() {
   } = useSWR<MetricsResponse, Error>(tableState ? JSON.stringify(tableState) : null, (tableState) =>
     fetchMetrics(JSON.parse(tableState))
   )
+
+  const rowFetchKey = tableState ? JSON.stringify(tableState) : null
+  // const fetchedKeys = [new Set(rowFetchKey)]
+  // console.log('@@fetchedKeys', fetchedKeys)
+
+  useEffect(() => {
+    setFetchedKeys([...fetchedKeys, rowFetchKey])
+  }, [rowFetchKey])
+
+  const uniqueFetchedKeys = [...new Set(fetchedKeys)]
+  console.log('@@uniqueFetchedKeys', uniqueFetchedKeys)
 
   /**
    * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
@@ -52,6 +64,7 @@ function useMetrics() {
     isLoading: isValidating,
     data,
     totalRows,
+    rowFetchKey,
   }
 }
 

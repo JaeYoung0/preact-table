@@ -18,11 +18,11 @@ import Select from '@mui/material/Select'
 
 export default function Table() {
   const { tableState } = useBubbleIo()
-  console.log('## tableState', tableState)
+  // console.log('## tableState', tableState)
   console.log('## Table rendering!')
 
   const { openModal } = useModals()
-  const { rows, error, isLoading: isRowFetching, totalRows } = useMetrics()
+  const { rows, error, isLoading: isRowFetching, totalRows, rowFetchKey } = useMetrics()
 
   const { visibleOptions } = useOptions()
   const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
@@ -107,14 +107,20 @@ export default function Table() {
   }, [filteredRows])
 
   useEffect(() => {
+    console.log('@@isRowFetching', isRowFetching)
+    console.log('@@rowFetchKey', rowFetchKey)
+
     if (rows?.length === 0) return
+    if (!rowFetchKey) return
+    // if (!isRowFetching) return
+    // page 변경 -> rows 새로 들어옴 -> mergedRows에 합칠 때 미리 소팅한 결과를 합치기
     console.log('## rows updated! -> mergedRows를 다시 sorting 합니다.')
 
     setSortLoading(true)
 
     handleMergedRows(loadSortedRows([...mergedRows, ...rows], sortModel))
     setSortLoading(false)
-  }, [rows])
+  }, [rowFetchKey, rows])
 
   useEffect(() => {
     if (rows?.length === 0) return
@@ -129,10 +135,6 @@ export default function Table() {
   useEffect(() => {
     if (!tableState) return
 
-    // FIXME: per_page가 달라졌을 때만 reset
-    // if (current.page === 0) {
-    //   handleMergedRows([])
-    // }
     console.log('## current page updated')
 
     window.postMessage({
@@ -282,12 +284,13 @@ export default function Table() {
           ),
           LoadingOverlay: () => (
             <S.RowsOverlay>
-              <span>Loading...</span>
+              {/* <span>Loading...</span> */}
+              <CircularProgress color="secondary" />
             </S.RowsOverlay>
           ),
           NoResultsOverlay: () => (
             <S.RowsOverlay>
-              <CircularProgress color="secondary" />
+              <p>필터링 조건을 확인해주세요.</p>
             </S.RowsOverlay>
           ),
           Pagination: () => renderPagination(),

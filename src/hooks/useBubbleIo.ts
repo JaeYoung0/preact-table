@@ -10,6 +10,7 @@ export const initialTableState = {
   order_by_col_num: 1, //default: 1
   metrics_type: 'SALES',
   page: 0,
+  per_page: 10,
 }
 
 export type TableState = typeof initialTableState
