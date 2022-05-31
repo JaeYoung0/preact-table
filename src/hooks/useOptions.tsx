@@ -24,6 +24,7 @@ const Options = createContext<OptionsContextType>({
 export function OptionsProvider({ children }: { children: React.ReactNode }) {
   const [visibleOptions, setVisibleOptions] = useState<ColData[]>([])
   const [hiddenOptions, setHiddenOptions] = useState<ColData[]>([])
+  console.log('@@@@hiddenOptions', hiddenOptions)
 
   const handleVisibileOptions = (newOptions: ColData[]) => {
     setVisibleOptions(newOptions)
@@ -34,15 +35,15 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
   }
 
   // visibleCols를 가공한 visibleOptions로 local state를 관리한다.
-  const { visibleCols, hiddenCols, mutate } = useCols()
+  const { visibleCols, hiddenCols, mutate, isLoading } = useCols()
 
   useEffect(() => {
     setVisibleOptions(visibleCols)
-  }, [visibleCols])
+  }, [visibleCols, isLoading, visibleCols.length])
 
   useEffect(() => {
-    setHiddenOptions(hiddenCols)
-  }, [hiddenCols])
+    setHiddenOptions(hiddenCols.sort((a, b) => b.type.localeCompare(a.type)))
+  }, [hiddenCols, isLoading, hiddenCols.length])
 
   return (
     <Options.Provider

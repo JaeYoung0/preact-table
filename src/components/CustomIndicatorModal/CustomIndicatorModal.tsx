@@ -13,6 +13,8 @@ import useBubbleIo from '@/hooks/useBubbleIo'
 import RemoveIcon from '@/icons/RemoveIcon'
 import ResetIcon from '@/icons/ResetIcon'
 import useModals from '@/hooks/useModals'
+import useMatchMutate from '@/hooks/useMatchMutate'
+import useOptions from '@/hooks/useOptions'
 
 export type IndicatorModalValue = {
   label: string
@@ -45,6 +47,9 @@ interface Props {
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
+  const matchMutate = useMatchMutate()
+
+  const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
   const { tableState } = useBubbleIo()
   const { openModal, promptValue } = useModals()
@@ -77,7 +82,18 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   }
 
   const handleSave = async () => {
-    if (modalState?.id) {
+    if (!tableState) {
+      return openModal({
+        type: 'Alert',
+        props: {
+          message: '새로고침 해주세요.',
+        },
+      })
+    }
+
+    console.log('@@@@modalState', modalState)
+
+    if (modalState.id) {
       const command: updateCustomColCommand = {
         type: 'CUSTOM',
         status: 'HIDDEN',
@@ -89,14 +105,19 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         id: modalState?.id,
       }
 
-      const res = await updateCustomCol(tableState?.user_id ?? '', command)
-      if (res) {
+      const updatedCustomCol = await updateCustomCol(tableState.user_id, command)
+      if (updatedCustomCol) {
         openModal({
           type: 'Alert',
           props: {
             message: '지표를 수정했습니다.',
           },
         })
+
+        handleHiddenOptions([
+          ...hiddenOptions.filter((item) => item.id !== modalState.id),
+          updatedCustomCol,
+        ])
       }
     } else {
       const command: createCustomColCommand = {
@@ -109,8 +130,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         metrics_type: 'SALES',
       }
 
-      const res = await createCustomCol(tableState?.user_id ?? '', command)
-      if (res) {
+      const newCustomCol = await createCustomCol(tableState.user_id, command)
+
+      if (newCustomCol) {
         openModal({
           type: 'Alert',
           props: {
@@ -118,9 +140,11 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
           },
         })
       }
+      handleHiddenOptions([...hiddenOptions, newCustomCol])
     }
 
-    await mutateCols()
+    matchMutate(/columns/g).then(() => mutateCols())
+    // matchMutate
     close()
   }
 

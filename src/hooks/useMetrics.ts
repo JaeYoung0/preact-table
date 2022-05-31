@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
-import useSWR from 'swr'
+import useSWR, { useSWRConfig } from 'swr'
 import { fetchMetrics } from '@/services/rows'
 import useBubbleIo from './useBubbleIo'
+import throttle from '@/helper/throttle'
+import usePage from './usePage'
 
 export type RowType = Record<string, any>
 
@@ -13,58 +15,104 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useBubbleIo()
-  const [fetchedKeys, setFetchedKeys] = useState<any[]>([])
+  const rowFetchKey = tableState ? JSON.stringify(tableState) : null
+  const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
+  const { cache } = useSWRConfig()
 
-  // tableState 객체를 직렬화하지 않으면 mutate가 제대로 되지 않는다.
+  const { singlePageLoading } = usePage(rowFetchKey)
+
+  console.log('@@@@rowFetchKeys', JSON.stringify(rowFetchKeys))
+
+  const isPoppedFromCaches = useRef(false)
+
+  function multiFetcher(rowFetchKeys: string) {
+    const urls = JSON.parse(rowFetchKeys) as string[]
+    return Promise.all(
+      urls.map((url) => (cache.get(url) ? cache.get(url) : fetchMetrics(JSON.parse(url))))
+    )
+  }
+
   const {
-    data = { report: [], total_cnt: 0 },
+    data = [],
     error,
     mutate,
     isValidating,
-  } = useSWR<MetricsResponse, Error>(tableState ? JSON.stringify(tableState) : null, (tableState) =>
-    fetchMetrics(JSON.parse(tableState))
-  )
-
-  const rowFetchKey = tableState ? JSON.stringify(tableState) : null
-  // const fetchedKeys = [new Set(rowFetchKey)]
-  // console.log('@@fetchedKeys', fetchedKeys)
+  } = useSWR<MetricsResponse[], Error>(JSON.stringify(rowFetchKeys), multiFetcher)
 
   useEffect(() => {
-    setFetchedKeys([...fetchedKeys, rowFetchKey])
+    if (rowFetchKeys.includes(rowFetchKey)) {
+      isPoppedFromCaches.current = true
+    } else {
+      isPoppedFromCaches.current = false
+    }
+
+    if (rowFetchKey === null) return
+    else setRowFetchKeys([...new Set([...rowFetchKeys, rowFetchKey])])
   }, [rowFetchKey])
 
-  const uniqueFetchedKeys = [...new Set(fetchedKeys)]
-  console.log('@@uniqueFetchedKeys', uniqueFetchedKeys)
+  const handleRowFetchKeys = (newValues: string[]) => setRowFetchKeys(newValues)
 
   /**
    * FIXME: data가 {detail: 'column formula error: 옳지 않은 식입니다. [상품가격 * 상품 할인가]'}로 들어오기도 한다. 이때 error가 undefined인게 이상함
    */
 
-  // FIXME: page 0 , 1, 2... 새로운 페이지 콜할 때마다 전체 rows는 합쳐줘야함
   const rows: GridRowModel[] = useMemo(() => {
     if (!data || error) return []
+    console.log('@@@@data', data)
 
-    return data?.report?.map((row, idx) => ({ ...row, id: idx }))
+    const result = data.reduce(
+      (acc, cur) => ({
+        report: [...acc.report, ...cur.report],
+        total_cnt: cur.total_cnt,
+      }),
+      { report: [], total_cnt: 0 }
+    )
+
+    return result?.report?.map((row, idx) => ({ ...row, id: idx }))
   }, [data, error])
+
+  console.log('@@@@rows', rows)
+
+  const isInitialFetch = rowFetchKeys.length === 1
 
   const prevTotalRows = useRef(0)
 
   const totalRows = useMemo(() => {
     if (tableState?.page !== 0) return prevTotalRows.current
-    if (!data || error) return 0
+    if (data.length === 0 || error) return 0
 
-    prevTotalRows.current = data?.total_cnt
-    return data.total_cnt
+    prevTotalRows.current = data[0].total_cnt
+    return data[0].total_cnt
   }, [data, error])
+
+  const fetchAllRows = throttle((targetIndex?: number) => {
+    const perPage = tableState?.per_page ?? 10
+    const lastPageIndex = Math.ceil(totalRows / perPage) - 1
+    const target = targetIndex ?? lastPageIndex
+
+    for (let idx = 0; idx < target; idx++) {
+      window.postMessage({
+        payload: {
+          ...tableState,
+          page: idx,
+          per_page: perPage,
+        },
+        reset: false,
+      })
+    }
+  })
 
   return {
     rows,
     mutate,
     error,
-    isLoading: isValidating,
+    isLoading: isValidating || singlePageLoading,
     data,
     totalRows,
-    rowFetchKey,
+
+    shouldMergeRows: !isPoppedFromCaches.current || isInitialFetch,
+    fetchAllRows,
+    handleRowFetchKeys,
   }
 }
 

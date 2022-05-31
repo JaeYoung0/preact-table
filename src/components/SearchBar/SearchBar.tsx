@@ -25,7 +25,6 @@ function SearchBar() {
   const { mergedRows, handleFilteredRows } = useMergedRows()
 
   console.log('@@filterOptions', filterOptions)
-  console.log('@@mergedRows', mergedRows)
 
   useEffect(() => {
     // visibleCols가 바뀔 때 마다 TEXT 타입 컬럼을 autocompleteLabels로 둔다.
@@ -34,7 +33,7 @@ function SearchBar() {
   }, [visibleCols])
 
   useEffect(() => {
-    console.log('## filterOptions or mergedRows updated! -> 다시 filtering 합니다.')
+    console.log('## filterOptions or mergedRows updated! -> 다시 filtering 합니다.', mergedRows)
 
     if (filterOptions.length === 0) handleFilteredRows(mergedRows)
     else {

@@ -22,16 +22,29 @@ export default function Table() {
   console.log('## Table rendering!')
 
   const { openModal } = useModals()
-  const { rows, error, isLoading: isRowFetching, totalRows, rowFetchKey } = useMetrics()
+  const {
+    rows,
+    error,
+    isLoading: isRowFetching,
+    totalRows,
+    shouldMergeRows,
+    fetchAllRows,
+    handleRowFetchKeys,
+  } = useMetrics()
 
   const { visibleOptions } = useOptions()
+
   const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
+  const [currentPage, setCurrentPage] = useState(0)
+
   // const [currentPage, setCurrentPage] = useState(0)
 
   const [current, setCurrent] = useState({
     page: 0,
     perPage: 10,
   })
+  console.log('@@shouldMergeRows', shouldMergeRows, mergedRows, current)
+  console.log('!!rows', rows)
 
   const [sortLoading, setSortLoading] = useState(false)
   const [sortModel, setSortModel] = useState<GridSortModel>()
@@ -67,13 +80,16 @@ export default function Table() {
     visibleOptions
   )
 
+  const addRowIds = (rows: RowType[]) => {
+    // add ids for MUI DataGrid
+    return rows.map((item, index) => ({ ...item, id: index }))
+  }
+
   const loadSortedRows = useCallback(
     (rows: RowType[], sortModel?: GridSortModel) => {
       if (!sortModel || sortModel.length === 0) {
-        return rows
+        return addRowIds(rows)
       }
-
-      console.log('## loadSortedRows')
 
       const sortedColumn = sortModel[0]
 
@@ -95,7 +111,7 @@ export default function Table() {
 
       return sortedRows
     },
-    [rows, sortModel]
+    [isRowFetching, sortModel]
   )
 
   useEffect(() => {
@@ -107,20 +123,24 @@ export default function Table() {
   }, [filteredRows])
 
   useEffect(() => {
-    console.log('@@isRowFetching', isRowFetching)
-    console.log('@@rowFetchKey', rowFetchKey)
+    // console.log('@@rowFetchKey', rowFetchKey)
 
     if (rows?.length === 0) return
-    if (!rowFetchKey) return
+    setSortLoading(true)
+    // if( cahce에 없었던 key냐?)
+    if (shouldMergeRows) {
+      // alert(`isRowFetching:${isRowFetching}`)
+      // alert('merge!')
+
+      handleMergedRows(loadSortedRows(rows, sortModel))
+    }
+
     // if (!isRowFetching) return
     // page 변경 -> rows 새로 들어옴 -> mergedRows에 합칠 때 미리 소팅한 결과를 합치기
     console.log('## rows updated! -> mergedRows를 다시 sorting 합니다.')
 
-    setSortLoading(true)
-
-    handleMergedRows(loadSortedRows([...mergedRows, ...rows], sortModel))
     setSortLoading(false)
-  }, [rowFetchKey, rows])
+  }, [isRowFetching, shouldMergeRows])
 
   useEffect(() => {
     if (rows?.length === 0) return
@@ -128,7 +148,7 @@ export default function Table() {
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(mergedRows, sortModel))
+    handleMergedRows(loadSortedRows(rows, sortModel))
     setSortLoading(false)
   }, [sortModel])
 
@@ -152,6 +172,7 @@ export default function Table() {
 
     console.log('## current per_page updated')
 
+    handleRowFetchKeys([])
     handleMergedRows([])
 
     window.postMessage({
@@ -173,6 +194,10 @@ export default function Table() {
   // if (rows.length === 0) return null
 
   const renderPagination = () => {
+    // const apiRef = useGridApiContext()
+    // const page = useGridSelector(apiRef, gridPageSelector)
+    // const pageCount = useGridSelector(apiRef, gridPageCountSelector)
+
     const goToPage = (page: number) => {
       if (sortLoading || isRowFetching) return
       setCurrent({ ...current, page })
@@ -183,6 +208,7 @@ export default function Table() {
       if (current.page === 0) return
 
       setCurrent({ ...current, page: current.page - 1 })
+      // apiRef.current.setPage(current.page - 1)
     }
 
     const handleNextButtonClick = () => {
@@ -190,6 +216,7 @@ export default function Table() {
       if (current.page === Math.ceil(totalRows / current.perPage) - 1) return
 
       setCurrent({ ...current, page: current.page + 1 })
+      // apiRef.current.setPage(current.page + 1)
     }
 
     const displays = [
@@ -221,7 +248,12 @@ export default function Table() {
           <S.NextArrowWrapper onClick={handleNextButtonClick}>
             <ArrowForwardIcon />
           </S.NextArrowWrapper>
-          <S.LastPageArrow onClick={() => goToPage(Math.ceil(totalRows / current.perPage) - 1)}>
+          <S.LastPageArrow
+            onClick={() => {
+              fetchAllRows()
+              goToPage(Math.ceil(totalRows / current.perPage) - 1)
+            }}
+          >
             <ArrowForwardIcon />
             <ArrowForwardIcon style={{ transform: 'translate3d(-3px, 0, 0)' }} />
           </S.LastPageArrow>
@@ -267,6 +299,10 @@ export default function Table() {
 
       <DataGrid
         page={current.page}
+        onPageChange={(newPage) => {
+          alert(newPage)
+          setCurrent({ ...current, page: newPage })
+        }}
         pageSize={current.perPage}
         rowsPerPageOptions={[10, 20, 30]}
         pagination
@@ -294,15 +330,13 @@ export default function Table() {
             </S.RowsOverlay>
           ),
           Pagination: () => renderPagination(),
-          // Pagination: CustomPagination,
-          // Footer: () => renderPagination(),
         }}
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         loading={isRowFetching || sortLoading}
-        rows={filteredRows}
         columns={cols}
+        rows={filteredRows}
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu

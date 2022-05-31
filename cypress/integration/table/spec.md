@@ -25,6 +25,8 @@ window.postMessage({
 
 1-2. 전체 rows는 mergedRows에 쌓아둔다.
 
+1-3. 이미 패치한 key로 꺼내볼 때는 mergedRows를 이전 값으로 유지한다.
+
 2. page를 이동하더라도 sorting, filtering을 유지한다.
 
 3. per_page를 중간에 업데이트하는 경우, 예를 들어 "5/8 page, 페이지 당 10개 표시 -> 페이지 당 20개 표시" 인 경우에는 page를 1로 초기화 한다. mergedRows는 처음부터 다시 쌓는다.

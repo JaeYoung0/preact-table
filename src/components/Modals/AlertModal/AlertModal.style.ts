@@ -28,6 +28,8 @@ export const Message = styled.p`
   line-height: 135%;
 
   color: #505866;
+  white-space: pre;
+  text-align: center;
 `
 
 export const Button = styled.button`

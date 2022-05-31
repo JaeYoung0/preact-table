@@ -13,6 +13,7 @@ import CloseIcon from '@/icons/CloseIcon'
 import HoverDotsIcon from '@/icons/HoverDotsIcon'
 import PlusIcon from '@/icons/PlusIcon'
 import useModals from '@/hooks/useModals'
+import useMatchMutate from '@/hooks/useMatchMutate'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -46,8 +47,9 @@ export default function MultiSelect() {
   const { openModal: openCustomModal } = useModals()
 
   const { mutate: mutateCols } = useCols()
-  const { mutate: mutateRows } = useMetrics()
-  const { handleMergedRows } = useMergedRows()
+  const { mutate: mutateRows, fetchAllRows } = useMetrics()
+  const { handleMergedRows, mergedRows } = useMergedRows()
+  const matchMutate = useMatchMutate()
 
   const openModal = (payload: IndicatorModalValue) => {
     setInitialModalState({
@@ -138,7 +140,7 @@ export default function MultiSelect() {
       return openCustomModal({
         type: 'Alert',
         props: {
-          message: '정렬 기준이 되는 열을 선택해주세요.',
+          message: `정렬 기준이 되는 열을 선택해주세요.\n(상품명 또는 상품ID)`,
         },
       })
     }
@@ -153,10 +155,18 @@ export default function MultiSelect() {
         message: '열 설정이 저장되었습니다.',
       },
     })
+    matchMutate(/columns/g, [...visibleOptions, ...hiddenOptions], false)
 
-    mutateCols([...visibleOptions, ...hiddenOptions], false)
+    if (!tableState) {
+      return openCustomModal({
+        type: 'Alert',
+        props: {
+          message: '새로고침 해주세요.',
+        },
+      })
+    }
 
-    await updateCols(tableState?.user_id ?? '', command)
+    await updateCols(tableState.user_id, command)
 
     // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
     // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
@@ -167,12 +177,21 @@ export default function MultiSelect() {
       )
 
       handleMergedRows([])
-      mutateRows()
-    }, 100)
+      matchMutate(/user_id/g).then(() => mutateRows())
+    }, 500)
   }
 
   const handleCustomColDelete = async (id: number) => {
     // const isConfirmed = confirm('삭제하시겠습니까?')
+
+    if (!tableState) {
+      return openCustomModal({
+        type: 'Alert',
+        props: {
+          message: '유저 아이디를 확인해주세요.',
+        },
+      })
+    }
 
     const isConfirmed = await openCustomModal({
       type: 'Confirm',
@@ -182,14 +201,17 @@ export default function MultiSelect() {
     })
 
     if (isConfirmed) {
-      await deleteCustomCol(tableState?.user_id ?? '', { id })
-      await mutateCols()
+      await deleteCustomCol(tableState.user_id, { id })
 
-      openCustomModal({
-        type: 'Alert',
-        props: {
-          message: '삭제를 완료했습니다.',
-        },
+      matchMutate(/columns/g).then(() => {
+        openCustomModal({
+          type: 'Alert',
+          props: {
+            message: '삭제를 완료했습니다.',
+          },
+        })
+        mutateCols()
+        handleHiddenOptions([...hiddenOptions.filter((item) => item.id !== id)])
       })
     }
   }
