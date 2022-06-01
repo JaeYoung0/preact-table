@@ -28,8 +28,8 @@ export default function Table() {
     isLoading: isRowFetching,
     totalRows,
     shouldMergeRows,
-    fetchAllRows,
     handleRowFetchKeys,
+    fetchAllRows,
   } = useMetrics()
 
   const { visibleOptions } = useOptions()
@@ -84,6 +84,8 @@ export default function Table() {
 
   const loadSortedRows = useCallback(
     (rows: RowType[], sortModel?: GridSortModel) => {
+      console.log('@@@@loadSortedRows rows', rows)
+
       if (!sortModel || sortModel.length === 0) {
         return addRowIds(rows)
       }
@@ -115,24 +117,24 @@ export default function Table() {
     console.log('## mergedRows', mergedRows)
   }, [mergedRows])
 
-  useEffect(() => {
-    console.log('## filteredRows', filteredRows)
+  // useEffect(() => {
+  //   console.log('## filteredRows', filteredRows)
 
-    // 필터링한 row index가 현재 페이지에 보이는 row index를 벗어나면 페이지를 다시 설정해준다.
-    if (filteredRows.length < current.perPage * current.page) {
-      openModal({
-        type: 'Alert',
-        props: {
-          message: `필터링 결과는 총 ${filteredRows.length}개 입니다.`,
-        },
-      })
+  //   // 필터링한 row index가 현재 페이지에 보이는 row index를 벗어나면 페이지를 다시 설정해준다.
+  //   if (filteredRows.length < current.perPage * current.page) {
+  //     openModal({
+  //       type: 'Alert',
+  //       props: {
+  //         message: `필터링 결과는 총 ${filteredRows.length}개 입니다.`,
+  //       },
+  //     })
 
-      setCurrent({
-        ...current,
-        page: 0,
-      })
-    }
-  }, [filteredRows, current.page])
+  //     setCurrent({
+  //       ...current,
+  //       page: 0,
+  //     })
+  //   }
+  // }, [filteredRows, current.page])
 
   useEffect(() => {
     // console.log('@@rowFetchKey', rowFetchKey)
@@ -143,8 +145,9 @@ export default function Table() {
     if (shouldMergeRows) {
       // alert(`isRowFetching:${isRowFetching}`)
       // alert('merge!')
+      console.log('@@@@rows', rows)
 
-      handleMergedRows(loadSortedRows(rows, sortModel))
+      handleMergedRows(loadSortedRows([...mergedRows, ...rows], sortModel))
     }
 
     // if (!isRowFetching) return
@@ -160,7 +163,7 @@ export default function Table() {
 
     setSortLoading(true)
 
-    handleMergedRows(loadSortedRows(rows, sortModel))
+    handleMergedRows(loadSortedRows([...mergedRows, ...rows], sortModel))
     setSortLoading(false)
   }, [sortModel])
 
@@ -263,7 +266,7 @@ export default function Table() {
           <S.LastPageArrow
             onClick={() => {
               fetchAllRows()
-              goToPage(Math.ceil(totalRows / current.perPage) - 1)
+              // goToPage(Math.ceil(totalRows / current.perPage) - 1)
             }}
           >
             <ArrowForwardIcon />
@@ -300,7 +303,8 @@ export default function Table() {
   return (
     <S.Wrapper>
       <S.SettingsWrapper>
-        <SearchBar />
+        {/* <SearchBar /> */}
+        <div />
         <div style={{ display: 'flex' }}>
           <S.ExcelDownloadButton onClick={handleExcelDownloadButtonClick}>
             excel
@@ -349,7 +353,8 @@ export default function Table() {
         onSortModelChange={handleSortModelChange}
         loading={isRowFetching || sortLoading}
         columns={cols}
-        rows={filteredRows}
+        // rows={filteredRows}
+        rows={mergedRows}
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu

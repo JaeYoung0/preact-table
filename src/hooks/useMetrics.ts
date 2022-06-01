@@ -17,27 +17,29 @@ function useMetrics() {
   const { tableState } = useBubbleIo()
   const rowFetchKey = tableState ? JSON.stringify(tableState) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
-  const { cache } = useSWRConfig()
+  // const { cache } = useSWRConfig()
 
-  const { singlePageLoading } = usePage(rowFetchKey)
+  // const { singlePageLoading } = usePage(rowFetchKey)
 
   console.log('@@@@rowFetchKeys', JSON.stringify(rowFetchKeys))
 
   const isPoppedFromCaches = useRef(false)
 
-  function multiFetcher(rowFetchKeys: string) {
-    const urls = JSON.parse(rowFetchKeys) as string[]
-    return Promise.all(
-      urls.map((url) => (cache.get(url) ? cache.get(url) : fetchMetrics(JSON.parse(url))))
-    )
-  }
+  const fetcher = (url: string) => fetchMetrics(JSON.parse(url))
+
+  // const multiFetcher = (rowFetchKeys: string) => {
+  //   const urls = JSON.parse(rowFetchKeys) as string[]
+  //   return Promise.all(
+  //     urls.map((url) => (cache.get(url) ? cache.get(url) : fetchMetrics(JSON.parse(url))))
+  //   )
+  // }
 
   const {
-    data = [],
+    data = { report: [], total_cnt: 0 },
     error,
     mutate,
     isValidating,
-  } = useSWR<MetricsResponse[], Error>(JSON.stringify(rowFetchKeys), multiFetcher)
+  } = useSWR<MetricsResponse, Error>(rowFetchKey, fetcher)
 
   useEffect(() => {
     if (rowFetchKeys.includes(rowFetchKey)) {
@@ -60,18 +62,16 @@ function useMetrics() {
     if (!data || error) return []
     console.log('@@@@data', data)
 
-    const result = data.reduce(
-      (acc, cur) => ({
-        report: [...acc.report, ...cur.report],
-        total_cnt: cur.total_cnt,
-      }),
-      { report: [], total_cnt: 0 }
-    )
+    // const result = data.reduce(
+    //   (acc, cur) => ({
+    //     report: [...acc.report, ...cur.report],
+    //     total_cnt: cur.total_cnt,
+    //   }),
+    //   { report: [], total_cnt: 0 }
+    // )
 
-    return result?.report?.map((row, idx) => ({ ...row, id: idx }))
+    return data?.report
   }, [data, error])
-
-  console.log('@@@@rows', rows)
 
   const isInitialFetch = rowFetchKeys.length === 1
 
@@ -79,34 +79,31 @@ function useMetrics() {
 
   const totalRows = useMemo(() => {
     if (tableState?.page !== 0) return prevTotalRows.current
-    if (data.length === 0 || error) return 0
+    // if (data.length === 0 || error) return 0
+    if (error) return 0
 
-    prevTotalRows.current = data[0].total_cnt
-    return data[0].total_cnt
+    prevTotalRows.current = data.total_cnt
+    return data.total_cnt
   }, [data, error])
 
-  const fetchAllRows = throttle((targetIndex?: number) => {
-    const perPage = tableState?.per_page ?? 10
-    const lastPageIndex = Math.ceil(totalRows / perPage) - 1
-    const target = targetIndex ?? lastPageIndex
-
-    for (let idx = 0; idx < target; idx++) {
-      window.postMessage({
-        payload: {
-          ...tableState,
-          page: idx,
-          per_page: perPage,
-        },
-        reset: false,
-      })
-    }
-  })
+  const fetchAllRows = () => {
+    if (!tableState) return
+    const { page, ...rest } = tableState
+    window.postMessage({
+      payload: {
+        ...rest,
+        // page: current.page,
+        // per_page: current.perPage,
+      },
+      reset: true,
+    })
+  }
 
   return {
     rows,
     mutate,
     error,
-    isLoading: isValidating || singlePageLoading,
+    isLoading: isValidating,
     data,
     totalRows,
 

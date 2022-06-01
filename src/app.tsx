@@ -33,7 +33,7 @@ export function App() {
               revalidateIfStale: false,
               revalidateOnFocus: false,
               revalidateOnReconnect: false,
-              provider: () => new Map(),
+              // provider: () => new Map(),
             }}
           >
             <ModalProvider>

@@ -47,7 +47,7 @@ interface Props {
 
 function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
-  const matchMutate = useMatchMutate()
+  // const matchMutate = useMatchMutate()
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
@@ -143,8 +143,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
       handleHiddenOptions([...hiddenOptions, newCustomCol])
     }
 
-    matchMutate(/columns/g).then(() => mutateCols())
+    // matchMutate(/columns/g).then(() => mutateCols())
     // matchMutate
+    mutateCols()
     close()
   }
 

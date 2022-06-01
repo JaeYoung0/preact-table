@@ -155,7 +155,8 @@ export default function MultiSelect() {
         message: '열 설정이 저장되었습니다.',
       },
     })
-    matchMutate(/columns/g, [...visibleOptions, ...hiddenOptions], false)
+    // matchMutate(/columns/g, [...visibleOptions, ...hiddenOptions], false)
+    mutateCols()
 
     if (!tableState) {
       return openCustomModal({
@@ -177,7 +178,8 @@ export default function MultiSelect() {
       )
 
       handleMergedRows([])
-      matchMutate(/user_id/g).then(() => mutateRows())
+      // matchMutate(/user_id/g).then(() => mutateRows())
+      mutateRows()
     }, 500)
   }
 
