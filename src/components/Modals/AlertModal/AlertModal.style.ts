@@ -5,7 +5,7 @@ export const Container = styled.div`
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 999;
+  z-index: 9999;
   transform: translate3d(-50%, -50%, 0);
 
   display: flex;

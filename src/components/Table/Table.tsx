@@ -35,16 +35,12 @@ export default function Table() {
   const { visibleOptions } = useOptions()
 
   const { mergedRows, handleMergedRows, filteredRows } = useMergedRows()
-  const [currentPage, setCurrentPage] = useState(0)
-
-  // const [currentPage, setCurrentPage] = useState(0)
 
   const [current, setCurrent] = useState({
     page: 0,
     perPage: 10,
   })
   console.log('@@shouldMergeRows', shouldMergeRows, mergedRows, current)
-  console.log('!!rows', rows)
 
   const [sortLoading, setSortLoading] = useState(false)
   const [sortModel, setSortModel] = useState<GridSortModel>()
@@ -62,7 +58,8 @@ export default function Table() {
       },
     })
 
-    console.log('@@name', name)
+    // console.log('@@name', name)
+    // fetchAllRows()
 
     extractXLSX(name || 'untitled', filteredRows)
   }
@@ -120,7 +117,22 @@ export default function Table() {
 
   useEffect(() => {
     console.log('## filteredRows', filteredRows)
-  }, [filteredRows])
+
+    // 필터링한 row index가 현재 페이지에 보이는 row index를 벗어나면 페이지를 다시 설정해준다.
+    if (filteredRows.length < current.perPage * current.page) {
+      openModal({
+        type: 'Alert',
+        props: {
+          message: `필터링 결과는 총 ${filteredRows.length}개 입니다.`,
+        },
+      })
+
+      setCurrent({
+        ...current,
+        page: 0,
+      })
+    }
+  }, [filteredRows, current.page])
 
   useEffect(() => {
     // console.log('@@rowFetchKey', rowFetchKey)
@@ -269,7 +281,8 @@ export default function Table() {
               const newPageSize = Number(event.target.value)
               setCurrent({ ...current, perPage: newPageSize, page: 0 })
             }}
-            IconComponent={() => <ArrowForwardIcon />}
+            // style={{ position: 'absolute' }}
+            // IconComponent={() => <ArrowForwardIcon />}
           >
             {displays.map((display) => (
               <MenuItem key={display.value} value={display.value}>

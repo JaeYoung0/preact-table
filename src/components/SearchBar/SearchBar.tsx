@@ -19,6 +19,7 @@ function SearchBar() {
   const [autocompleteLabels, setAutocompleteLabels] = useState<ColData[]>([])
   const [searchValue, setSearchValue] = useState('')
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
+  // const [filterOptions, setFilterOptions] = useState<ColData[]>([])
 
   const { visibleCols } = useCols()
 
@@ -100,6 +101,9 @@ function SearchBar() {
         {...params}
         multiline
         placeholder={filterOptions.length === 0 ? '원하는 조건을 입력해 필터링하세요.' : ''}
+        onKeyDown={(e) => {
+          e.stopPropagation()
+        }}
         InputProps={{
           ...rest,
           startAdornment: renderStartAdornment(),
@@ -111,6 +115,8 @@ function SearchBar() {
 
   const handleOptionClick = (option: ColData) => {
     const { id, label } = option
+    console.log('@@@@option', option)
+
     setFilterOptions([
       ...filterOptions,
       {
@@ -118,10 +124,13 @@ function SearchBar() {
         label,
         value: searchValue,
       },
+      // option
     ])
 
     setSearchValue('')
   }
+
+  // console.log('@@@@searchValue', searchValue)
 
   const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: ColData) => {
     if (!searchValue)
@@ -131,7 +140,9 @@ function SearchBar() {
           {...props}
           onClick={() => {
             if (!searchValue) return
-            handleOptionClick(option)
+            console.log('@@searchValue', searchValue)
+
+            // handleOptionClick(option)
           }}
         >
           {option.label} <b>조건을 입력해주세요.</b>
@@ -143,6 +154,7 @@ function SearchBar() {
       </S.OptionLi>
     )
   }
+  console.log('@@autocompleteLabels', autocompleteLabels)
 
   return (
     <S.Wrapper>
@@ -150,10 +162,19 @@ function SearchBar() {
         sx={{ flex: 1, mr: 10 }}
         id="table-autocomplete"
         multiple
+        // value={autocompleteLabels.filter((item) =>
+        //   filterOptions.find((option) => option.label === item.label)
+        // )}
         options={autocompleteLabels}
         renderInput={renderInput}
         inputValue={searchValue}
-        onInputChange={(e, inputValue, reason) => handleInputChange(inputValue)}
+        onInputChange={(e, inputValue, reason) => {
+          // alert(reason)
+          // alert(inputValue)
+          // console.log('@@inputValue', inputValue, reason)
+
+          handleInputChange(inputValue)
+        }}
         // onChange={(e, value, reason) => {
         //   // FIXME: 여기서 mutate ?
         // }}

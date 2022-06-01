@@ -168,15 +168,15 @@ export const PageSizeArea = styled.div`
     color: #9198a0;
   }
 
-  .MuiInputBase-root {
+  /* .MuiInputBase-root {
     padding: 0px 10px;
     cursor: pointer;
-  }
+  } */
 
   .MuiSelect-select {
-    width: 20px;
+    width: 30px;
     height: 20px;
-    padding: 0 0 0 0 !important;
+    padding: 0 10px !important;
   }
 
   .MuiInputBase-input {
@@ -185,6 +185,6 @@ export const PageSizeArea = styled.div`
   }
 
   svg {
-    transform: rotate(90deg) scale(0.8, 0.8);
+    transform: scale(0.8, 0.8);
   }
 `
