@@ -29,6 +29,7 @@ export const Wrapper = styled.div`
 
   .MuiDataGrid-columnHeaderTitle {
     color: #fff;
+    font-weight: 600;
   }
 
   .MuiDataGrid-sortIcon {
@@ -160,15 +161,10 @@ export const PageSizeArea = styled.div`
   span {
     display: inline-block;
     white-space: pre;
-    font-weight: 400;
+    font-weight: 600;
     font-size: 12px;
     color: #9198a0;
   }
-
-  /* .MuiInputBase-root {
-    padding: 0px 10px;
-    cursor: pointer;
-  } */
 
   .MuiSelect-select {
     width: 30px;

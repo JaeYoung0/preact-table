@@ -64,6 +64,8 @@ export const ModalBasicButton = styled.button`
 
   background: #f2f4f6;
   border-radius: 4px;
+
+  font-weight: 600;
 `
 
 export const CancelButton = styled(ModalBasicButton)`
@@ -71,12 +73,14 @@ export const CancelButton = styled(ModalBasicButton)`
   justify-content: center;
   margin-left: 0;
   margin-right: 10px;
+  font-weight: 600;
 `
 export const SubmitButton = styled(ModalBasicButton)`
   justify-content: center;
   margin-left: 0;
   background-color: #6713ef;
   color: #fff;
+  font-weight: 600;
 `
 
 export const Row = styled.div`
