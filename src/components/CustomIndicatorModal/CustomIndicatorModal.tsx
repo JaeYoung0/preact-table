@@ -9,7 +9,7 @@ import {
   updateCustomCol,
   updateCustomColCommand,
 } from '@/services/columns'
-import useBubbleIo from '@/hooks/useBubbleIo'
+import useTableState from '@/hooks/useTableState'
 import RemoveIcon from '@/icons/RemoveIcon'
 import ResetIcon from '@/icons/ResetIcon'
 import useModals from '@/hooks/useModals'
@@ -51,7 +51,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
-  const { tableState } = useBubbleIo()
+  const { tableState } = useTableState()
   const { openModal, promptValue } = useModals()
 
   useEffect(() => {

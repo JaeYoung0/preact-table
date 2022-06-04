@@ -101,9 +101,7 @@ export const RowsOverlay = styled.div`
 
 export const BottomPagingText = styled.p`
   position: absolute;
-  /* bottom: -35px; */
   left: 50%;
-  /* bottom: 0px; */
   transform: translateX(-50%);
 
   font-weight: 600;
@@ -122,13 +120,12 @@ export const BottomPagingText = styled.p`
 export const BottomArrows = styled.div`
   position: absolute;
   left: 50%;
-  /* bottom: -35px; */
-  /* bottom: 0px; */
+
   transform: translateX(-50%);
 
   display: flex;
-  justify-content: center;
-  width: 200px;
+  justify-content: space-between;
+  width: 180px;
 `
 
 const ArrowBase = css`

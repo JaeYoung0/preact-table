@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { CigroAPI_V2 } from '@/helper/api'
 import { useMemo } from 'preact/hooks'
-import useBubbleIo from './useBubbleIo'
+import useTableState from './useTableState'
 
 export type ColData = CustomColType | OriginalColType
 
@@ -32,7 +32,7 @@ export type OriginalColType = {
 }
 
 function useCols() {
-  const { tableState } = useBubbleIo()
+  const { tableState } = useTableState()
 
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
     tableState ? '/metrics/columns' : null,

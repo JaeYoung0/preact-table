@@ -5,9 +5,10 @@ import * as S from './SearchBar.style'
 import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete'
 import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
-import useMergedRows from '@/hooks/useMergedRows'
 import SearchIcon from '@/icons/SearchIcon'
 import CloseIcon from '@/icons/CloseIcon'
+import useTableState from '@/hooks/useTableState'
+import useModals from '@/hooks/useModals'
 
 type FilterOption = {
   id: number
@@ -19,13 +20,13 @@ function SearchBar() {
   const [autocompleteLabels, setAutocompleteLabels] = useState<ColData[]>([])
   const [searchValue, setSearchValue] = useState('')
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
-  // const [filterOptions, setFilterOptions] = useState<ColData[]>([])
+  const { tableState } = useTableState()
+
+  const { openModal } = useModals()
 
   const { visibleCols } = useCols()
 
-  const { mergedRows, handleFilteredRows } = useMergedRows()
-
-  console.log('@@filterOptions', filterOptions)
+  console.log('@@@@filterOptions', filterOptions)
 
   useEffect(() => {
     // visibleCols가 바뀔 때 마다 TEXT 타입 컬럼을 autocompleteLabels로 둔다.
@@ -33,32 +34,19 @@ function SearchBar() {
     setAutocompleteLabels(textCols)
   }, [visibleCols])
 
-  useEffect(() => {
-    console.log('## filterOptions or mergedRows updated! -> 다시 filtering 합니다.', mergedRows)
-
-    if (filterOptions.length === 0) handleFilteredRows(mergedRows)
-    else {
-      handleFilteredRows(
-        mergedRows.filter((row) => {
-          let result = true
-          const regexList = filterOptions.map((option) => new RegExp(option.value))
-
-          filterOptions.forEach((option) =>
-            regexList.forEach((regex) =>
-              regex.test(row[option.label]) ? (result = true) : (result = false)
-            )
-          )
-
-          return result
-        })
-      )
-    }
-  }, [filterOptions, mergedRows])
-
   const handleInputChange = (inputValue: string) => setSearchValue(inputValue)
 
   const handleDeleteChip = (idx: number) => {
     setFilterOptions([...filterOptions.filter((_, filterIdx) => filterIdx !== idx)])
+
+    window.postMessage({
+      payload: {
+        ...tableState,
+        search_field: '',
+        keyword: '',
+      },
+      reset: false,
+    })
   }
 
   const renderStartAdornment = () => {
@@ -83,9 +71,21 @@ function SearchBar() {
     ))
   }
 
+  const removeAllFilters = () => {
+    setFilterOptions([])
+    window.postMessage({
+      payload: {
+        ...tableState,
+        search_field: '',
+        keyword: '',
+      },
+      reset: false,
+    })
+  }
+
   const renderEndAdornment = () => {
     return filterOptions.length !== 0 ? (
-      <S.ClearIconWrapper onClick={() => setFilterOptions([])}>
+      <S.ClearIconWrapper onClick={removeAllFilters}>
         <ClearIcon color="action" fontSize="small" />
       </S.ClearIconWrapper>
     ) : (
@@ -115,7 +115,14 @@ function SearchBar() {
 
   const handleOptionClick = (option: ColData) => {
     const { id, label } = option
-    console.log('@@@@option', option)
+
+    if (filterOptions.length >= 1)
+      return openModal({
+        type: 'Alert',
+        props: {
+          message: '필터링 가능한 컬럼은 하나만 선택할 수 있습니다.',
+        },
+      })
 
     setFilterOptions([
       ...filterOptions,
@@ -124,25 +131,20 @@ function SearchBar() {
         label,
         value: searchValue,
       },
-      // option
     ])
 
     setSearchValue('')
   }
 
-  // console.log('@@@@searchValue', searchValue)
-
   const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: ColData) => {
     if (!searchValue)
       return (
-        // FIXME: 조건 입력하고 enter하면 반영안됨
+        // 조건 입력하고 enter하면 반영안됨 -> 키보드 이벤트 제거로 대응
         <S.OptionLi
           {...props}
           onClick={() => {
             if (!searchValue) return
             console.log('@@searchValue', searchValue)
-
-            // handleOptionClick(option)
           }}
         >
           {option.label} <b>조건을 입력해주세요.</b>
@@ -156,28 +158,30 @@ function SearchBar() {
   }
   console.log('@@autocompleteLabels', autocompleteLabels)
 
+  useEffect(() => {
+    if (filterOptions.length === 0) return
+    window.postMessage({
+      payload: {
+        ...tableState,
+        search_field: filterOptions[0].label,
+        keyword: filterOptions[0].value,
+      },
+      reset: false,
+    })
+  }, [filterOptions])
+
   return (
     <S.Wrapper>
       <Autocomplete
         sx={{ flex: 1, mr: 10 }}
         id="table-autocomplete"
         multiple
-        // value={autocompleteLabels.filter((item) =>
-        //   filterOptions.find((option) => option.label === item.label)
-        // )}
         options={autocompleteLabels}
         renderInput={renderInput}
         inputValue={searchValue}
         onInputChange={(e, inputValue, reason) => {
-          // alert(reason)
-          // alert(inputValue)
-          // console.log('@@inputValue', inputValue, reason)
-
           handleInputChange(inputValue)
         }}
-        // onChange={(e, value, reason) => {
-        //   // FIXME: 여기서 mutate ?
-        // }}
         filterOptions={(options) => options}
         renderOption={(props, option, state) => {
           return renderOptions(props, option)

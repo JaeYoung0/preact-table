@@ -7,8 +7,7 @@ import useCols, { CustomColType } from '@/hooks/useCols'
 import { IndicatorModalValue } from '../CustomIndicatorModal'
 import { deleteCustomCol, updateCols, updateColsCommand } from '@/services/columns'
 import useMetrics from '@/hooks/useMetrics'
-import useBubbleIo from '@/hooks/useBubbleIo'
-import useMergedRows from '@/hooks/useMergedRows'
+import useTableState from '@/hooks/useTableState'
 import CloseIcon from '@/icons/CloseIcon'
 import HoverDotsIcon from '@/icons/HoverDotsIcon'
 import PlusIcon from '@/icons/PlusIcon'
@@ -42,13 +41,12 @@ export default function MultiSelect() {
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
-  const { tableState } = useBubbleIo()
+  const { tableState } = useTableState()
 
   const { openModal: openCustomModal } = useModals()
 
   const { mutate: mutateCols } = useCols()
-  const { mutate: mutateRows, fetchAllRows } = useMetrics()
-  const { handleMergedRows, mergedRows } = useMergedRows()
+  const { mutate: mutateRows } = useMetrics()
   const matchMutate = useMatchMutate()
 
   const openModal = (payload: IndicatorModalValue) => {
@@ -177,7 +175,6 @@ export default function MultiSelect() {
         '## 열 설정이 변경되었습니다. mergedRows를 초기화하고, 변경된 cols에 따라 rows를 다시 호출합니다.'
       )
 
-      handleMergedRows([])
       // matchMutate(/user_id/g).then(() => mutateRows())
       mutateRows()
     }, 500)
