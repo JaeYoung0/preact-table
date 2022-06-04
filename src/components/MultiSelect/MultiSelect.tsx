@@ -154,7 +154,6 @@ export default function MultiSelect() {
       },
     })
     // matchMutate(/columns/g, [...visibleOptions, ...hiddenOptions], false)
-    mutateCols()
 
     if (!tableState) {
       return openCustomModal({
@@ -165,24 +164,18 @@ export default function MultiSelect() {
       })
     }
 
-    await updateCols(tableState.user_id, command)
-
-    // updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
-    // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
-    setTimeout(() => {
-      // FIXME: 새롭게 hidden -> visible로 바뀐 col이 1개 이상 존재할 때만 mutate하기
-      console.log(
-        '## 열 설정이 변경되었습니다. mergedRows를 초기화하고, 변경된 cols에 따라 rows를 다시 호출합니다.'
-      )
-
-      // matchMutate(/user_id/g).then(() => mutateRows())
-      mutateRows()
-    }, 500)
+    await updateCols(tableState.user_id, command).then(() => {
+      // FIXME: updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
+      // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
+      setTimeout(() => {
+        mutateCols().then(() => {
+          mutateRows()
+        })
+      }, 500)
+    })
   }
 
   const handleCustomColDelete = async (id: number) => {
-    // const isConfirmed = confirm('삭제하시겠습니까?')
-
     if (!tableState) {
       return openCustomModal({
         type: 'Alert',

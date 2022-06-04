@@ -16,8 +16,6 @@ export type MetricsResponse = {
 }
 
 export const fetchMetrics = async (payload: getMetricsCommand) => {
-  console.log('@@@@fetchMetrics payload', payload)
-
   const diffMonth = Math.abs(dayjs(payload.start).diff(dayjs(payload.end), 'month'))
 
   if (diffMonth > 12) {

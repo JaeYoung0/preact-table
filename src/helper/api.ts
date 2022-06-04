@@ -26,7 +26,6 @@ export const CigroAPI_V2 = (
   endpoint += '?' + new URLSearchParams(config.params).toString()
 
   if (config.method !== 'GET') {
-    //  FIXME: stringify를 해야해?..
     options.body = JSON.stringify(config.body)
   }
 

@@ -26,8 +26,6 @@ function SearchBar() {
 
   const { visibleCols } = useCols()
 
-  console.log('@@@@filterOptions', filterOptions)
-
   useEffect(() => {
     // visibleCols가 바뀔 때 마다 TEXT 타입 컬럼을 autocompleteLabels로 둔다.
     const textCols = visibleCols.filter((col) => col.display === 'TEXT')
@@ -144,7 +142,6 @@ function SearchBar() {
           {...props}
           onClick={() => {
             if (!searchValue) return
-            console.log('@@searchValue', searchValue)
           }}
         >
           {option.label} <b>조건을 입력해주세요.</b>
@@ -156,7 +153,6 @@ function SearchBar() {
       </S.OptionLi>
     )
   }
-  console.log('@@autocompleteLabels', autocompleteLabels)
 
   useEffect(() => {
     if (filterOptions.length === 0) return

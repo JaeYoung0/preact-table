@@ -10,7 +10,7 @@ export function isOverflown(element: any) {
 const GridCellExpand = function GridCellExpand(props: any) {
   const { width, value, displayType } = props
   const valueFormatter = (value: any) => {
-    if (value === null) return '-'
+    if (value === null || value === '') return '-'
     if (!value && value !== 0) return null
 
     if (displayType === 'PERCENT') {

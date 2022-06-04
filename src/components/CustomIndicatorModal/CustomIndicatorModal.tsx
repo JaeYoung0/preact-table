@@ -91,8 +91,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
       })
     }
 
-    console.log('@@@@modalState', modalState)
-
     if (modalState.id) {
       const command: updateCustomColCommand = {
         type: 'CUSTOM',

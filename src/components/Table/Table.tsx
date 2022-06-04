@@ -18,14 +18,11 @@ import { fetchMetrics } from '@/services/rows'
 
 export default function Table() {
   const { tableState } = useTableState()
-  // console.log('## tableState', tableState)
-  console.log('## Table rendering!')
 
   const { rows, error, isLoading: isRowFetching, totalRows } = useMetrics()
-  console.log('@@@@rows', rows)
 
   const { visibleOptions } = useOptions()
-  console.log('@@@@visibleOptions', visibleOptions)
+  const [excelDownlading, setExcelDownlading] = useState(false)
 
   const [current, setCurrent] = useState({
     page: 0,
@@ -34,11 +31,8 @@ export default function Table() {
   const { openModal } = useModals()
 
   const [sortModel, setSortModel] = useState<GridSortModel>()
-  console.log('@@@@sortModel', sortModel)
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
-    console.log('@@@@newModel', newModel)
-
     setSortModel(newModel)
   }
 
@@ -53,12 +47,16 @@ export default function Table() {
       },
     })
 
+    setExcelDownlading(true)
+
     // 현재 tableState기준 page 쿼리를 제거하여 전체 데이터를 다운받는다
     const { page, ...rest } = tableState
 
     const { report: rows } = await fetchMetrics({
       ...rest,
     })
+
+    setExcelDownlading(false)
 
     extractXLSX(name || 'untitled', rows)
   }
@@ -107,6 +105,20 @@ export default function Table() {
   }, [current.perPage])
 
   useEffect(() => {
+    if (!tableState) return
+    if (totalRows === 0) return
+
+    console.log('## totalRows updated')
+
+    if (current.page > Math.ceil(totalRows / current.perPage)) {
+      setCurrent({
+        ...current,
+        page: Math.ceil(totalRows / current.perPage) - 1,
+      })
+    }
+  }, [totalRows])
+
+  useEffect(() => {
     if (!tableState || !sortModel || sortModel.length === 0) return
 
     console.log('## sortModel updated')
@@ -122,7 +134,7 @@ export default function Table() {
       },
       reset: false,
     })
-  }, [sortModel])
+  }, [sortModel, visibleOptions])
 
   const footerPageCountText = useMemo(
     () => `${current.page + 1}  /  ${Math.ceil(totalRows / current.perPage)}`,
@@ -187,7 +199,6 @@ export default function Table() {
             </S.NextArrowWrapper>
             <S.LastPageArrow
               onClick={() => {
-                // fetchAllRows()
                 goToPage(Math.ceil(totalRows / current.perPage) - 1)
               }}
             >
@@ -228,8 +239,17 @@ export default function Table() {
 
         <div style={{ display: 'flex' }}>
           <S.ExcelDownloadButton onClick={handleExcelDownloadButtonClick}>
-            excel
-            <Download />
+            {excelDownlading ? (
+              <>
+                excel
+                <CircularProgress disableShrink size={15} />
+              </>
+            ) : (
+              <>
+                excel
+                <Download />
+              </>
+            )}
           </S.ExcelDownloadButton>
           <MultiSelect />
         </div>

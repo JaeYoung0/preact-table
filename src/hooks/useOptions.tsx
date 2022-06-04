@@ -24,7 +24,6 @@ const Options = createContext<OptionsContextType>({
 export function OptionsProvider({ children }: { children: React.ReactNode }) {
   const [visibleOptions, setVisibleOptions] = useState<ColData[]>([])
   const [hiddenOptions, setHiddenOptions] = useState<ColData[]>([])
-  console.log('@@@@hiddenOptions', hiddenOptions)
 
   const handleVisibileOptions = (newOptions: ColData[]) => {
     setVisibleOptions(newOptions)

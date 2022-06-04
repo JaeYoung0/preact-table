@@ -17,7 +17,7 @@ type ModalContextType = {
 export type AlertModalType = {
   type: 'Alert'
   props: {
-    id?: number // FIXME: open할 때는 없어도 되는 props 구분하기
+    id?: number
     message: string
     onClose?: () => void
   }

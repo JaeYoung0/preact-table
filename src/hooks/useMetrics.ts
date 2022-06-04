@@ -13,7 +13,6 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useTableState()
-  console.log('@@@@tableState', tableState)
 
   const rowFetchKey = tableState ? JSON.stringify(tableState) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
@@ -44,14 +43,16 @@ function useMetrics() {
   const isInitialFetch = rowFetchKeys.length === 1
 
   const prevTotalRows = useRef(0)
+  console.log('@@@@prevTotalRows', prevTotalRows)
 
   const totalRows = useMemo(() => {
-    if (tableState?.page !== 0) return prevTotalRows.current
+    if (!data || data.total_cnt == 0) return prevTotalRows.current
     if (error) return 0
 
     prevTotalRows.current = data.total_cnt
     return data.total_cnt
-  }, [data, error])
+  }, [data, error, tableState])
+  // console.log('@@@totalRows', totalRows)
 
   return {
     rows,
