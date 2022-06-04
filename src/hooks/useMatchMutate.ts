@@ -1,5 +1,6 @@
 import { useSWRConfig } from 'swr'
 
+// SWR에서 전역 cache provider를 설정했을 때 mutate를 위해 사용하는 훅
 function useMatchMutate() {
   const { cache, mutate } = useSWRConfig()
 

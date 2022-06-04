@@ -44,13 +44,6 @@ function useCols() {
           metrics_type: 'SALES',
         },
       })
-    // {
-    //   // dedupingInterval: 3000,
-    //   // errorRetryCount: 3,
-    //   // revalidateOnFocus: false,
-    //   // revalidateOnReconnect: false,
-    //   // refreshInterval: 5000, // 5초마다 폴링
-    // }
   )
 
   const visibleCols = useMemo(() => {

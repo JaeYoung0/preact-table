@@ -3,7 +3,7 @@ import MultiSelect from '@/components/MultiSelect'
 import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
-import useMetrics, { RowType } from '@/hooks/useMetrics'
+import useMetrics from '@/hooks/useMetrics'
 import { useEffect, useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
@@ -22,6 +22,7 @@ export default function Table() {
   const { rows, error, isLoading: isRowFetching, totalRows } = useMetrics()
 
   const { visibleOptions } = useOptions()
+
   const [excelDownlading, setExcelDownlading] = useState(false)
 
   const [current, setCurrent] = useState({
@@ -33,7 +34,11 @@ export default function Table() {
   const [sortModel, setSortModel] = useState<GridSortModel>()
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
-    setSortModel(newModel)
+    // 정렬 기준이 없을 경우 디폴트는 첫번째 컬럼으로 세팅한다
+    if (newModel.length === 0) {
+      const firstLabel = visibleOptions[0].label
+      setSortModel([{ field: firstLabel, sort: 'asc' }])
+    } else setSortModel(newModel)
   }
 
   const handleExcelDownloadButtonClick = async () => {
@@ -119,12 +124,15 @@ export default function Table() {
   }, [totalRows])
 
   useEffect(() => {
-    if (!tableState || !sortModel || sortModel.length === 0) return
+    if (!tableState || visibleOptions.length === 0) return
+    if (!sortModel || sortModel.length === 0) {
+      return setSortModel([{ field: visibleOptions[0].label, sort: 'asc' }])
+    }
 
     console.log('## sortModel updated')
 
     const orderId = visibleOptions.find((option) => option.label === sortModel[0].field)?.order
-    if (!orderId) return alert('새로고침 해주세요')
+    if (!orderId) return
 
     window.postMessage({
       payload: {
