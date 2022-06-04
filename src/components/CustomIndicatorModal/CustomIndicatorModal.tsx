@@ -13,7 +13,6 @@ import useTableState from '@/hooks/useTableState'
 import RemoveIcon from '@/icons/RemoveIcon'
 import ResetIcon from '@/icons/ResetIcon'
 import useModals from '@/hooks/useModals'
-import useMatchMutate from '@/hooks/useMatchMutate'
 import useOptions from '@/hooks/useOptions'
 
 export type IndicatorModalValue = {
@@ -49,10 +48,10 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
   const [modalState, setModalState] = useState<IndicatorModalValue>(() => initialModalState)
   // const matchMutate = useMatchMutate()
 
-  const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
+  const { handleHiddenOptions, hiddenOptions } = useOptions()
 
   const { tableState } = useTableState()
-  const { openModal, promptValue } = useModals()
+  const { openModal } = useModals()
 
   useEffect(() => {
     setModalState(initialModalState)
@@ -92,6 +91,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
     }
 
     if (modalState.id) {
+      // 지표 수정
+      // FIXME: modalState.formula validate check
+
       const command: updateCustomColCommand = {
         type: 'CUSTOM',
         status: 'HIDDEN',
@@ -118,6 +120,9 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         ])
       }
     } else {
+      // 지표 생성
+      // FIXME: modalState.formula validate check
+
       const command: createCustomColCommand = {
         type: 'CUSTOM',
         status: 'HIDDEN',
