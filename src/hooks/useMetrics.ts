@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'preact/hooks'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
@@ -17,6 +17,12 @@ function useMetrics() {
 
   const rowFetchKey = tableState ? JSON.stringify(tableState) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
+  console.log('@@rowFetchKeys', rowFetchKeys)
+
+  useEffect(() => {
+    if (!tableState) return
+    setRowFetchKeys([...new Set([...rowFetchKeys, rowFetchKey])])
+  }, [tableState])
 
   const isPoppedFromCaches = useRef(false)
 
@@ -28,8 +34,6 @@ function useMetrics() {
     mutate,
     isValidating,
   } = useSWR<MetricsResponse, Error>(rowFetchKey, fetcher)
-
-  const handleRowFetchKeys = (newValues: string[]) => setRowFetchKeys(newValues)
 
   const rows: GridRowModel[] = useMemo(() => {
     if (!data || error) return []
@@ -57,7 +61,8 @@ function useMetrics() {
     data,
     totalRows,
     shouldMergeRows: !isPoppedFromCaches.current || isInitialFetch,
-    handleRowFetchKeys,
+
+    rowFetchKeys,
   }
 }
 

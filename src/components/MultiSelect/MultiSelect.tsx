@@ -13,6 +13,7 @@ import HoverDotsIcon from '@/icons/HoverDotsIcon'
 import PlusIcon from '@/icons/PlusIcon'
 import useModals from '@/hooks/useModals'
 import useMatchMutate from '@/hooks/useMatchMutate'
+import { mutate } from 'swr'
 
 const initialValues: IndicatorModalValue = {
   label: '',
@@ -46,7 +47,7 @@ export default function MultiSelect() {
   const { openModal: openCustomModal } = useModals()
 
   const { mutate: mutateCols } = useCols()
-  const { mutate: mutateRows } = useMetrics()
+  const { mutate: mutateRows, rowFetchKeys } = useMetrics()
   const matchMutate = useMatchMutate()
 
   const openModal = (payload: IndicatorModalValue) => {
@@ -153,7 +154,6 @@ export default function MultiSelect() {
         message: '열 설정이 저장되었습니다.',
       },
     })
-    // matchMutate(/columns/g, [...visibleOptions, ...hiddenOptions], false)
 
     if (!tableState) {
       return openCustomModal({
@@ -169,7 +169,7 @@ export default function MultiSelect() {
       // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
       setTimeout(() => {
         mutateCols().then(() => {
-          mutateRows()
+          rowFetchKeys.forEach((key) => mutate(key))
         })
       }, 500)
     })
