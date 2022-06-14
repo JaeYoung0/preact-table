@@ -1,3 +1,4 @@
+import useCols from '@/hooks/useCols'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
@@ -13,8 +14,11 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useTableState()
+  const { visibleCols } = useCols()
 
-  const rowFetchKey = tableState ? JSON.stringify(tableState) : null
+  const visibleLabels = visibleCols.map((col) => col.label)
+
+  const rowFetchKey = tableState ? JSON.stringify({ ...tableState, visibleLabels }) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
 
   useEffect(() => {
@@ -26,12 +30,10 @@ function useMetrics() {
 
   const fetcher = (url: string) => fetchMetrics(JSON.parse(url))
 
-  const {
-    data = { report: [], total_cnt: 0 },
-    error,
-    mutate,
-    isValidating,
-  } = useSWR<MetricsResponse, Error>(rowFetchKey, fetcher)
+  const { data = { report: [], total_cnt: 0 }, error, mutate, isValidating } = useSWR<
+    MetricsResponse,
+    Error
+  >(rowFetchKey, fetcher)
 
   const rows: GridRowModel[] = useMemo(() => {
     if (!data || error) return []
