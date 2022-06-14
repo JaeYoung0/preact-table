@@ -1,3 +1,4 @@
+import { MetricsType } from '@/hooks/useTableState'
 import useSWR from 'swr'
 import { CigroAPI_V2 } from '@/helper/api'
 import { useMemo } from 'preact/hooks'
@@ -7,7 +8,7 @@ export type ColData = CustomColType | OriginalColType
 
 export type CustomColType = {
   type: 'CUSTOM'
-  metrics_type: 'SALES'
+  metrics_type: MetricsType
   label: string
   display: 'WON' | 'PERCENT' | 'NUMBER'
   order: number
@@ -20,7 +21,7 @@ export type CustomColType = {
 
 export type OriginalColType = {
   type: 'ORIGINAL'
-  metrics_type: 'SALES'
+  metrics_type: MetricsType
   label: string
   display: 'TEXT' | 'WON' | 'PERCENT' | 'NUMBER'
   order: number
@@ -42,7 +43,7 @@ function useCols() {
         params: {
           user_id: tableState?.user_id ?? '',
           env: tableState?.env ?? 'prod',
-          metrics_type: 'SALES',
+          metrics_type: tableState?.metrics_type,
         },
       })
   )

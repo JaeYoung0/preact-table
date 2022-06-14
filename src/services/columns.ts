@@ -1,12 +1,12 @@
 import { CigroAPI_V2 } from '@/helper/api'
-import { DeployType } from '@/hooks/useTableState'
+import { DeployType, MetricsType } from '@/hooks/useTableState'
 
 export type createCustomColCommand = {
   label: string
   display: 'NUMBER' | 'PERCENT' | 'WON'
   description?: string
   formula: string
-  metrics_type: 'SALES'
+  metrics_type: MetricsType
   type: 'CUSTOM'
   status: 'HIDDEN'
 }

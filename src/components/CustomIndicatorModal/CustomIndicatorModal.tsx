@@ -101,7 +101,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         display: modalState.display,
         description: modalState.description,
         formula: modalState.formula.join(' '),
-        metrics_type: 'SALES',
+        metrics_type: tableState.metrics_type,
         id: modalState?.id,
       }
 
@@ -136,7 +136,7 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         display: modalState.display,
         description: modalState.description,
         formula: modalState.formula.join(' '),
-        metrics_type: 'SALES',
+        metrics_type: tableState.metrics_type,
       }
 
       const newCustomCol = await createCustomCol(

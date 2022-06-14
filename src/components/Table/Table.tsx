@@ -138,7 +138,6 @@ export default function Table() {
         sort: sortModel[0].sort?.toUpperCase(), // 'ASC' or 'DESC'
         order_by_col_num: orderId,
       },
-      reset: false,
     })
   }, [sortModel, visibleOptions])
 
