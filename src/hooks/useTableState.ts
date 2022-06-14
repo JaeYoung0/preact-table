@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'preact/hooks'
 
 export type DeployType = 'dev' | 'prod'
+export type MetricsType = 'SALES' | 'AD'
 
 export type TableStateType = {
-  metrics_type: 'SALES' // default
+  metrics_type: MetricsType
   user_id: string
   env: DeployType
   start: string
