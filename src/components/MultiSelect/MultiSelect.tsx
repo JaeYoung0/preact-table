@@ -164,7 +164,13 @@ export default function MultiSelect() {
       })
     }
 
-    await updateCols(tableState.user_id, command).then(() => {
+    await updateCols(
+      {
+        user_id: tableState.user_id,
+        env: tableState.env,
+      },
+      command
+    ).then(() => {
       // FIXME: updateCols 200응답받고 바로 mutate하면 이전값으로 업데이트 되어버릴 때가 있다.
       // -> DB 업데이트가 느려서 그런가?! -> 어쩔 수 없이 setTimeout으로 처리 ...
       setTimeout(() => {
@@ -193,7 +199,13 @@ export default function MultiSelect() {
     })
 
     if (isConfirmed) {
-      await deleteCustomCol(tableState.user_id, { id })
+      await deleteCustomCol(
+        {
+          user_id: tableState.user_id,
+          env: tableState.env,
+        },
+        { id }
+      )
 
       matchMutate(/columns/g).then(() => {
         openCustomModal({

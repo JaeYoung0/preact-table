@@ -41,6 +41,7 @@ function useCols() {
         method: 'GET',
         params: {
           user_id: tableState?.user_id ?? '',
+          env: tableState?.env ?? 'prod',
           metrics_type: 'SALES',
         },
       })

@@ -43,7 +43,6 @@ function SearchBar() {
         search_field: '',
         keyword: '',
       },
-      reset: false,
     })
   }
 
@@ -77,7 +76,6 @@ function SearchBar() {
         search_field: '',
         keyword: '',
       },
-      reset: false,
     })
   }
 
@@ -162,7 +160,6 @@ function SearchBar() {
         search_field: filterOptions[0].label,
         keyword: filterOptions[0].value,
       },
-      reset: false,
     })
   }, [filterOptions])
 

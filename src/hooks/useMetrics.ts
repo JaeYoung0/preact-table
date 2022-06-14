@@ -13,11 +13,9 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useTableState()
-  console.log('@@tableState', tableState)
 
   const rowFetchKey = tableState ? JSON.stringify(tableState) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
-  console.log('@@rowFetchKeys', rowFetchKeys)
 
   useEffect(() => {
     if (!tableState) return

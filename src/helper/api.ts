@@ -3,9 +3,6 @@ export type ParamsType = Record<string, any>
 function handleErrors(response: Response) {
   if (!response.ok) {
     throw Error(response.statusText)
-
-    // if (response.status == 404) {
-    // }
   }
   return response
 }
@@ -13,17 +10,26 @@ function handleErrors(response: Response) {
 export const CigroAPI_V2 = (
   endpoint: string,
   config: {
-    params: ParamsType
     method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    params: ParamsType
     body?: any
   }
 ) => {
-  const prefix = 'https://dev.cigro.io/api/v2'
+  const deployType = config.params.env as 'prod' | 'dev'
+
+  const baseUrl = {
+    dev: 'https://dev.cigro.io/api/v2',
+    prod: 'https://prod.cigro.io/api/v2',
+  }
+
+  const prefix = baseUrl[deployType] ?? baseUrl['prod']
 
   let options: { method: string; body?: string } = {
     method: config.method,
   }
-  endpoint += '?' + new URLSearchParams(config.params).toString()
+
+  const { env, ...rest } = config.params
+  endpoint += '?' + new URLSearchParams(rest).toString()
 
   if (config.method !== 'GET') {
     options.body = JSON.stringify(config.body)
@@ -33,7 +39,6 @@ export const CigroAPI_V2 = (
     .then(handleErrors)
     .then((response) => response.json())
     .catch((err) => {
-      // console.error(err);
       throw err
     })
 }

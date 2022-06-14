@@ -105,7 +105,13 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         id: modalState?.id,
       }
 
-      const updatedCustomCol = await updateCustomCol(tableState.user_id, command)
+      const updatedCustomCol = await updateCustomCol(
+        {
+          user_id: tableState.user_id,
+          env: tableState.env,
+        },
+        command
+      )
       if (updatedCustomCol) {
         openModal({
           type: 'Alert',
@@ -133,7 +139,13 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
         metrics_type: 'SALES',
       }
 
-      const newCustomCol = await createCustomCol(tableState.user_id, command)
+      const newCustomCol = await createCustomCol(
+        {
+          user_id: tableState.user_id,
+          env: tableState.env,
+        },
+        command
+      )
 
       if (newCustomCol) {
         openModal({
@@ -146,8 +158,6 @@ function CustomIndicatorModal({ visible, close, initialModalState }: Props) {
       handleHiddenOptions([...hiddenOptions, newCustomCol])
     }
 
-    // matchMutate(/columns/g).then(() => mutateCols())
-    // matchMutate
     mutateCols()
     close()
   }

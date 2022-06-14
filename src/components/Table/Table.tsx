@@ -90,7 +90,6 @@ export default function Table() {
         page: current.page,
         per_page: current.perPage,
       },
-      reset: false,
     })
   }, [current.page])
 
@@ -105,7 +104,6 @@ export default function Table() {
         page: current.page,
         per_page: current.perPage,
       },
-      reset: false,
     })
   }, [current.perPage])
 
@@ -122,8 +120,6 @@ export default function Table() {
       })
     }
   }, [totalRows])
-
-  console.log('@@visibleOptions', visibleOptions)
 
   useEffect(() => {
     if (!tableState || visibleOptions.length === 0) return

@@ -3,6 +3,7 @@
 아래 postMessage로 초기화 한다.
 
 ```code
+// dev
 window.postMessage({
       payload: {
         metrics_type: 'SALES',
@@ -11,14 +12,32 @@ window.postMessage({
         end: '2022-04-05',
         page:0,
         per_page:10,
-
         order_by_col_num: 1,
         sort: 'ASC',
         search_field: '',
-        keyword: ''
+        keyword: '',
+        env: 'dev'
       },
-      reset: false
     })
+
+// prod test
+
+window.postMessage({
+      payload: {
+        metrics_type: 'SALES',
+        user_id: '1619163830244x903498739105014900',
+        start: '2021-12-05',
+        end: '2022-04-05',
+        page:0,
+        per_page:10,
+        order_by_col_num: 1,
+        sort: 'ASC',
+        search_field: '',
+        keyword: '',
+        env: 'prod'
+      },
+    })
+
 ```
 
 ## Test Case
