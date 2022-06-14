@@ -90,7 +90,6 @@ export default function Table() {
         page: current.page,
         per_page: current.perPage,
       },
-      reset: false,
     })
   }, [current.page])
 
@@ -105,7 +104,6 @@ export default function Table() {
         page: current.page,
         per_page: current.perPage,
       },
-      reset: false,
     })
   }, [current.perPage])
 
@@ -129,7 +127,7 @@ export default function Table() {
       return setSortModel([{ field: visibleOptions[0].label, sort: 'asc' }])
     }
 
-    console.log('## sortModel updated')
+    console.log('## sortModel updated', sortModel)
 
     const orderId = visibleOptions.find((option) => option.label === sortModel[0].field)?.order
     if (!orderId) return
@@ -137,10 +135,9 @@ export default function Table() {
     window.postMessage({
       payload: {
         ...tableState,
-        sort: sortModel[0].sort?.toUpperCase(),
+        sort: sortModel[0].sort?.toUpperCase(), // 'ASC' or 'DESC'
         order_by_col_num: orderId,
       },
-      reset: false,
     })
   }, [sortModel, visibleOptions])
 

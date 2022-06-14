@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'preact/hooks'
+import useCols from '@/hooks/useCols'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GridRowModel } from '@mui/x-data-grid'
 import useSWR from 'swr'
 import { fetchMetrics } from '@/services/rows'
@@ -13,23 +14,26 @@ export type MetricsResponse = {
 
 function useMetrics() {
   const { tableState } = useTableState()
-  console.log('@@tableState', tableState)
+  const { visibleCols } = useCols()
 
-  const rowFetchKey = tableState ? JSON.stringify(tableState) : null
+  const visibleLabels = visibleCols.map((col) => col.label)
+
+  const rowFetchKey = tableState ? JSON.stringify({ ...tableState, visibleLabels }) : null
   const [rowFetchKeys, setRowFetchKeys] = useState<any[]>([])
+
+  useEffect(() => {
+    if (!tableState) return
+    setRowFetchKeys([...new Set([...rowFetchKeys, rowFetchKey])])
+  }, [tableState])
 
   const isPoppedFromCaches = useRef(false)
 
   const fetcher = (url: string) => fetchMetrics(JSON.parse(url))
 
-  const {
-    data = { report: [], total_cnt: 0 },
-    error,
-    mutate,
-    isValidating,
-  } = useSWR<MetricsResponse, Error>(rowFetchKey, fetcher)
-
-  const handleRowFetchKeys = (newValues: string[]) => setRowFetchKeys(newValues)
+  const { data = { report: [], total_cnt: 0 }, error, mutate, isValidating } = useSWR<
+    MetricsResponse,
+    Error
+  >(rowFetchKey, fetcher)
 
   const rows: GridRowModel[] = useMemo(() => {
     if (!data || error) return []
@@ -57,7 +61,8 @@ function useMetrics() {
     data,
     totalRows,
     shouldMergeRows: !isPoppedFromCaches.current || isInitialFetch,
-    handleRowFetchKeys,
+
+    rowFetchKeys,
   }
 }
 
