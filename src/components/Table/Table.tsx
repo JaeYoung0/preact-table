@@ -124,12 +124,14 @@ export default function Table() {
   useEffect(() => {
     if (!tableState || visibleOptions.length === 0) return
     if (!sortModel || sortModel.length === 0) {
-      return setSortModel([{ field: visibleOptions[0].label, sort: 'asc' }])
+      const firstTextOption = visibleOptions.find((option) => option.display === 'TEXT')
+      return setSortModel([
+        { field: firstTextOption?.label ?? visibleOptions[0].label, sort: 'asc' },
+      ])
     }
 
-    console.log('## sortModel updated', sortModel)
-
     const orderId = visibleOptions.find((option) => option.label === sortModel[0].field)?.order
+
     if (!orderId) return
 
     window.postMessage({
