@@ -19,6 +19,7 @@ export type TableStateType = {
   // 필터링
   search_field: string
   keyword: string
+  visibleLabels: string[]
 }
 
 type BubbleIoInjectionData = {
