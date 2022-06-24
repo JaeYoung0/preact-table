@@ -23,8 +23,11 @@ export type TableStateType = {
 }
 
 type BubbleIoInjectionData = {
+  key: typeof ALLOW_KEY
   payload: TableStateType
 }
+
+const ALLOW_KEY = 'cigro-table'
 
 /**
  * Bubbie.io에서 window.postMessage를 쏘면 여기서 받는다.
@@ -34,8 +37,8 @@ function useTableState() {
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
-      const { payload } = e.data
-
+      const { payload, key } = e.data
+      if (key !== ALLOW_KEY) return
       setTableState(payload)
     }
     window.addEventListener('message', handleMessage)

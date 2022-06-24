@@ -38,6 +38,7 @@ function SearchBar() {
     setFilterOptions([...filterOptions.filter((_, filterIdx) => filterIdx !== idx)])
 
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         search_field: '',
@@ -71,6 +72,7 @@ function SearchBar() {
   const removeAllFilters = () => {
     setFilterOptions([])
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         search_field: '',
@@ -155,6 +157,7 @@ function SearchBar() {
   useEffect(() => {
     if (filterOptions.length === 0) return
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         search_field: filterOptions[0].label,

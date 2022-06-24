@@ -5,6 +5,7 @@
 ```code
 // dev
 window.postMessage({
+      key:'cigro-table',
       payload: {
         metrics_type: 'SALES',
         user_id: '1651800183717x956761776063033100',
@@ -23,6 +24,7 @@ window.postMessage({
 // prod test
 
 window.postMessage({
+      key:'cigro-table',
       payload: {
         metrics_type: 'SALES',
         user_id: '1619163830244x903498739105014900',

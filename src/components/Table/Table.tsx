@@ -85,6 +85,7 @@ export default function Table() {
     console.log('## current page updated')
 
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         page: current.page,
@@ -99,6 +100,7 @@ export default function Table() {
     console.log('## current per_page updated')
 
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         page: current.page,
@@ -135,6 +137,7 @@ export default function Table() {
     if (!orderId) return
 
     window.postMessage({
+      key: 'cigro-table',
       payload: {
         ...tableState,
         sort: sortModel[0].sort?.toUpperCase(), // 'ASC' or 'DESC'
