@@ -30,6 +30,44 @@
 
 - window.postMessage로 초기화하기 위해 플러그인에 action을 정의합니다.
 
+  ```jsx
+  // dev test
+  window.postMessage({
+    key: 'cigro-table',
+    payload: {
+      metrics_type: 'SALES',
+      user_id: '1651800183717x956761776063033100',
+      start: '2021-12-05',
+      end: '2022-04-05',
+      page: 0,
+      per_page: 10,
+      order_by_col_num: 1,
+      sort: 'ASC',
+      search_field: '',
+      keyword: '',
+      env: 'dev',
+    },
+  })
+
+  // prod test
+  window.postMessage({
+    key: 'cigro-table',
+    payload: {
+      metrics_type: 'SALES',
+      user_id: '1619163830244x903498739105014900',
+      start: '2021-12-05',
+      end: '2022-04-05',
+      page: 0,
+      per_page: 10,
+      order_by_col_num: 1,
+      sort: 'ASC',
+      search_field: '',
+      keyword: '',
+      env: 'prod',
+    },
+  })
+  ```
+
   - 이미지
 
     ![Untitled](ReadMeImg/Untitled%203.png)
