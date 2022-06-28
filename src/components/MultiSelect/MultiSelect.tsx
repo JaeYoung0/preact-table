@@ -234,7 +234,7 @@ export default function MultiSelect() {
 
         <S.ConfigBody>
           <S.BodyLeft>
-            <S.SubTitle>표시</S.SubTitle>
+            <S.SubTitle>표시 지표</S.SubTitle>
             <S.VisibleOptionsWrapper>
               {visibleOptions.map((option, idx) => (
                 <li
@@ -263,7 +263,7 @@ export default function MultiSelect() {
 
           <S.BodyRight>
             <S.SubTitle>
-              지표
+              숨김 지표
               <S.OpenModalButton onClick={() => openModal(initialValues)}>
                 + 커스텀 지표
               </S.OpenModalButton>
