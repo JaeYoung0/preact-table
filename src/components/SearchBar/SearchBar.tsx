@@ -1,6 +1,6 @@
 import React from 'react'
 import useCols, { ColData } from '@/hooks/useCols'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import * as S from './SearchBar.style'
 import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete'
 import Chip from '@mui/material/Chip'
@@ -21,6 +21,7 @@ function SearchBar() {
   const [searchValue, setSearchValue] = useState('')
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([])
   const { tableState } = useTableState()
+  const fakeRef = useRef<HTMLInputElement | null>(null)
 
   const { openModal } = useModals()
 
@@ -113,6 +114,7 @@ function SearchBar() {
 
   const handleOptionClick = (option: ColData) => {
     const { id, label } = option
+    fakeRef.current?.focus()
 
     if (filterOptions.length >= 1)
       return openModal({
@@ -137,7 +139,6 @@ function SearchBar() {
   const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: ColData) => {
     if (!searchValue)
       return (
-        // 조건 입력하고 enter하면 반영안됨 -> 키보드 이벤트 제거로 대응
         <S.OptionLi
           {...props}
           onClick={() => {
@@ -168,6 +169,18 @@ function SearchBar() {
 
   return (
     <S.Wrapper>
+      <input
+        style={{
+          width: 0,
+          height: 0,
+          border: 0,
+          padding: 0,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+        ref={fakeRef}
+      />
       <Autocomplete
         sx={{ flex: 1, mr: 10 }}
         id="table-autocomplete"

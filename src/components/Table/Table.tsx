@@ -268,7 +268,6 @@ export default function Table() {
       <DataGrid
         page={0} // useMetrics에서 가져온 데이터를 그대로 보여준다
         onPageChange={(newPage) => {
-          alert(newPage)
           setCurrent({ ...current, page: newPage })
         }}
         pageSize={current.perPage}
