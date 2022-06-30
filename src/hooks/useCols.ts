@@ -48,14 +48,23 @@ function useCols() {
       })
   )
 
+  const shoudBeExcluded = (item: ColData) =>
+    tableState?.excludedLabels.some((label) => label === item.label)
+
   const visibleCols = useMemo(() => {
     if (!data || error) return []
-    return data.filter((item) => item.status === 'VISIBLE')
+
+    return data.filter((item) => {
+      return item.status === 'VISIBLE' && !shoudBeExcluded(item)
+    })
   }, [data, isValidating])
 
   const hiddenCols = useMemo(() => {
     if (!data || error) return []
-    return data.filter((item) => item.status === 'HIDDEN')
+
+    return data.filter((item) => {
+      return item.status === 'HIDDEN' && !shoudBeExcluded(item)
+    })
   }, [data, isValidating])
 
   /**

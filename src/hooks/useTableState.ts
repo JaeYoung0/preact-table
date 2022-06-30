@@ -20,6 +20,9 @@ export type TableStateType = {
   search_field: string
   keyword: string
   visibleLabels: string[]
+
+  // 렌더링시 배제할 컬럼명 모음
+  excludedLabels: string[]
 }
 
 type BubbleIoInjectionData = {

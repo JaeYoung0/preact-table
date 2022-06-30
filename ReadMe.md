@@ -35,6 +35,7 @@
   window.postMessage({
     key: 'cigro-table',
     payload: {
+      env: 'dev',
       metrics_type: 'SALES',
       user_id: '1651800183717x956761776063033100',
       start: '2021-12-05',
@@ -45,7 +46,7 @@
       sort: 'ASC',
       search_field: '',
       keyword: '',
-      env: 'dev',
+      excludedLabels: [],
     },
   })
 
@@ -53,6 +54,7 @@
   window.postMessage({
     key: 'cigro-table',
     payload: {
+      env: 'prod',
       metrics_type: 'SALES',
       user_id: '1619163830244x903498739105014900',
       start: '2021-12-05',
@@ -63,7 +65,7 @@
       sort: 'ASC',
       search_field: '',
       keyword: '',
-      env: 'prod',
+      excludedLabels: [],
     },
   })
   ```
