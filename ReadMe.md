@@ -17,12 +17,24 @@
     const wrapper = document.createElement('div')
     wrapper.setAttribute('id', wrapperId)
     instance.canvas.append(wrapper)
+
+    const handleClickRowMessage = (e) => {
+      const { key, payload } = e.data
+      if (key !== 'cigro-table-row') return
+      instance.publishState('tableRow', [payload])
+      instance.triggerEvent('tableRowClicked')
+    }
+    window.addEventListener('message', handleClickRowMessage)
     ```
+
+  ```
 
     ![Untitled](ReadMeImg/Untitled%201.png)
 
   - document.getElementById('app')에서 'app'을 wrapperId로 바꿔줍니다.
     ![Untitled](ReadMeImg/Untitled%206.png)
+
+  ```
 
 - bubble.io에서 플러그인을 initialize하는 부분에 번들링 + 수정한 js파일을 복붙합니다. 위치는 initialize하는 function **내부**입니다.
 
