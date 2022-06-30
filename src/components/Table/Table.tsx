@@ -4,7 +4,7 @@ import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
 import useMetrics from '@/hooks/useMetrics'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
@@ -15,6 +15,11 @@ import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
 import Select from '@mui/material/Select'
 import { fetchMetrics } from '@/services/rows'
+
+// type BubbleIoTableRowData = {
+//   key: 'cigro-table-row'
+//   payload: Record<string, any>
+// }
 
 export default function Table() {
   const { tableState } = useTableState()
@@ -242,6 +247,17 @@ export default function Table() {
     )
   }
 
+  // useEffect(() => {
+  //   const handleClickRowMessage = (e) => {
+  //     const { key, payload } = e.data
+  //     if(key !== 'cigro-table-row') return
+  //     console.log('@@key', key, payload)
+  //   }
+  //   window.addEventListener('message', handleClickRowMessage)
+
+  //   return () => window.removeEventListener('message', handleClickRowMessage)
+  // }, [])
+
   return (
     <S.Wrapper>
       <S.SettingsWrapper>
@@ -266,13 +282,18 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
+        onRowClick={(e) => {
+          window.postMessage({
+            key: 'cigro-table-row',
+            payload: JSON.stringify(e.row),
+          })
+        }}
         page={0} // useMetrics에서 가져온 데이터를 그대로 보여준다
         onPageChange={(newPage) => {
           setCurrent({ ...current, page: newPage })
         }}
         pageSize={current.perPage}
         rowsPerPageOptions={[10, 20, 30]}
-        // pagination
         rowCount={totalRows}
         components={{
           ErrorOverlay: () => (
