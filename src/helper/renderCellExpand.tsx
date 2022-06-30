@@ -91,7 +91,11 @@ const GridCellExpand = function GridCellExpand(props: any) {
         {valueFormatter(value)}
       </Box>
       {showPopper && (
-        <Popper open={showFullCell && anchorEl !== null} anchorEl={anchorEl}>
+        <Popper
+          style={{ zIndex: 500 }}
+          open={showFullCell && anchorEl !== null}
+          anchorEl={anchorEl}
+        >
           <Paper elevation={1}>
             <Typography variant="body2" style={{ padding: 8 }}>
               {valueFormatter(value)}
