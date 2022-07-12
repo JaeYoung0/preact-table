@@ -1,11 +1,10 @@
-import { customScroll } from '@/app.style'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { BasicButton } from '../common.style'
 export const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 100%;
   .MuiDataGrid-columnHeaders {
     background: #505866;
 

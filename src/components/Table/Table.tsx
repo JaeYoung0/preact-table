@@ -327,6 +327,7 @@ export default function Table() {
         disableSelectionOnClick
         showCellRightBorder
         disableColumnMenu
+        autoHeight
       />
     </S.Wrapper>
   )
