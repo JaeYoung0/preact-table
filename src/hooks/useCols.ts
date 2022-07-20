@@ -49,7 +49,7 @@ function useCols() {
   )
 
   const shoudBeExcluded = (item: ColData) =>
-    tableState?.excludedLabels.some((label) => label === item.label)
+    tableState?.excludedLabels?.some((label) => label === item.label)
 
   const visibleCols = useMemo(() => {
     if (!data || error) return []
