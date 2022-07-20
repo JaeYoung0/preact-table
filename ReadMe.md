@@ -59,6 +59,7 @@
       search_field: '',
       keyword: '',
       excludedLabels: [],
+      brand_name: '',
     },
   })
 
@@ -78,6 +79,7 @@
       search_field: '',
       keyword: '',
       excludedLabels: [],
+      brand_name: '',
     },
   })
   ```
