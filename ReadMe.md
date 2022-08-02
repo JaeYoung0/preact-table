@@ -48,10 +48,10 @@
     key: 'cigro-table',
     payload: {
       env: 'dev',
-      metrics_type: 'SALES',
+      metrics_type: 'PRODUCT',
       user_id: '1651800183717x956761776063033100',
-      start: '2021-12-05',
-      end: '2022-04-05',
+      start: '2021-11-01',
+      end: '2021-11-30',
       page: 0,
       per_page: 10,
       order_by_col_num: 1,
@@ -59,7 +59,7 @@
       search_field: '',
       keyword: '',
       excludedLabels: [],
-      brand_name: '',
+      brand_name: '전체',
     },
   })
 
