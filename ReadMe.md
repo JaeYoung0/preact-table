@@ -58,8 +58,45 @@
       sort: 'ASC',
       search_field: '',
       keyword: '',
-      excludedLabels: [],
       brand_name: '전체',
+      mustBeSavedVisibleOnServer: [
+        {
+          label: '상품ID',
+          visibleOnTable: true,
+        },
+        {
+          label: '상품명',
+          visibleOnTable: true,
+        },
+        {
+          label: '옵션명',
+          visibleOnTable: true,
+        },
+        {
+          label: 'channel_name',
+          visibleOnTable: true,
+        },
+        {
+          label: 'account_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_manager_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_campaign_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_group_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_id',
+          visibleOnTable: true,
+        },
+      ],
     },
   })
 
@@ -78,8 +115,45 @@
       sort: 'ASC',
       search_field: '',
       keyword: '',
-      excludedLabels: [],
-      brand_name: '',
+      brand_name: '전체',
+      mustBeSavedVisibleOnServer: [
+        {
+          label: '상품ID',
+          visibleOnTable: true,
+        },
+        {
+          label: '상품명',
+          visibleOnTable: true,
+        },
+        {
+          label: '옵션명',
+          visibleOnTable: true,
+        },
+        {
+          label: 'channel_name',
+          visibleOnTable: true,
+        },
+        {
+          label: 'account_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_manager_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_campaign_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_group_id',
+          visibleOnTable: true,
+        },
+        {
+          label: 'ad_id',
+          visibleOnTable: true,
+        },
+      ],
     },
   })
   ```

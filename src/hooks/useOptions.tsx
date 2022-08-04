@@ -2,7 +2,6 @@ import { createContext } from 'preact'
 import { useContext, useEffect, useState } from 'preact/hooks'
 import React from 'react'
 import { KeyedMutator } from 'swr'
-import { columns as DATA_COLS } from '../data'
 import useCols, { ColData } from './useCols'
 
 type OptionsContextType = {

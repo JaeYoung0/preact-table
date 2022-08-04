@@ -42,7 +42,7 @@ export default function MultiSelect() {
 
   const { visibleOptions, handleVisibileOptions, handleHiddenOptions, hiddenOptions } = useOptions()
 
-  const { tableState } = useTableState()
+  const { tableState, mustBeSavedVisibleLabelList } = useTableState()
 
   const { openModal: openCustomModal } = useModals()
 
@@ -236,28 +236,32 @@ export default function MultiSelect() {
           <S.BodyLeft>
             <S.SubTitle>표시 지표</S.SubTitle>
             <S.VisibleOptionsWrapper>
-              {visibleOptions.map((option, idx) => (
-                <li
-                  draggable
-                  key={idx}
-                  onDragStart={() => handleDragStart(idx)}
-                  onDragEnter={handleDragEnter}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDragDrop(e, idx)}
-                >
-                  {option.label}
-                  <span
-                    onClick={() => {
-                      handleVisibileOptions(visibleOptions.filter((item) => item.id !== option.id))
-                      handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
-                    }}
+              {visibleOptions
+                .filter((option) => !mustBeSavedVisibleLabelList.includes(option.label))
+                .map((option, idx) => (
+                  <li
+                    draggable
+                    key={idx}
+                    onDragStart={() => handleDragStart(idx)}
+                    onDragEnter={handleDragEnter}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDragDrop(e, idx)}
                   >
-                    <HoverDotsIcon />
-                    <CloseIcon />
-                  </span>
-                </li>
-              ))}
+                    {option.label}
+                    <span
+                      onClick={() => {
+                        handleVisibileOptions(
+                          visibleOptions.filter((item) => item.id !== option.id)
+                        )
+                        handleHiddenOptions([...hiddenOptions, { ...option, status: 'HIDDEN' }])
+                      }}
+                    >
+                      <HoverDotsIcon />
+                      <CloseIcon />
+                    </span>
+                  </li>
+                ))}
             </S.VisibleOptionsWrapper>
           </S.BodyLeft>
 
@@ -269,21 +273,40 @@ export default function MultiSelect() {
               </S.OpenModalButton>
             </S.SubTitle>
             <S.HiddenOptionsWrapper>
-              {hiddenOptions.map((option) => (
-                <li>
-                  {option.label}
-                  {option.type === 'CUSTOM' && (
-                    <S.CustomLabelsWrapper>
-                      <span>커스텀</span>
-                      <span onClick={(e) => handleCustomListClick(e, option)}>수정</span>
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleCustomColDelete(option.id)
-                        }}
-                      >
-                        삭제
-                      </span>
+              {hiddenOptions
+                .filter((option) => !mustBeSavedVisibleLabelList.includes(option.label))
+                .map((option) => (
+                  <li>
+                    {option.label}
+                    {option.type === 'CUSTOM' && (
+                      <S.CustomLabelsWrapper>
+                        <span>커스텀</span>
+                        <span onClick={(e) => handleCustomListClick(e, option)}>수정</span>
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleCustomColDelete(option.id)
+                          }}
+                        >
+                          삭제
+                        </span>
+                        <span
+                          onClick={() => {
+                            handleHiddenOptions(
+                              hiddenOptions.filter((item) => item.id !== option.id)
+                            )
+                            handleVisibileOptions([
+                              ...visibleOptions,
+                              { ...option, status: 'VISIBLE' },
+                            ])
+                          }}
+                        >
+                          <PlusIcon />
+                        </span>
+                      </S.CustomLabelsWrapper>
+                    )}
+
+                    {option.type === 'ORIGINAL' && (
                       <span
                         onClick={() => {
                           handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
@@ -295,21 +318,9 @@ export default function MultiSelect() {
                       >
                         <PlusIcon />
                       </span>
-                    </S.CustomLabelsWrapper>
-                  )}
-
-                  {option.type === 'ORIGINAL' && (
-                    <span
-                      onClick={() => {
-                        handleHiddenOptions(hiddenOptions.filter((item) => item.id !== option.id))
-                        handleVisibileOptions([...visibleOptions, { ...option, status: 'VISIBLE' }])
-                      }}
-                    >
-                      <PlusIcon />
-                    </span>
-                  )}
-                </li>
-              ))}
+                    )}
+                  </li>
+                ))}
             </S.HiddenOptionsWrapper>
           </S.BodyRight>
         </S.ConfigBody>

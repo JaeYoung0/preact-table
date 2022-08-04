@@ -15,6 +15,7 @@ export type MetricsResponse = {
   total_cnt: number // 전체 row 갯수
 }
 
+// fetch해야하는 col은 서버에 별도의 api로 저장한다 -> cols API
 export const fetchMetrics = async (payload: getMetricsCommand) => {
   const diffMonth = Math.abs(dayjs(payload.start).diff(dayjs(payload.end), 'month'))
 

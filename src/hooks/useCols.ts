@@ -33,7 +33,9 @@ export type OriginalColType = {
 }
 
 function useCols() {
-  const { tableState } = useTableState()
+  const { tableState, mustBeSavedVisibleLabelList } = useTableState()
+
+  console.log('@@tableState', tableState)
 
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
     tableState ? '/metrics/columns' : null,
@@ -48,22 +50,23 @@ function useCols() {
       })
   )
 
-  const shoudBeExcluded = (item: ColData) =>
-    tableState?.excludedLabels?.some((label) => label === item.label)
-
   const visibleCols = useMemo(() => {
     if (!data || error) return []
 
-    return data.filter((item) => {
-      return item.status === 'VISIBLE' && !shoudBeExcluded(item)
+    const filtered = data.filter((item) => {
+      if (mustBeSavedVisibleLabelList.includes(item.label)) return true
+      return item.status === 'VISIBLE'
     })
+
+    return filtered
   }, [data, isValidating])
 
   const hiddenCols = useMemo(() => {
     if (!data || error) return []
 
     return data.filter((item) => {
-      return item.status === 'HIDDEN' && !shoudBeExcluded(item)
+      if (mustBeSavedVisibleLabelList.includes(item.label)) return false
+      return item.status === 'HIDDEN'
     })
   }, [data, isValidating])
 

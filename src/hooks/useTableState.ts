@@ -22,7 +22,11 @@ export type TableStateType = {
   visibleLabels: string[]
 
   // 렌더링시 배제할 컬럼명 모음
-  excludedLabels: string[]
+  // excludedLabels: string[]
+
+  // excludedLabels에 넣었던 아이템은 mustBeSavedVisibleOnServer에서 visibleOnTable을 false로 할 것
+  // 서버에 반드시 VISIBLE로 저장되어있어야 하는 열 목록
+  mustBeSavedVisibleOnServer: { label: string; visibleOnTable: boolean }[]
 }
 
 type BubbleIoInjectionData = {
@@ -37,6 +41,7 @@ const ALLOW_KEY = 'cigro-table'
  */
 function useTableState() {
   const [tableState, setTableState] = useState<TableStateType | null>(null)
+  console.log('@@tableState', tableState)
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent<BubbleIoInjectionData>) => {
@@ -51,6 +56,14 @@ function useTableState() {
 
   return {
     tableState,
+    mustBeSavedVisibleOnServer: tableState?.mustBeSavedVisibleOnServer ?? [],
+    mustBeSavedVisibleLabelList:
+      tableState?.mustBeSavedVisibleOnServer.map((item) => item.label) ?? [],
+    mustBeSavedVisibleMapper:
+      tableState?.mustBeSavedVisibleOnServer.reduce<Record<string, unknown>>(
+        (acc, cur) => ({ ...acc, [cur.label]: cur.visibleOnTable }),
+        {}
+      ) ?? {},
   }
 }
 

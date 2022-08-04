@@ -16,13 +16,8 @@ import useModals from '@/hooks/useModals'
 import Select from '@mui/material/Select'
 import { fetchMetrics } from '@/services/rows'
 
-// type BubbleIoTableRowData = {
-//   key: 'cigro-table-row'
-//   payload: Record<string, any>
-// }
-
 export default function Table() {
-  const { tableState } = useTableState()
+  const { tableState, mustBeSavedVisibleMapper, mustBeSavedVisibleLabelList } = useTableState()
 
   const { rows, error, isLoading: isRowFetching, totalRows } = useMetrics()
 
@@ -71,18 +66,22 @@ export default function Table() {
     extractXLSX(name || 'untitled', rows)
   }
 
-  const cols = useMemo<GridColumns>(
-    () =>
-      visibleOptions.map((col) => ({
-        field: col.label,
-        headerName: col.label,
-        width: 150,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: (params) => renderCellExpand(params, col),
-      })),
-    visibleOptions
-  )
+  const cols = useMemo<GridColumns>(() => {
+    const filtered = visibleOptions.filter((option) => {
+      if (mustBeSavedVisibleLabelList.includes(option.label)) {
+        return mustBeSavedVisibleMapper[option.label]
+      } else return true
+    })
+
+    return filtered.map((col) => ({
+      field: col.label,
+      headerName: col.label,
+      width: 150,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => renderCellExpand(params, col),
+    }))
+  }, [visibleOptions, mustBeSavedVisibleMapper])
 
   useEffect(() => {
     if (!tableState) return
@@ -247,17 +246,6 @@ export default function Table() {
     )
   }
 
-  // useEffect(() => {
-  //   const handleClickRowMessage = (e) => {
-  //     const { key, payload } = e.data
-  //     if(key !== 'cigro-table-row') return
-  //     console.log('@@key', key, payload)
-  //   }
-  //   window.addEventListener('message', handleClickRowMessage)
-
-  //   return () => window.removeEventListener('message', handleClickRowMessage)
-  // }, [])
-
   return (
     <S.Wrapper>
       <S.SettingsWrapper>
@@ -282,7 +270,11 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
-        onRowClick={(e) => {
+        onRowClick={(e, a, c) => {
+          console.log('@@wow', e, a, c)
+          const order = e.id // 현재 페이지에서 몇번째 로우인지
+
+          alert(JSON.stringify(e.row))
           window.postMessage({
             key: 'cigro-table-row',
             payload: JSON.stringify(e.row),
