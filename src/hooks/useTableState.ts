@@ -21,9 +21,6 @@ export type TableStateType = {
   keyword: string
   visibleLabels: string[]
 
-  // 렌더링시 배제할 컬럼명 모음
-  // excludedLabels: string[]
-
   // excludedLabels에 넣었던 아이템은 mustBeSavedVisibleOnServer에서 visibleOnTable을 false로 할 것
   // 서버에 반드시 VISIBLE로 저장되어있어야 하는 열 목록
   mustBeSavedVisibleOnServer: { label: string; visibleOnTable: boolean }[]
