@@ -4,7 +4,7 @@ import * as S from './Table.style'
 import Download from '@/icons/Download'
 import useOptions from '@/hooks/useOptions'
 import useMetrics from '@/hooks/useMetrics'
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 import CircularProgress from '@mui/material/CircularProgress'
 import extractXLSX from '@/helper/extractXLSX'
 import SearchBar from '../SearchBar'
@@ -271,10 +271,6 @@ export default function Table() {
 
       <DataGrid
         onRowClick={(e, a, c) => {
-          console.log('@@wow', e, a, c)
-          const order = e.id // 현재 페이지에서 몇번째 로우인지
-
-          alert(JSON.stringify(e.row))
           window.postMessage({
             key: 'cigro-table-row',
             payload: JSON.stringify(e.row),
