@@ -19,7 +19,7 @@ export type MetricsResponse = {
 export const fetchMetrics = async (payload: getMetricsCommand) => {
   const diffMonth = Math.abs(dayjs(payload.start).diff(dayjs(payload.end), 'month'))
 
-  const { visibleLabels, ...rest } = payload
+  const { visibleLabels, mustBeSavedVisibleOnServer, ...rest } = payload
 
   if (diffMonth > 12) {
     throw new Error('최대 1년까지 조회할 수 있습니다.')

@@ -36,9 +36,9 @@ function useCols() {
   const { tableState, mustBeSavedVisibleLabelList } = useTableState()
 
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
-    tableState ? '/metrics/columns' : null,
+    tableState ? ['/metrics/columns', tableState.metrics_type] : null,
     (key) =>
-      CigroAPI_V2(key, {
+      CigroAPI_V2('/metrics/columns', {
         method: 'GET',
         params: {
           user_id: tableState?.user_id ?? '',
