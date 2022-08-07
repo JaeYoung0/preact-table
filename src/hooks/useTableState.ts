@@ -41,7 +41,6 @@ const ALLOW_KEY = 'cigro-table'
  */
 function useTableState() {
   const [tableState, setTableState] = useState<TableStateType | null>(null)
-  console.log('@@tableState', tableState)
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent<BubbleIoInjectionData>) => {

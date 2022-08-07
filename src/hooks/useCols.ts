@@ -35,8 +35,6 @@ export type OriginalColType = {
 function useCols() {
   const { tableState, mustBeSavedVisibleLabelList } = useTableState()
 
-  console.log('@@tableState', tableState)
-
   const { data, error, mutate, isValidating } = useSWR<ColData[]>(
     tableState ? ['/metrics/columns', tableState.metrics_type] : null,
     (key) =>

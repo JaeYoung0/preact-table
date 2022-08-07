@@ -15,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem'
 import useModals from '@/hooks/useModals'
 import Select from '@mui/material/Select'
 import { fetchMetrics } from '@/services/rows'
+import TestButtons from '../TestButtons'
 
 export default function Table() {
   const { tableState, mustBeSavedVisibleMapper, mustBeSavedVisibleLabelList } = useTableState()
@@ -29,14 +30,26 @@ export default function Table() {
     page: 0,
     perPage: 10,
   })
+
+  useEffect(() => {
+    // metrics_type이 바뀔때마다 page 초기화
+    if (!tableState?.metrics_type) return
+    setCurrent({
+      page: 0,
+      perPage: 10,
+    })
+  }, [tableState?.metrics_type])
+
   const { openModal } = useModals()
 
   const [sortModel, setSortModel] = useState<GridSortModel>()
 
   const handleSortModelChange = async (newModel: GridSortModel) => {
+    if (visibleOptions.length === 0) return
     // 정렬 기준이 없을 경우 디폴트는 첫번째 컬럼으로 세팅한다
     if (newModel.length === 0) {
       const firstLabel = visibleOptions[0].label
+
       setSortModel([{ field: firstLabel, sort: 'asc' }])
     } else setSortModel(newModel)
   }
@@ -132,7 +145,7 @@ export default function Table() {
     if (!sortModel || sortModel.length === 0) {
       const firstTextOption = visibleOptions.find((option) => option.display === 'TEXT')
       return setSortModel([
-        { field: firstTextOption?.label ?? visibleOptions[0].label, sort: 'asc' },
+        { field: firstTextOption?.label ?? visibleOptions?.[0]?.label, sort: 'asc' },
       ])
     }
 
@@ -270,14 +283,12 @@ export default function Table() {
       </S.SettingsWrapper>
 
       <DataGrid
-        onRowClick={(e, a, c) => {
-          console.log('@@wow', e, a, c)
-          const order = e.id // 현재 페이지에서 몇번째 로우인지
+        onRowClick={(e) => {
+          const clickedRow = e.row
 
-          alert(JSON.stringify(e.row))
           window.postMessage({
             key: 'cigro-table-row',
-            payload: JSON.stringify(e.row),
+            payload: JSON.stringify(clickedRow),
           })
         }}
         page={0} // useMetrics에서 가져온 데이터를 그대로 보여준다
@@ -321,6 +332,7 @@ export default function Table() {
         disableColumnMenu
         autoHeight
       />
+      {import.meta.env.VITE_DEPLOY_TYPE === 'test' && <TestButtons />}
     </S.Wrapper>
   )
 }
