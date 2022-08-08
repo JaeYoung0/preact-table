@@ -7,7 +7,7 @@ function TestButtons() {
             key: 'cigro-table',
             payload: {
               env: 'dev',
-              metrics_type: 'CHANNEL',
+              metrics_type: 'SALES_CHANNEL',
               user_id: '1651800183717x956761776063033100',
               start: '2021-11-01',
               end: '2021-11-30',
@@ -23,7 +23,7 @@ function TestButtons() {
           })
         }}
       >
-        CHANNEL
+        SALES_CHANNEL
       </button>
       <button
         onClick={() => {
